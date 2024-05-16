@@ -15,8 +15,9 @@ datasource db {
 
 
 
-model User {
+model Account {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String
   name          String
   email         String  @unique
 
