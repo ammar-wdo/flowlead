@@ -13,28 +13,101 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model Account {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    String
+  firstName String
+  lastName  String
+  email     String @unique
+
+  image     String?
+  companies Company[]
+}
+
+model Company {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   name          String
-  email         String  @unique
+  address       String
+  zipcode       String
+  city          String
+  country       String
+  websiteUrl    String?
+  logo          String?
+  phone         String
+  companyEmail  String
+  serviceEmail  String?
+  cocNumber     String?
+  industry      String?
+  vatNumber     String
+  contactPerson String
+  IBAN          String
+  termsUrl      String?
 
-  image         String?
-  password      String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  qoutationSettings QoutesSettings
+  invoiceSettings InvoiceSettings 
 
+  forms Form[]
 
+  accountId String  @db.ObjectId
+  account   Account @relation(fields: [accountId], references: [id])
 }
 
 model Form {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  fields    Field[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  name        String
+  description String?
+  slug        String
+
+  isPublished Boolean @default(false)
+  isWidjet    Boolean @default(false)
+
+  fields Field[]
+  views  Viewd[]
+  services Service[]
+
+  companyId String  @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
+}
+
+
+
+
+model Service {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+  description String?
+  pricingsType  PricingType 
+  isRequired Boolean @default(false)
+  options Option[]
+  addToQoutation Boolean @default(false)
+
+  formId String @db.ObjectId
+  form Form @relation(fields: [formId],references: [id])
+
+}
+
+
+
+
+model Viewd {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  formId String @db.ObjectId
+  form   Form   @relation(fields: [formId], references: [id])
 }
 
 // types
@@ -92,4 +165,33 @@ type Field {
   options     String[]
   validations ValidationOptions
   conditional ConditionalOptions
+}
+
+type QoutesSettings {
+  dueDays               Int    @default(14)
+  qouteNumberPrefix     String @default("")
+  latestQoutationNumber Int    @default(0)
+  subject               String @default("")
+  body                  String @default("")
+}
+
+type InvoiceSettings {
+  dueDays               Int    @default(14)
+  qouteNumberPrefix     String @default("")
+  latestQoutationNumber Int    @default(0)
+  subject               String @default("")
+  body                  String @default("")
+}
+
+enum PricingType {
+  single
+}
+
+type Option {
+  name String
+  description String?
+  image String?
+  enableQuantity  Boolean @default(false)
+  price Int
+  
 }

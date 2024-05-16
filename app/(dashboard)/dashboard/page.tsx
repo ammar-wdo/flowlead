@@ -1,12 +1,22 @@
 
 import { UserButton } from '@clerk/nextjs'
+import { currentUser } from '@clerk/nextjs/server'
 import React from 'react'
 
 type Props = {}
 
-const page = (props: Props) => {
+const page = async(props: Props) => {
+
+    const user = await currentUser()
   return (
-    <UserButton />
+   <div className='min-h-screen flex items-center justify-center'>
+
+
+    <UserButton showName />
+
+
+
+   </div> 
   )
 }
 
