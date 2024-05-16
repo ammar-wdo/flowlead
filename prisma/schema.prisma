@@ -13,12 +13,108 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  email String
+model Account {
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String    @db.ObjectId
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id])
 
+  @@unique([providerId, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String   @db.ObjectId
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+}
+
+model Form {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  fields    Field[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+// types
 
+enum FieldType {
+  text
+  number
+  select
+  radio
+  checkbox
+  breaker
+}
+
+enum LogicOperator {
+  AND
+  OR
+  NOT
+}
+
+enum ComparisonOperator {
+  EQ //Equals
+  NE //Not Equals
+  GT // Greater Than
+  LT //Less Than
+  GTE //Greater than or Equals
+  LTE //Less than or Equals
+}
+
+type Condition {
+  fieldId    String?
+  operator   ComparisonOperator?
+  value      String?
+  logic      LogicOperator?
+  conditions Condition[]
+}
+
+type ConditionalOptions {
+  logic      LogicOperator?
+  conditions Condition[]
+}
+
+type ValidationOptions {
+  required  Boolean?
+  minLength Int?
+  maxLength Int?
+  min       Int?
+  max       Int?
+  pattern   String?
+}
+
+type Field {
+  id          String
+  label       String
+  type        FieldType
+  options     String[]
+  validations ValidationOptions
+  conditional ConditionalOptions
+}
