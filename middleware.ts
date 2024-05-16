@@ -1,4 +1,9 @@
-export { default } from "next-auth/middleware"
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
+export default clerkMiddleware(
+    
+);
 
-export const config = { matcher: ["/dashboard/:path*"] }
+export const config = {
+  matcher: ["/((?!.+.[w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+};
