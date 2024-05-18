@@ -37,7 +37,7 @@ export const hashPassword = async (password: string) => {
 export async function prepareUser() {
 
   const {userId} = auth()
-  if(!userId) return 
+ if(!userId) throw new CustomError('Unauthorized') 
 
   const user = await currentUser()
 
@@ -45,19 +45,21 @@ export async function prepareUser() {
     userId
   }})
 
-  if(account) return 
-
-
-const newAccount = await prisma.account.create({
-  data:{
-    userId,
-    email:user?.emailAddresses[0].emailAddress!,
-    firstName:user?.firstName!,
-    lastName:user?.lastName!,
-    image:user?.imageUrl
-
+  if(!account)  {
+    const newAccount = await prisma.account.create({
+      data:{
+        userId,
+        email:user?.emailAddresses[0].emailAddress!,
+        firstName:user?.firstName!,
+        lastName:user?.lastName!,
+        image:user?.imageUrl
+    
+      }
+    })
   }
-})
+
+
+
 
 const company  = await prisma.company.findFirst({
   where:{
@@ -65,9 +67,9 @@ const company  = await prisma.company.findFirst({
   }
 })
 
-if(!company) return 
+if(company) return redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${company.slug}`)
 
-redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${company.slug}`)
+
  
   
 }
