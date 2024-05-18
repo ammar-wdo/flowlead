@@ -15,12 +15,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import SectionsWrapper from '../sections-wrapper'
+import { SingleImageDropzone } from '../single-image-dropeZone';
 
 type Props = {}
 
 const CompanyForm = (props: Props) => {
 
-    const {form,onSubmit} = useComapany()
+    const {form,onSubmit,file,setFile,uploadImage,ImagePlaceholder} = useComapany()
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -83,6 +84,20 @@ const CompanyForm = (props: Props) => {
             </FormItem>
           )}
         />
+           <FormField
+          control={form.control}
+          name="zipcode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Zipcode*</FormLabel>
+              <FormControl>
+                <Input placeholder="Company Zipcode" {...field} />
+              </FormControl>
+             
+              <FormMessage />
+            </FormItem>
+          )}
+        />
             <FormField
           control={form.control}
           name="phone"
@@ -127,9 +142,157 @@ const CompanyForm = (props: Props) => {
             </FormItem>
           )}
         />
+          <FormField
+          control={form.control}
+          name="companyEmail"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Email*</FormLabel>
+              <FormControl>
+                <Input placeholder="Company Email" {...field} />
+              </FormControl>
+             
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+            <FormField
+          control={form.control}
+          name="logo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Logo</FormLabel>
+              <FormControl>
+              <SingleImageDropzone
+                    width={200}
+                    height={200}
+                    value={file}
+                    onChange={(file) => {
+                      setFile(file);
+                    }}
+                  />
+              </FormControl>
+              <Button
+              className={`${(!file || !!form.watch('logo')) &&  'hidden'}`}
+                
+                  type="button"
+                  onClick={uploadImage}
+                >
+                  Upload
+                </Button>
+       
+              <ImagePlaceholder />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
             </div>
+        
        
+        </SectionsWrapper>
+        <SectionsWrapper title='Business Information'>
+            <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-3'>
+            <FormField
+          control={form.control}
+          name="serviceEmail"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Service Email</FormLabel>
+              <FormControl>
+                <Input placeholder="Service Email" {...field} />
+              </FormControl>
+             
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+            <FormField
+          control={form.control}
+          name="cocNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Chumber of Commerce</FormLabel>
+              <FormControl>
+                <Input placeholder="Chumber of Commerce" {...field} />
+              </FormControl>
+             
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+            <FormField
+          control={form.control}
+          name="industry"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Indusry</FormLabel>
+              <FormControl>
+                <Input placeholder="Industry" {...field} />
+              </FormControl>
+             
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+            <FormField
+          control={form.control}
+          name="vatNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>VAT Number*</FormLabel>
+              <FormControl>
+                <Input placeholder="VAT Number" {...field} />
+              </FormControl>
+             
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+            <FormField
+          control={form.control}
+          name="contactPerson"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Contact Person*</FormLabel>
+              <FormControl>
+                <Input placeholder="Contact Person" {...field} />
+              </FormControl>
+             
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+            <FormField
+          control={form.control}
+          name="IBAN"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>IBAN*</FormLabel>
+              <FormControl>
+                <Input placeholder="IBAN" {...field} />
+              </FormControl>
+             
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+            <FormField
+          control={form.control}
+          name="termsUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Terms & Conditions URL</FormLabel>
+              <FormControl>
+                <Input placeholder="Terms & Conditions URL" {...field} />
+              </FormControl>
+             
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+            </div>
+     
         </SectionsWrapper>
        
         <Button type="submit">Submit</Button>

@@ -42,6 +42,6 @@ export const useComapany = ()=>{
 }
 
 
-return {form,onSubmit}
+return {form,onSubmit,file,setFile,uploadImage,ImagePlaceholder}
 
 }
