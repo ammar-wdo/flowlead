@@ -21,7 +21,7 @@ const page =async ({params:{companySlug}}: Props) => {
 
   if(!company) redirect(process.env.NEXT_PUBLIC_BASE_URL + '/dashboard')
   return (
-    <div><UserButton /></div>
+    <div></div>
   )
 }
 
