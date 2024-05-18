@@ -10,7 +10,7 @@ type Props = {}
 
 const page = async(props: Props) => {
 
-await prepareUser()
+// await prepareUser()
 
 
 
