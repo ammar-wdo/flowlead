@@ -11,17 +11,9 @@ type Props = {}
 
 const page = async(props: Props) => {
 
-// await prepareUser()
+await prepareUser()
 
-const {userId} = auth()
 
-if(!userId) throw new CustomError('Unauthorized')
-
-// const company  = await prisma.company.findFirst({
-//   where:{
-//     userId
-//   }
-// })
 
 
 
