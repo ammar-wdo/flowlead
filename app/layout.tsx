@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
 import ModalsProvider from "@/providers/modals-provider";
 import { EdgeStoreProvider } from '../lib/edgestore';
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +25,7 @@ export default function RootLayout({
       <EdgeStoreProvider>{children}
       <ModalsProvider/>
       </EdgeStoreProvider>
-     
+      <Toaster richColors/>
         </body>
     </html>
     </ClerkProvider>

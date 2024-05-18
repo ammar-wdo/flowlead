@@ -20,7 +20,9 @@ export const companySchema = z.object({
     logo:optionalString,
     phone:phoneReg,
     companyEmail:requiredString.email(),
-    serviceEmail:requiredString.email().optional().or(z.literal(undefined)),
+    serviceEmail: z.string().email().optional().refine(data => data === undefined || z.string().email().safeParse(data).success, {
+      message: 'Service Email must be a valid email or undefined',
+    }),
     cocNumber:optionalString,
     industry:optionalString,
     vatNumber:requiredString,

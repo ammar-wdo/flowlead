@@ -73,3 +73,14 @@ redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${company.slug}`)
  
   
 }
+
+
+export function generateRandomSlug() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let slug = '';
+  for (let i = 0; i < 9; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    slug += characters[randomIndex];
+  }
+  return slug;
+}

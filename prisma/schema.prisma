@@ -42,7 +42,7 @@ model Company {
   websiteUrl    String?
   logo          String?
   phone         String
-  companyEmail  String
+  companyEmail  String @unique
   serviceEmail  String?
   cocNumber     String?
   industry      String?

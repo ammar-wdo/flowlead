@@ -1,5 +1,6 @@
 
-import DashboardPrepare from '@/components/dashboard-prepare'
+
+import { DashboardPrepare } from '@/components/dashboard-prepare'
 import { CustomError } from '@/custom-error'
 import prisma from '@/lib/prisma'
 import { prepareUser } from '@/lib/utils'
@@ -26,7 +27,7 @@ await prepareUser()
    <div className='min-h-screen flex items-center justify-center'>
 
 
-<DashboardPrepare/>
+<DashboardPrepare />
  </div> 
   )
 }

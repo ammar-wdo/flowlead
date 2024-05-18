@@ -1,27 +1,59 @@
 'use client'
 
-import { useModal } from '@/hooks/modal-hook'
-import React, { useEffect } from 'react'
+
+
+
+
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
+import { useModal } from "@/hooks/modal-hook"
+import CompanyForm from "./company/company-form"
+import { useEffect, useState } from "react"
+
 
 type Props = {}
+    
+   export const DashboardPrepare= (props: Props) => {
+    const [openModal, setOpenModal] = useState(true)
 
-const DashboardPrepare = (props: Props) => {
+    const [mounted, setMounted] = useState(false)
 
-    const { open,modalInputs,setOpen}
-        = useModal()
+    useEffect(()=>{
+        setMounted(true)
+    },[])
+
+    useEffect(()=>{
+        setOpenModal(true)
+    },[openModal])
+
+    if(!mounted) return 
+     
+      return (
+        <Dialog open={openModal} onOpenChange={setOpenModal} >
+    
+        <DialogContent className="2xl:max-w-[55%] max-w-[95%] w-full max-h-[98%] overflow-y-scroll">
+          <DialogHeader>
+            <DialogTitle>First company registration</DialogTitle>
+            <DialogDescription>
+              Please complete your first company registration in order to start your journey with us.
+            </DialogDescription>
+          </DialogHeader>
+          <CompanyForm/>
+        </DialogContent>
+      </Dialog>
+      
+      )
+    }
+    
 
 
-    useEffect(() => { 
-        if(!open)
-            {
-                setOpen({type:'company-modal'})
-            }
-    }, [open])
-
-    return null
 
 
-}
 
 
-export default DashboardPrepare
