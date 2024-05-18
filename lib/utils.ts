@@ -5,6 +5,7 @@ import { CustomError } from "@/custom-error";
 import prisma from "./prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import * as clerkClient from '@clerk/clerk-sdk-node'
 
 
 
@@ -40,10 +41,15 @@ export async function prepareUser() {
   if(!userId) throw new CustomError('Unauthorized') 
 
   const user = await currentUser()
+  
+
+ 
 
   const account = await prisma.account.findFirst({where:{
     userId
   }})
+
+  
 
   if(!account) {
 
