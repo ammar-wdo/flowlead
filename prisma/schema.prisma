@@ -18,7 +18,7 @@ model Account {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId    String
+  userId    String @unique
   firstName String
   lastName  String
   email     String @unique
@@ -31,6 +31,8 @@ model Company {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String   @unique
+  slug      String   @unique
 
   name          String
   address       String
@@ -50,7 +52,7 @@ model Company {
   termsUrl      String?
 
   qoutationSettings QoutesSettings
-  invoiceSettings InvoiceSettings 
+  invoiceSettings   InvoiceSettings
 
   forms Form[]
 
@@ -65,41 +67,34 @@ model Form {
 
   name        String
   description String?
-  slug        String
+  slug        String @unique
 
   isPublished Boolean @default(false)
   isWidjet    Boolean @default(false)
 
-  fields Field[]
-  views  Viewd[]
+  fields   Field[]
+  views    Viewd[]
   services Service[]
 
   companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 }
 
-
-
-
 model Service {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String
-  description String?
-  pricingsType  PricingType 
-  isRequired Boolean @default(false)
-  options Option[]
-  addToQoutation Boolean @default(false)
+  name           String
+  description    String?
+  pricingsType   PricingType
+  isRequired     Boolean     @default(false)
+  options        Option[]
+  addToQoutation Boolean     @default(false)
 
   formId String @db.ObjectId
-  form Form @relation(fields: [formId],references: [id])
-
+  form   Form   @relation(fields: [formId], references: [id])
 }
-
-
-
 
 model Viewd {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -188,10 +183,9 @@ enum PricingType {
 }
 
 type Option {
-  name String
-  description String?
-  image String?
-  enableQuantity  Boolean @default(false)
-  price Int
-  
+  name           String
+  description    String?
+  image          String?
+  enableQuantity Boolean @default(false)
+  price          Int
 }

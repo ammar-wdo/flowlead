@@ -2,7 +2,6 @@
   "name": "flowlead",
   "version": "0.1.0",
   "private": true,
-  
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,7 +11,13 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.0.11",
+    "@edgestore/react": "^0.1.6",
+    "@edgestore/server": "^0.1.6",
+    "@hookform/resolvers": "^3.4.0",
     "@prisma/client": "^5.14.0",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-slot": "^1.0.2",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -21,8 +26,12 @@
     "prisma": "^5.14.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.51.4",
+    "react-phone-input-2": "^2.15.1",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
