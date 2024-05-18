@@ -17,11 +17,11 @@ const {userId} = auth()
 
 if(!userId) throw new CustomError('Unauthorized')
 
-const company  = await prisma.company.findFirst({
-  where:{
-    userId
-  }
-})
+// const company  = await prisma.company.findFirst({
+//   where:{
+//     userId
+//   }
+// })
 
 
 
