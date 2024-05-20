@@ -23,19 +23,19 @@ const layout = async({ children,params:{companySlug} }: Props) => {
 
   if(!company) redirect(process.env.NEXT_PUBLIC_BASE_URL + '/dashboard')
   return (
-    <main className='max-h-screen h-full flex'>
+    <div className='max-h-screen h-full flex'>
 
 
       <Aside companySlug={companySlug}/>
       <div className='flex-1 flex flex-col'>
       <Header />
-        <div className=' flex-1 '>
+        <main className=' flex-1 p-12'>
           {children}
-        </div>
+        </main>
       </div>
 
 
-    </main>
+    </div>
   )
 }
 

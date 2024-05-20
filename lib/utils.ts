@@ -90,3 +90,11 @@ export function generateRandomSlug() {
   }
   return slug;
 }
+
+
+//check mongidb id 
+
+export function isValidObjectId(id: string): boolean {
+  const hexRegex = /^[0-9a-fA-F]{24}$/;
+  return hexRegex.test(id);
+}

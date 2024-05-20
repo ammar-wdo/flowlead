@@ -25,6 +25,7 @@ model Account {
 
   image     String?
   companies Company[]
+  services  Service[]
 }
 
 model Company {
@@ -55,6 +56,7 @@ model Company {
   invoiceSettings   InvoiceSettings
 
   forms Form[]
+  services Service[]
 
   accountId String  @db.ObjectId
   account   Account @relation(fields: [accountId], references: [id])
@@ -84,16 +86,23 @@ model Service {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String
 
   name           String
   description    String?
-  pricingsType   PricingType
+  pricingType   PricingType
   isRequired     Boolean     @default(false)
   options        Option[]
   addToQoutation Boolean     @default(false)
 
-  formId String @db.ObjectId
-  form   Form   @relation(fields: [formId], references: [id])
+  accountId String @db.ObjectId
+  account Account @relation(fields: [accountId],references: [id])
+
+  formId String? @db.ObjectId
+  form   Form?   @relation(fields: [formId], references: [id])
+
+    companyId String  @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
 }
 
 model Viewd {
@@ -179,7 +188,10 @@ type InvoiceSettings {
 }
 
 enum PricingType {
-  single
+  SINGLE_PRICE
+  CHECKBOX_GROUP
+  RADIO_GROUP
+  DROPDOWN_GROUP
 }
 
 type Option {
