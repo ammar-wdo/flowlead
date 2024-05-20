@@ -7,7 +7,7 @@ type Props = {}
 
 const FormsForm = (props: Props) => {
   return (
-    <div>    <QuillEditor value={''} onChange={(value:string)=>{}} /></div>
+    <div className='h-full flex items-center justify-center'>    <QuillEditor value={''} onChange={(value:string)=>{}} /></div>
   )
 }
 

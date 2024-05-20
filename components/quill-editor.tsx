@@ -21,6 +21,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ value, onChange }) => {
             [{ header: [1, 2,3,false] }],
             ['bold', 'italic', 'underline'],
             [{ color: [] }],
+            [{ size: ['small', false, 'large', 'huge'] }]
    
           ],
         },
@@ -38,7 +39,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ value, onChange }) => {
     }
   }, [value, onChange]);
 
-  return <div className='' ref={quillRef} />;
+  return <div className='w-full'>
+    <div className='' ref={quillRef} />
+    </div>;
 };
 
 export default QuillEditor;
