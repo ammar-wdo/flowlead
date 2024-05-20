@@ -79,3 +79,27 @@
       @apply bg-background text-foreground;
     }
   }
+
+
+  .ql-container {
+
+    overflow-y: auto;
+    max-width: 700px;
+  }
+  
+  .ql-editor {
+    font-family: Arial, sans-serif; /* Change font family */
+    font-size: 16px; /* Change font size */
+    line-height: 1.5; /* Change line height */
+    padding: 10px; /* Add padding */
+  }
+  
+  .ql-toolbar {
+    background-color: #f5f5f5; /* Change toolbar background color */
+    border-bottom: 1px solid #ccc; /* Add border to toolbar */
+    max-width: 700px;
+  }
+  
+  .ql-container.ql-snow {
+    border: 1px solid #ccc; /* Add border to the editor container */
+  }

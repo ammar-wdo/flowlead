@@ -1,4 +1,5 @@
 import Aside from '@/components/aside'
+import Header from '@/components/header'
 import { CustomError } from '@/custom-error'
 import prisma from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
@@ -27,7 +28,7 @@ const layout = async({ children,params:{companySlug} }: Props) => {
 
       <Aside companySlug={companySlug}/>
       <div className='flex-1 flex flex-col'>
-        <header className='h-[64px] bg-white border-b'>header</header>
+      <Header />
         <div className=' flex-1 '>
           {children}
         </div>

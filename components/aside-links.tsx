@@ -78,8 +78,8 @@ const AsideLinks = (props: Props) => {
         <section >
             {
                 links.map(link => <article key={link.title}>
-                    <h3 className='text-white opacity-60 pl-[20px] text-[11px]  mt-8 mb-3 uppercase font-light'>{link.title}</h3>
-                    {link.elements.map(el => <Link key={el.title} className={cn('gap-4 px-[20px] py-[12px] flex items-center text-[12px]  tracking-wide rounded-md transition hover:bg-white/10 text-white/60 mb-1', el.active && 'bg-white/10')} href={el.href}>
+                    <h3 className='text-white opacity-60 pl-[20px] text-[12px]  mt-8 mb-3 uppercase font-light'>{link.title}</h3>
+                    {link.elements.map(el => <Link key={el.title} className={cn('gap-4 px-[20px] py-[12px] flex items-center text-[14px]  tracking-wide rounded-md transition hover:bg-white/10 text-white/60 mb-1', el.active && 'bg-white/10')} href={el.href}>
                         <Image alt='icon' src={el.icon} width={15} height={15} className={cn(!el.active && 'opacity-60')} />
                         <p className={cn(el.active && 'text-white')}>{el.title}</p>
                         </Link>)}
