@@ -105,6 +105,7 @@ export const addCompany = async (values: z.infer<typeof companySchema>) => {
 
 
     } catch (error) {
+        console.log(error)
         let message = 'Internal server error'
         if (error instanceof CustomError)
             message = error.message

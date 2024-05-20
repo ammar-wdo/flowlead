@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 
-type ModalInputs ={
+export type ModalInputs ={
     type:'company-modal'
 } | null
 

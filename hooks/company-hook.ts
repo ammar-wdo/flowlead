@@ -46,6 +46,7 @@ export const useComapany = () => {
       if (!res.success) return toast.error(res.error)
       toast.success(res.message)
     router.refresh()
+    setClose()
    
 
     } catch (error) {

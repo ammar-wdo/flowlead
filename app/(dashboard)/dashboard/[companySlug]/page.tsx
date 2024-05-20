@@ -9,17 +9,8 @@ type Props = {params:{companySlug:string}}
 
 const page =async ({params:{companySlug}}: Props) => {
 
-  const {userId} = auth()
-  if(!userId) throw new CustomError("Unauthorized")
 
-  const company = await prisma.company.findUnique({
-    where:{
-      slug:companySlug,
-      userId
-    }
-  })
-
-  if(!company) redirect(process.env.NEXT_PUBLIC_BASE_URL + '/dashboard')
+ 
   return (
     <div></div>
   )
