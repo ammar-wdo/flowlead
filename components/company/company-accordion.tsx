@@ -50,7 +50,7 @@ const CompanyAccordion = async ({ companySlug }: Props) => {
 
                     {companies.map(el => {
                         if (el.slug === companySlug) return
-                        return <CompanyAccordionItem name={el.name} logo={el.logo} slug={el.slug} />
+                        return <CompanyAccordionItem key={el.id} name={el.name} logo={el.logo} slug={el.slug} />
                     })}
                     <ClientModalButton modalInputs={{ type: 'company-modal' }} className='flex items-center gap-2 w-full text-white/60 hover:text-white h-[64px] border-b border-[#2F394A] text-[12px] rounded-none justify-start  pl-[40px] bg-primeOpacity hover:bg-primeOpacity font-light capitalize  '>
                         <PlusCircle size={31}/>
