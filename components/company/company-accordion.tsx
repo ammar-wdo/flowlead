@@ -52,7 +52,7 @@ const CompanyAccordion = async ({ companySlug }: Props) => {
                         if (el.slug === companySlug) return
                         return <CompanyAccordionItem name={el.name} logo={el.logo} slug={el.slug} />
                     })}
-                    <ClientModalButton modalInputs={{ type: 'company-modal' }} className='flex items-center gap-2 w-full text-white h-[64px] border-b border-[#2F394A] rounded-none justify-start  pl-[40px] bg-primeOpacity hover:bg-primeOpacity font-light capitalize text-sm '>
+                    <ClientModalButton modalInputs={{ type: 'company-modal' }} className='flex items-center gap-2 w-full text-white/60 hover:text-white h-[64px] border-b border-[#2F394A] text-[12px] rounded-none justify-start  pl-[40px] bg-primeOpacity hover:bg-primeOpacity font-light capitalize  '>
                         <PlusCircle size={31}/>
                         <span>Create Company</span>
                     </ClientModalButton>
