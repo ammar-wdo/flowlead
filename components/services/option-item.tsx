@@ -25,6 +25,7 @@ name:string
     handleDelete:()=>void
     form: UseFormReturn<{
         options: {
+            id:string
             name: string;
             enableQuantity: boolean;
             price: number;
@@ -56,7 +57,7 @@ const {ImagePlaceholder,file,setFile,uploadImage } = useOptionLogo({form,index})
                             <FormItem className="space-y-0 flex-1">
 
                                 <FormControl>
-                                    <Input placeholder="Option name" {...field} />
+                                    <Input placeholder="Option name" {...field}  />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

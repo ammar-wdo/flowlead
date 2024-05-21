@@ -30,13 +30,9 @@ const ServiceForm = ({ service }: Props) => {
 
     const { form, onSubmit } = useService(service)
 
-    const handleDelete = (index: number) => {
+    const handleDelete = (id: string) => {
         const newOptions = form.watch('options')
-        const filteredOptions = newOptions.filter((el, i) => i !== index)
-
-
-        console.log("options", newOptions.find((el, i) => i === index))
-        console.log("filtered options", filteredOptions)
+        const filteredOptions = newOptions.filter((el, i) => el.id !== id)
         form.setValue('options', filteredOptions)
 
     }
@@ -100,18 +96,21 @@ const ServiceForm = ({ service }: Props) => {
                             <FormControl>
                                 <div>
                                     <div className='space-y-12'>
-                                        {form.watch('options').map((option, i) => <OptionItem handleDelete={() => handleDelete(i)} name={option.name} form={form} index={i} key={`${i}  ${Date.now()}`} />)}
+                                        {form.watch('options').map((option, i) => <OptionItem handleDelete={() => handleDelete(option.id)} name={option.name} form={form} index={i} key={option.id} />)}
                                         {form.formState.errors.options?.length && <span className='text-red-500 mt-4'>Invalid options inputs</span>}
                                     </div>
 
-                                    <Button className='mt-8 bg-second text-white hover:bg-second/90' type='button' onClick={() => field.onChange([...form.watch('options'), { name: '', description: '', image: '', enableQuantity: false } as z.infer<typeof optionSchema>])}>Add New Option</Button>
+                                    <Button
+                                     className='mt-8 bg-second text-white hover:bg-second/90'
+                                      type='button'
+                                       onClick={() => field.onChange([...form.watch('options'), { name: '', description: '', image: '', enableQuantity: false ,id:String(Date.now())} as z.infer<typeof optionSchema>])}>Add New Option</Button>
                                 </div>
                             </FormControl>
 
                         </FormItem>
                     )}
                 />
-                {JSON.stringify(form.watch('options'), null, 2)}
+                {/* {JSON.stringify(form.watch('options'), null, 2)} */}
                 <Button type="submit">Submit</Button>
             </form>
         </Form>

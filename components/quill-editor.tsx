@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css'; // Import the snow theme CSS
 
@@ -12,7 +12,10 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ value, onChange }) => {
   const quillRef = useRef<HTMLDivElement | null>(null);
   const quillInstanceRef = useRef<Quill | null>(null);
 
+
+
   useEffect(() => {
+
     if (quillRef.current && !quillInstanceRef.current) {
       quillInstanceRef.current = new Quill(quillRef.current, {
         theme: 'snow',
@@ -38,6 +41,11 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ value, onChange }) => {
       quillInstanceRef.current.root.innerHTML = value;
     }
   }, [value, onChange]);
+
+
+
+
+
 
   return <div className='w-full'>
     <div className='' ref={quillRef} />

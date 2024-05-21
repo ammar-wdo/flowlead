@@ -45,6 +45,7 @@ export const pricingTypeEnum = ["SINGLE_PRICE",
 
 
   export const optionSchema = z.object({
+    id:requiredString,
     name:requiredString,
     description:optionalString.nullable().optional(),
     image:optionalString.nullable().optional(),

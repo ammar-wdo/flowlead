@@ -195,6 +195,7 @@ enum PricingType {
 }
 
 type Option {
+  id String 
   name           String
   description    String?
   image          String?
