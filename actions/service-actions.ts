@@ -49,7 +49,7 @@ export const addService = async (values: z.infer<typeof serviceSchema>, companyS
         })
 
 
-        return { success: true, message: "Company Created Successfully" }
+        return { success: true, message: "Service Created Successfully" }
     } catch (error) {
         console.log(error)
         let message = 'Internal server error'

@@ -13,7 +13,7 @@ type Props = {
 
 const PricingTypeComponent = ({ pricingType, onChange, isChoosen }: Props) => {
     return (
-        <div onClick={() => onChange(pricingType)} className={cn('rounded-md border px-12 py-8 flex items-center gap-3 hover:border-second transition cursor-pointer ', isChoosen && 'bg-second text-white hover:bg-second border-second')}>
+        <div onClick={() => onChange(pricingType)} className={cn('rounded-md border px-12 py-8 flex items-center gap-3 transition cursor-pointer hover:border-second hover:text-second', isChoosen && '   border-second text-second')}>
             {pricingTypeMap[pricingType].Icon} 
             {pricingTypeMap[pricingType].title}
             </div>

@@ -49,7 +49,7 @@ export const pricingTypeEnum = ["SINGLE_PRICE",
     description:optionalString.nullable().optional(),
     image:optionalString.nullable().optional(),
     enableQuantity:z.boolean(),
-    price:z.coerce.number()
+    price:z.coerce.number({message:'Enter valid number please'}).min(1)
   })
 
 
@@ -59,7 +59,7 @@ export const serviceSchema = z.object({
   description: optionalString,
   pricingType: z.enum(pricingTypeEnum).default('SINGLE_PRICE').refine(el => pricingTypeEnum.includes(el), { message: "Invalid Pricing Type", path: ['pricingType'] }),
   isRequired: z.boolean().default(false),
-  options:z.array(optionSchema).min(1).default([{name:'First Option',description:"",enableQuantity:false,price:0,image:''}]),
+  options:z.array(optionSchema).min(1,"Atleast one option"),
   addToQoutation:z.boolean().default(false)
 
 

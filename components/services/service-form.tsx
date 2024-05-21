@@ -16,9 +16,11 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import QuillEditor from '../quill-editor'
-import { pricingTypeArray } from '@/schemas'
+import { optionSchema, pricingTypeArray } from '@/schemas'
 import PricingTypeComponent, { SinglePricingType } from '../pricing-type'
 import { cn } from '@/lib/utils'
+import OptionItem from './option-item'
+import { z } from 'zod'
 
 type Props = {
     service: Service | undefined | null
@@ -27,6 +29,17 @@ type Props = {
 const ServiceForm = ({ service }: Props) => {
 
     const { form, onSubmit } = useService(service)
+
+    const handleDelete = (index: number) => {
+        const newOptions = form.watch('options')
+        const filteredOptions = newOptions.filter((el, i) => i !== index)
+
+
+        console.log("options", newOptions.find((el, i) => i === index))
+        console.log("filtered options", filteredOptions)
+        form.setValue('options', filteredOptions)
+
+    }
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -61,7 +74,7 @@ const ServiceForm = ({ service }: Props) => {
                 />
 
 
-               {/* Pricing Type */}
+                {/* Pricing Type */}
                 <FormField
                     control={form.control}
                     name="pricingType"
@@ -70,7 +83,7 @@ const ServiceForm = ({ service }: Props) => {
                             <FormLabel>Pricing Type*</FormLabel>
                             <FormControl>
                                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                                    {pricingTypeArray.map((type,i) =><PricingTypeComponent key={i} isChoosen={field.value===type}  pricingType={type as SinglePricingType} onChange={(val)=>field.onChange(val)}/>)}
+                                    {pricingTypeArray.map((type, i) => <PricingTypeComponent key={i} isChoosen={field.value === type} pricingType={type as SinglePricingType} onChange={(val) => field.onChange(val)} />)}
                                 </div>
                             </FormControl>
                             <FormMessage />
@@ -86,15 +99,19 @@ const ServiceForm = ({ service }: Props) => {
                             <FormLabel>Options*</FormLabel>
                             <FormControl>
                                 <div>
-                                {field.value.map((option,i)=><div key={i}>{option.name}</div>)}
-                                <Button type='button' onClick={()=>field.onChange([...field.value,{name:'Option ' + (field.value.length+1)}])}>Add Option</Button>
+                                    <div className='space-y-12'>
+                                        {form.watch('options').map((option, i) => <OptionItem handleDelete={() => handleDelete(i)} name={option.name} form={form} index={i} key={`${i}  ${Date.now()}`} />)}
+                                        {form.formState.errors.options?.length && <span className='text-red-500 mt-4'>Invalid options inputs</span>}
+                                    </div>
+
+                                    <Button className='mt-8 bg-second text-white hover:bg-second/90' type='button' onClick={() => field.onChange([...form.watch('options'), { name: '', description: '', image: '', enableQuantity: false } as z.infer<typeof optionSchema>])}>Add New Option</Button>
                                 </div>
-                            
                             </FormControl>
-                            <FormMessage />
+
                         </FormItem>
                     )}
                 />
+                {JSON.stringify(form.watch('options'), null, 2)}
                 <Button type="submit">Submit</Button>
             </form>
         </Form>
