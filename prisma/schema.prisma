@@ -92,6 +92,8 @@ model Service {
   description    String?
   pricingType   PricingType
   isRequired     Boolean     @default(false)
+  isLineItem   Boolean     @default(false)
+  taxPercentage Float
   options        Option[]
   addToQoutation Boolean     @default(false)
 

@@ -16,7 +16,7 @@ export const useService  =(service:Service | null | undefined)=>{
         defaultValues: {
           name:service?.name ||  "",
           description:service?.description || "",
-          options:service?.options || [{name:'',description:'',enableQuantity:false,image:'',price:undefined}],
+          options:service?.options || [{name:'',description:'',enableQuantity:false,image:'',price:undefined,id:String(Date.now())}],
           isRequired:service?.isRequired,
           pricingType:service?.pricingType || 'SINGLE_PRICE',
           addToQoutation:service?.addToQoutation     

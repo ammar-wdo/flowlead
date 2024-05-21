@@ -21,6 +21,8 @@ import PricingTypeComponent, { SinglePricingType } from '../pricing-type'
 import { cn } from '@/lib/utils'
 import OptionItem from './option-item'
 import { z } from 'zod'
+import { Checkbox } from '../ui/checkbox'
+import { Loader } from 'lucide-react'
 
 type Props = {
     service: Service | undefined | null
@@ -36,6 +38,8 @@ const ServiceForm = ({ service }: Props) => {
         form.setValue('options', filteredOptions)
 
     }
+
+    const isLoading = form.formState.isSubmitting
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -68,6 +72,57 @@ const ServiceForm = ({ service }: Props) => {
                         </FormItem>
                     )}
                 />
+                {/* Tax percentage */}
+                <FormField
+                    control={form.control}
+                    name="taxPercentage"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Tax Percentage*</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Tax Percentage" type='number' {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <div className='flex items-center justify-between'>
+                    {/* Is Line Item */}
+                    <FormField
+                        control={form.control}
+                        name="isLineItem"
+                        render={({ field }) => (
+                            <FormItem className='flex items-start gap-3 space-y-0'>
+                                <FormLabel>Is In Line Items</FormLabel>
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    {/* Is Line Item */}
+                    <FormField
+                        control={form.control}
+                        name="isRequired"
+                        render={({ field }) => (
+                            <FormItem className='flex items-start gap-3 space-y-0'>
+                                <FormLabel>Is Required</FormLabel>
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+
 
 
                 {/* Pricing Type */}
@@ -101,17 +156,17 @@ const ServiceForm = ({ service }: Props) => {
                                     </div>
 
                                     <Button
-                                     className='mt-8 bg-second text-white hover:bg-second/90'
-                                      type='button'
-                                       onClick={() => field.onChange([...form.watch('options'), { name: '', description: '', image: '', enableQuantity: false ,id:String(Date.now())} as z.infer<typeof optionSchema>])}>Add New Option</Button>
+                                        className='mt-8 bg-second text-white hover:bg-second/90'
+                                        type='button'
+                                        onClick={() => field.onChange([...form.watch('options'), { name: '', description: '', image: '', enableQuantity: false, id: String(Date.now()) } as z.infer<typeof optionSchema>])}>Add New Option</Button>
                                 </div>
                             </FormControl>
 
                         </FormItem>
                     )}
                 />
-                {/* {JSON.stringify(form.watch('options'), null, 2)} */}
-                <Button type="submit">Submit</Button>
+              
+                <Button disabled={isLoading} type="submit">Submit {isLoading && <Loader className='animate-spin' />}</Button>
             </form>
         </Form>
     )

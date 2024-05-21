@@ -60,6 +60,8 @@ export const serviceSchema = z.object({
   description: optionalString,
   pricingType: z.enum(pricingTypeEnum).default('SINGLE_PRICE').refine(el => pricingTypeEnum.includes(el), { message: "Invalid Pricing Type", path: ['pricingType'] }),
   isRequired: z.boolean().default(false),
+  isLineItem:z.boolean().default(false),
+  taxPercentage:z.coerce.number({message:'Enter valid number please'}).min(1),
   options:z.array(optionSchema).min(1,"Atleast one option"),
   addToQoutation:z.boolean().default(false)
 

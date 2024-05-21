@@ -26,6 +26,7 @@ name:string
     form: UseFormReturn<{
         options: {
             id:string
+           
             name: string;
             enableQuantity: boolean;
             price: number;
@@ -35,6 +36,8 @@ name:string
         name: string;
         pricingType: "SINGLE_PRICE" | "CHECKBOX_GROUP" | "RADIO_GROUP" | "DROPDOWN_GROUP";
         isRequired: boolean;
+        isLineItem:boolean
+        taxPercentage:number
         addToQoutation: boolean;
         description?: string | undefined;
     }, any, undefined>
