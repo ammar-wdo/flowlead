@@ -7,7 +7,7 @@ import { serviceSchema } from "@/schemas";
 import { useLogo } from "./logo-hook";
 import { toast } from "sonner";
 import { useParams, useRouter } from "next/navigation";
-import { addService } from "@/actions/service-actions";
+import { addService, updateService } from "@/actions/service-actions";
 
 export const useService  =(service:Service | null | undefined)=>{
 
@@ -17,9 +17,11 @@ export const useService  =(service:Service | null | undefined)=>{
           name:service?.name ||  "",
           description:service?.description || "",
           options:service?.options || [{name:'',description:'',enableQuantity:false,image:'',price:undefined,id:String(Date.now())}],
-          isRequired:service?.isRequired,
+          isRequired:service?.isRequired || false,
           pricingType:service?.pricingType || 'SINGLE_PRICE',
-          addToQoutation:service?.addToQoutation     
+          addToQoutation:service?.addToQoutation   || false ,
+          taxPercentage:service?.taxPercentage || undefined ,
+          isLineItem:service?.isLineItem || false
         },
       })
 
@@ -30,11 +32,18 @@ export const useService  =(service:Service | null | undefined)=>{
 const router = useRouter()
       async function onSubmit(values: z.infer<typeof serviceSchema>) {
         try {
-          const res = await addService(values,params.companySlug)
+let res
+          if(!service)
+          { res = await addService(values,params.companySlug)}
+          else{
+            res = await updateService(values,params.companySlug,service.id)
+          }
     
           if (!res.success) return toast.error(res.error)
+
           toast.success(res.message)
         router.push(`/dashboard/${params.companySlug}/services`)
+        router.refresh()
     
        
     

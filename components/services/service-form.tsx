@@ -179,7 +179,7 @@ const ServiceForm = ({ service }: Props) => {
                     </div>
                 <Scroller previousVar={previousVar} variable={form.watch('options').length} />
 
-                <LoadingButton className='ml-auto w-fit block bg-second hover:bg-second/90' title='Submit' isLoading={isLoading} />
+                <LoadingButton className='ml-auto  flex bg-second hover:bg-second/90' title={!service ? 'Submit' : 'Update'} isLoading={isLoading} />
             </form>
         </Form>
     )

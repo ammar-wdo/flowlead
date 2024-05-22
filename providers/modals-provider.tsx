@@ -1,6 +1,7 @@
 'use client'
 
 import CompanyModal from '@/components/modals/company-modal'
+import DeleteModal from '@/components/modals/delete-modal'
 import React, { useEffect, useState } from 'react'
 
 type Props = {}
@@ -13,6 +14,7 @@ const ModalsProvider = (props: Props) => {
   return (
    <>
   <CompanyModal/>
+  <DeleteModal/>
    </>
   )
 }
