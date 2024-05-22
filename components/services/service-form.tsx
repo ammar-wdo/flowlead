@@ -105,6 +105,23 @@ const ServiceForm = ({ service }: Props) => {
                             </FormItem>
                         )}
                     />
+                        {/* Is Line Item */}
+                        <FormField
+                            control={form.control}
+                            name="isLineItem"
+                            render={({ field }) => (
+                                <FormItem className='flex items-start gap-3 space-y-0'>
+                                    <FormLabel>Show as Line Item</FormLabel>
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                 </div>
                 {/* Tax percentage */}
                 <div className='bg-white p-8 space-y-8'>
@@ -121,42 +138,7 @@ const ServiceForm = ({ service }: Props) => {
                             </FormItem>
                         )}
                     />
-                    <div className='flex items-center justify-between'>
-                        {/* Is Line Item */}
-                        <FormField
-                            control={form.control}
-                            name="isLineItem"
-                            render={({ field }) => (
-                                <FormItem className='flex items-start gap-3 space-y-0'>
-                                    <FormLabel>Is In Line Items</FormLabel>
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {/* Is Line Item */}
-                        <FormField
-                            control={form.control}
-                            name="isRequired"
-                            render={({ field }) => (
-                                <FormItem className='flex items-start gap-3 space-y-0'>
-                                    <FormLabel>Is Required</FormLabel>
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                  
                 </div>
 
 
@@ -199,7 +181,25 @@ const ServiceForm = ({ service }: Props) => {
                                     <FormItem>
                                         <FormLabel>Options*</FormLabel>
                                         <FormControl>
-                                            <div>
+                                            <div className='space-y-16'>
+                                                 
+                        <FormField
+                            control={form.control}
+                            name="isRequired"
+                            render={({ field }) => (
+                                <FormItem className='flex items-center gap-2  space-y-0 mt-6'>
+                                   
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormLabel>Options are required</FormLabel>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                                                 <div className='space-y-12'>
                                                     {form.watch('options').map((option, i) => <OptionItem handleDelete={() => handleDelete(option.id)} id={option.id} form={form} index={i} key={option.id} />)}
                                                     {form.formState.errors.options?.length && <span className='text-red-500 mt-4'>Invalid options inputs</span>}

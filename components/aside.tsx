@@ -7,7 +7,7 @@ type Props = {companySlug:string}
 
 const Aside = ({companySlug}: Props) => {
   return (
-    <aside className='w-[240px] flex flex-col bg-prime'>
+    <aside className='w-[240px] flex flex-col bg-prime fixed left-0 h-full'>
   <Logo companySlug={companySlug}/>
 
   {/* aside content */}

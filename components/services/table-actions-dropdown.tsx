@@ -8,7 +8,7 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import { Button } from "../ui/button"
-import { Delete, Edit, MoreHorizontal } from "lucide-react"
+import { Delete, Edit, MoreHorizontal, MoreVertical } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { useModal } from "@/hooks/modal-hook"
@@ -37,7 +37,7 @@ setOpen({type:'delete',deleteFunction:()=>deleteService(params.companySlug as st
 <DropdownMenuTrigger asChild>
   <Button variant="ghost" className="h-8 w-8 p-0">
     <span className="sr-only">Open menu</span>
-    <MoreHorizontal className="h-4 w-4" />
+    <MoreVertical className="h-4 w-4 text-muted-foreground" />
   </Button>
 </DropdownMenuTrigger>
 <DropdownMenuContent align="end">
