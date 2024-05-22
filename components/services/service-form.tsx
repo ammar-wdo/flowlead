@@ -25,6 +25,16 @@ import { Checkbox } from '../ui/checkbox'
 import { Loader } from 'lucide-react'
 import LoadingButton from '../loading-button'
 import Scroller from '../scroller'
+import { SortableContext, arrayMove ,sortableKeyboardCoordinates} from '@dnd-kit/sortable';
+import {
+    DndContext,
+    closestCenter,
+    useSensor,
+    useSensors,
+    PointerSensor,
+    KeyboardSensor,
+    DragEndEvent
+  } from '@dnd-kit/core';
 
 type Props = {
     service: Service | undefined | null
@@ -42,6 +52,24 @@ const ServiceForm = ({ service }: Props) => {
         previousVar.current--
 
     }
+
+
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+      
+        if (over && active.id !== over.id) {
+
+            const items = form.watch('options')
+            const oldIndex = items.findIndex(item => item.id === active.id);
+            const newIndex = items.findIndex(item => item.id === over.id);
+         const newOptions =   arrayMove(items, oldIndex, newIndex);
+
+        form.setValue('options',newOptions)
+          
+          ;
+        }
+      };
 
     const isLoading = form.formState.isSubmitting
     return (
@@ -152,31 +180,44 @@ const ServiceForm = ({ service }: Props) => {
                     />
                 </div>
                 {/* options */}
-                <div className='bg-white p-8 space-y-8'>   
-                <FormField
-                    control={form.control}
-                    name="options"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Options*</FormLabel>
-                            <FormControl>
-                                <div>
-                                    <div className='space-y-12'>
-                                        {form.watch('options').map((option, i) => <OptionItem handleDelete={() => handleDelete(option.id)} name={option.name} form={form} index={i} key={option.id} />)}
-                                        {form.formState.errors.options?.length && <span className='text-red-500 mt-4'>Invalid options inputs</span>}
-                                    </div>
+                <DndContext 
+                 sensors={useSensors(
+                    useSensor(PointerSensor),
+                    useSensor(KeyboardSensor, {
+                      coordinateGetter: sortableKeyboardCoordinates,
+                    })
+                  )}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                    <SortableContext items={form.watch('options')}>
+                        <div className='bg-white p-8 space-y-8'>
+                            <FormField
+                                control={form.control}
+                                name="options"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Options*</FormLabel>
+                                        <FormControl>
+                                            <div>
+                                                <div className='space-y-12'>
+                                                    {form.watch('options').map((option, i) => <OptionItem handleDelete={() => handleDelete(option.id)} id={option.id} form={form} index={i} key={option.id} />)}
+                                                    {form.formState.errors.options?.length && <span className='text-red-500 mt-4'>Invalid options inputs</span>}
+                                                </div>
 
-                                    <Button
-                                        className='mt-8 bg-second text-white hover:bg-second/90'
-                                        type='button'
-                                        onClick={() => field.onChange([...form.watch('options'), { name: '', description: '', image: '', enableQuantity: false, id: String(Date.now()) } as z.infer<typeof optionSchema>])}>Add New Option</Button>
-                                </div>
-                            </FormControl>
+                                                <Button
+                                                    className='mt-8 bg-second text-white hover:bg-second/90'
+                                                    type='button'
+                                                    onClick={() => field.onChange([...form.watch('options'), { name: '', description: '', image: '', enableQuantity: false, id: String(Date.now()) } as z.infer<typeof optionSchema>])}>Add New Option</Button>
+                                            </div>
+                                        </FormControl>
 
-                        </FormItem>
-                    )}
-                />
-                    </div>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </SortableContext>
+                </DndContext>
                 <Scroller previousVar={previousVar} variable={form.watch('options').length} />
 
                 <LoadingButton className='ml-auto  flex bg-second hover:bg-second/90' title={!service ? 'Submit' : 'Update'} isLoading={isLoading} />

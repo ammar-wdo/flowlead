@@ -6,6 +6,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import ModalsProvider from "@/providers/modals-provider";
 import { EdgeStoreProvider } from '../lib/edgestore';
 import { Toaster } from "@/components/ui/sonner"
+import {DndContext} from '@dnd-kit/core';
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({ subsets: ["latin"],weight:["100","200","300","400","500","600","700","800","900"] });
@@ -22,14 +23,20 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
+     
+
+
     <html lang="en">
+
       <body className={poppins.className}>
       <EdgeStoreProvider>{children}
       <ModalsProvider/>
       </EdgeStoreProvider>
       <Toaster richColors/>
         </body>
+   
     </html>
+ 
     </ClerkProvider>
   );
 }
