@@ -2,7 +2,7 @@
 
 import { useService } from '@/hooks/service-hook'
 import { PricingType, Service } from '@prisma/client'
-import React from 'react'
+import React, { useRef } from 'react'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -23,6 +23,8 @@ import OptionItem from './option-item'
 import { z } from 'zod'
 import { Checkbox } from '../ui/checkbox'
 import { Loader } from 'lucide-react'
+import LoadingButton from '../loading-button'
+import Scroller from '../scroller'
 
 type Props = {
     service: Service | undefined | null
@@ -31,11 +33,13 @@ type Props = {
 const ServiceForm = ({ service }: Props) => {
 
     const { form, onSubmit } = useService(service)
+    const previousVar = useRef(1)
 
     const handleDelete = (id: string) => {
         const newOptions = form.watch('options')
         const filteredOptions = newOptions.filter((el, i) => el.id !== id)
         form.setValue('options', filteredOptions)
+        previousVar.current--
 
     }
 
@@ -44,104 +48,111 @@ const ServiceForm = ({ service }: Props) => {
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 {/* name */}
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Service Name*</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Service name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                {/* Description */}
-                <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Service Description <span className='text-muted-foreground'>(optional)</span></FormLabel>
-                            <FormControl>
-                                <QuillEditor value={field.value || ''} onChange={field.onChange} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                {/* Tax percentage */}
-                <FormField
-                    control={form.control}
-                    name="taxPercentage"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Tax Percentage*</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Tax Percentage" type='number' {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <div className='flex items-center justify-between'>
-                    {/* Is Line Item */}
+                <div className='bg-white p-8 space-y-8'>
                     <FormField
                         control={form.control}
-                        name="isLineItem"
+                        name="name"
                         render={({ field }) => (
-                            <FormItem className='flex items-start gap-3 space-y-0'>
-                                <FormLabel>Is In Line Items</FormLabel>
+                            <FormItem>
+                                <FormLabel>Service Name*</FormLabel>
                                 <FormControl>
-                                    <Checkbox
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
+                                    <Input placeholder="Service name" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    {/* Is Line Item */}
+
+                    {/* Description */}
                     <FormField
                         control={form.control}
-                        name="isRequired"
+                        name="description"
                         render={({ field }) => (
-                            <FormItem className='flex items-start gap-3 space-y-0'>
-                                <FormLabel>Is Required</FormLabel>
+                            <FormItem>
+                                <FormLabel>Service Description <span className='text-muted-foreground'>(optional)</span></FormLabel>
                                 <FormControl>
-                                    <Checkbox
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
+                                    <QuillEditor value={field.value || ''} onChange={field.onChange} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                 </div>
+                {/* Tax percentage */}
+                <div className='bg-white p-8 space-y-8'>
+                    <FormField
+                        control={form.control}
+                        name="taxPercentage"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Tax Percentage*</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Tax Percentage" type='number' {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className='flex items-center justify-between'>
+                        {/* Is Line Item */}
+                        <FormField
+                            control={form.control}
+                            name="isLineItem"
+                            render={({ field }) => (
+                                <FormItem className='flex items-start gap-3 space-y-0'>
+                                    <FormLabel>Is In Line Items</FormLabel>
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        {/* Is Line Item */}
+                        <FormField
+                            control={form.control}
+                            name="isRequired"
+                            render={({ field }) => (
+                                <FormItem className='flex items-start gap-3 space-y-0'>
+                                    <FormLabel>Is Required</FormLabel>
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                </div>
 
 
 
                 {/* Pricing Type */}
-                <FormField
-                    control={form.control}
-                    name="pricingType"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Pricing Type*</FormLabel>
-                            <FormControl>
-                                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                                    {pricingTypeArray.map((type, i) => <PricingTypeComponent key={i} isChoosen={field.value === type} pricingType={type as SinglePricingType} onChange={(val) => field.onChange(val)} />)}
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <div className='bg-white p-8 space-y-8'>
+                    <FormField
+                        control={form.control}
+                        name="pricingType"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Pricing Type*</FormLabel>
+                                <FormControl>
+                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                                        {pricingTypeArray.map((type, i) => <PricingTypeComponent key={i} isChoosen={field.value === type} pricingType={type as SinglePricingType} onChange={(val) => field.onChange(val)} />)}
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
                 {/* options */}
+                <div className='bg-white p-8 space-y-8'>   
                 <FormField
                     control={form.control}
                     name="options"
@@ -165,8 +176,10 @@ const ServiceForm = ({ service }: Props) => {
                         </FormItem>
                     )}
                 />
-              
-                <Button disabled={isLoading} type="submit">Submit {isLoading && <Loader className='animate-spin' />}</Button>
+                    </div>
+                <Scroller previousVar={previousVar} variable={form.watch('options').length} />
+
+                <LoadingButton className='ml-auto w-fit block bg-second hover:bg-second/90' title='Submit' isLoading={isLoading} />
             </form>
         </Form>
     )

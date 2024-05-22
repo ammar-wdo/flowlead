@@ -29,7 +29,7 @@ const layout = async({ children,params:{companySlug} }: Props) => {
       <Aside companySlug={companySlug}/>
       <div className='flex-1 flex flex-col '>
       <Header />
-        <main className='overflow-y-scroll flex-1 p-12'>
+        <main className='overflow-y-scroll flex-1 p-12 bg-[#384EB7]/5'>
           {children}
         </main>
       </div>
