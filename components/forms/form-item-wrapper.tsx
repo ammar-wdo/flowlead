@@ -1,0 +1,27 @@
+import { ElementComponentType, formSchema } from '@/schemas'
+import React from 'react'
+import { UseFormReturn } from 'react-hook-form'
+import { z } from 'zod'
+
+type Props = {
+    elementComponent:ElementComponentType,
+   form:UseFormReturn<z.infer<typeof formSchema>>
+}
+
+const FormItemWrapper = ({elementComponent,form}: Props) => {
+
+    const {component,...element} = elementComponent
+
+    const addFormItem = ()=>{
+        const elements = form.getValues('elements');
+     if(element.type==='FIELD' && element.field) {
+      element.field.id = String(Date.now())
+     }
+        form.setValue('elements',[...elements,element])
+    }
+  return (
+    <div onClick={addFormItem} className='py-4 px-6 bg-white flex items-center cursor-pointer hover:text-second transition'>{component}</div>
+  )
+}
+
+export default FormItemWrapper

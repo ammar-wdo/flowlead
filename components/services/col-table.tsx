@@ -35,8 +35,8 @@ export const columns: ColumnDef<PartialService>[] = [
    
   },
   {
-   
-    header: "Actions",
+    accessorKey: "actions",
+    header: "",
     cell:({row})=><TableActionsDropdown serviceId={row.original.id}/>
    
   },

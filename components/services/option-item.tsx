@@ -1,6 +1,6 @@
 'use client'
 
-import { optionSchema } from "@/schemas";
+import { optionSchema, serviceSchema } from "@/schemas";
 import { ChangeEvent, useState } from "react";
 import { z } from "zod";
 import { Input } from "../ui/input";
@@ -18,7 +18,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from "@/lib/utils";
 
-type Option = z.infer<typeof optionSchema>
+
 
 type Props = {
 
@@ -26,24 +26,7 @@ type Props = {
     id: string
     index: number,
     handleDelete: () => void
-    form: UseFormReturn<{
-        options: {
-            id: string
-
-            name: string;
-            enableQuantity: boolean;
-            price: number;
-            description?: string | null | undefined;
-            image?: string | null | undefined;
-        }[];
-        name: string;
-        pricingType: "SINGLE_PRICE" | "CHECKBOX_GROUP" | "RADIO_GROUP" | "DROPDOWN_GROUP";
-        isRequired: boolean;
-        isLineItem: boolean
-        taxPercentage: number
-        addToQoutation: boolean;
-        description?: string | undefined;
-    }, any, undefined>
+    form: UseFormReturn<z.infer<typeof serviceSchema>>
 }
 
 const OptionItem = ({ index, form, id, handleDelete }: Props) => {

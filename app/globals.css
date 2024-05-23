@@ -90,6 +90,7 @@
     line-height: 1.5; /* Change line height */
     padding: 10px; /* Add padding */
     border-radius: 5px;
+    min-height: 150px;
   }
   
   .ql-toolbar {

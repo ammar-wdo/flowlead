@@ -126,3 +126,26 @@ export const getServices = async (companySlug: string, userId: string) => {
 
   return refactoredServices
 }
+
+//getch forms
+
+export const getForms = async (companySlug: string, userId: string)=>{
+
+  const forms = await prisma.form.findMany({
+    where:{
+      userId,
+      company:{
+        slug:companySlug
+      }
+
+    },
+    select:{
+      name:true,
+      createdAt:true,
+      slug:true
+    }
+  })
+
+  return forms
+
+}

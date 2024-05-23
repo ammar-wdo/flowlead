@@ -26,6 +26,7 @@ model Account {
   image     String?
   companies Company[]
   services  Service[]
+  forms Form[]
 }
 
 model Company {
@@ -66,6 +67,7 @@ model Form {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId  String
 
   name        String
   description String?
@@ -74,9 +76,12 @@ model Form {
   isPublished Boolean @default(false)
   isWidjet    Boolean @default(false)
 
-  fields   Field[]
+  elements   Element[]
   views    Viewd[]
   services Service[]
+
+  accountId String @db.ObjectId
+  account Account @relation(fields: [accountId],references: [id])
 
   companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
@@ -142,17 +147,20 @@ enum ComparisonOperator {
   LTE //Less than or Equals
 }
 
-type Condition {
+type SimpleCondition {
   fieldId    String?
   operator   ComparisonOperator?
   value      String?
-  logic      LogicOperator?
-  conditions Condition[]
+}
+
+type CompoundCondition {
+  logic      LogicOperator
+  conditions SimpleCondition[]
 }
 
 type ConditionalOptions {
-  logic      LogicOperator?
-  conditions Condition[]
+  logic      LogicOperator
+  conditions CompoundCondition[]
 }
 
 type ValidationOptions {
@@ -164,14 +172,41 @@ type ValidationOptions {
   pattern   String?
 }
 
+enum ElementType {
+  FIELD
+  SERVICE_ELEMENT
+}
+
+type Element {
+  type ElementType
+field Field?
+service ServiceElement?
+}
+
 type Field {
   id          String
   label       String
+  placeholder String?
+  hint        String?
   type        FieldType
   options     String[]
-  validations ValidationOptions
-  conditional ConditionalOptions
+  validations ValidationOptions?
+  conditional ConditionalOptions?
 }
+
+type ServiceElement {
+id String
+ name           String
+  description    String?
+  pricingType   PricingType
+  isRequired     Boolean     @default(false)
+  isLineItem   Boolean     @default(false)
+  taxPercentage Float
+  options        Option[]
+  addToQoutation Boolean     @default(false)
+}
+
+
 
 type QoutesSettings {
   dueDays               Int    @default(14)
