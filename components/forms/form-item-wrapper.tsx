@@ -2,6 +2,7 @@ import { ElementComponentType, formSchema } from '@/schemas'
 import React from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
+import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
     elementComponent:ElementComponentType,
@@ -13,6 +14,7 @@ const FormItemWrapper = ({elementComponent,form}: Props) => {
     const {component,...element} = elementComponent
 
     const addFormItem = ()=>{
+        element.id = uuidv4()
         const elements = form.getValues('elements');
      if(element.type==='FIELD' && element.field) {
       element.field.id = String(Date.now())

@@ -89,7 +89,8 @@ export const fieldTypeArray = ["text",
   "select",
   "radio",
   "checkbox",
-  "breaker"]
+  "breaker",
+]
 
   export const fieldTypeEnum = ["text",
   "number",
@@ -142,13 +143,14 @@ export const fieldTypeArray = ["text",
     placeholder:optionalString.nullable().optional(),
     hint:optionalString.nullable().optional(),
     type:z.nativeEnum(FieldType),
-    options:z.array(z.string()),
+    options:z.array(requiredString).min(1,"Atleast one option"),
     validations:validationOptionsSchema.nullable().optional(),
     conditional:conditionalOptions.nullable().optional()
   })
 
 
   export const elementSchema = z.object({
+    id:requiredString,
     type:z.nativeEnum(ElementType),
     field:fieldSchema.nullable().optional(),
     service:serviceSchema.nullable().optional()
@@ -172,6 +174,7 @@ export const fieldTypeArray = ["text",
   export type ElementComponentType = z.infer<typeof elementSchema> & {component:ReactNode}
 
   export const emptyServiceElement:ElementComponentType = {
+    id:'',
     type:'SERVICE_ELEMENT',
     component:<div className="flex items-center gap-2 text-[12px] "><IoIosAddCircle size={20} />Add Service</div>,
     service:{
@@ -189,11 +192,13 @@ export const fieldTypeArray = ["text",
   }
 
   export const emptyTextFieldElement:ElementComponentType = {
+    id:'',
     type:'FIELD',
     component:<div className="flex items-center gap-2 text-[12px] "> <PiTextAa size={20} />Text</div>,
     field:{
       id:'',
-      label:'Text',
+      label:'Text Input',
+      placeholder:"",
       options:[],
       type:'text',
       conditional:null,
@@ -203,11 +208,13 @@ export const fieldTypeArray = ["text",
 
   
   export const emptyNumberFieldElement:ElementComponentType = {
+    id:'',
     type:'FIELD',
     component:<div className="flex items-center gap-2 text-[12px] "> <TiSortNumerically size={20} />Number</div>,
     field:{
       id:'',
-      label:'Number input',
+      label:'Number Input',
+      placeholder:"",
       options:[],
       type:'number',
       conditional:null,
@@ -215,12 +222,14 @@ export const fieldTypeArray = ["text",
     },
   }
   export const emptyCheckBoxFieldElement:ElementComponentType = {
+    id:'',
     type:'FIELD',
     component:<div className="flex items-center gap-2 text-[12px] "> <IoCheckboxSharp size={20} />Check Box</div>,
     field:{
       id:'',
       label:'Check box',
-      options:["option1","option2","option3"],
+      placeholder:"",
+      options:["Option 1","Option 2","Option 3"],
       type:'checkbox',
       conditional:null,
       validations:null,  
@@ -228,35 +237,41 @@ export const fieldTypeArray = ["text",
   }
   
   export const emptyRadioFieldElement:ElementComponentType = {
+    id:'',
     type:'FIELD',
     component:<div className="flex items-center gap-2 text-[12px] "> <IoOptionsSharp size={20} />Option Group</div>,
     field:{
       id:'',
       label:'Option group',
-      options:[],
+      placeholder:"",
+      options:["Option 1","Option 2","Option 3"],
       type:'radio',
       conditional:null,
       validations:null,  
     },
   }
   export const emptySelectElement:ElementComponentType = {
+    id:'',
     type:'FIELD',
     component:<div className="flex items-center gap-2 text-[12px] "> <IoArrowDownCircle size={20} />Drop Down</div>,
     field:{
       id:'',
       label:'Drop Down',
-      options:[],
+      placeholder:"",
+      options:["Option 1","Option 2","Option 3"],
       type:'select',
       conditional:null,
       validations:null,  
     },
   }
   export const emptyBreakerElement:ElementComponentType = {
+    id:'',
     type:'FIELD',
     component:<div className="flex items-center gap-2 text-[12px] "> <BsFileBreakFill size={20} />Page Break</div>,
     field:{
       id:'',
       label:'Page Break',
+      placeholder:"",
       options:[],
       type:'breaker',
       conditional:null,

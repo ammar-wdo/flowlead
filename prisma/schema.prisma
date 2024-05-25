@@ -178,6 +178,7 @@ enum ElementType {
 }
 
 type Element {
+  id String 
   type ElementType
 field Field?
 service ServiceElement?

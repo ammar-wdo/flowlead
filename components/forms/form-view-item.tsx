@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { elementSchema, formSchema } from '@/schemas'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
+import { v4 as uuidv4 } from 'uuid';
 import {
     Select,
     SelectContent,
@@ -13,46 +14,71 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Checkbox } from '../ui/checkbox'
+import { Button } from '../ui/button'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities';
+import { GripVertical, Trash, XIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useSelectedElement } from '@/hooks/selected-element-hook'
 
-
-
+type Form = UseFormReturn<z.infer<typeof formSchema>>
+type FieldType = ControllerRenderProps<z.infer<typeof formSchema>, `elements.${number}.field`>
+type ServiceElementType = ControllerRenderProps<z.infer<typeof formSchema>, `elements.${number}.service`>
 type Element = z.infer<typeof elementSchema>
 type Props = {
-    form: UseFormReturn<z.infer<typeof formSchema>>,
+    form: Form,
     i: number,
-    element: Element
+    element: Element,
+    handleDelete:(id:string)=>void
 
 }
 
 
 
-const TextInputViewItem = ({element}: {element:Element}) => {
-    return ( <FormControl>
-        <div>
-        <Label>{element.field?.label}</Label>
-            <Input placeholder={element.field?.placeholder || "Text Input"} readOnly className='pointer-events-none' />
-        </div>
-           
-        </FormControl>)
+const TextInputViewItem = ({ index, form, placeholder }: { index: number, form: Form, placeholder: string | null | undefined }) => {
+    return (<FormControl>
+        <FormField
+            control={form.control}
+            name={`elements.${index}.field.label`}
+            render={({ field }) => (
+                <FormItem>
+                    <div>
+                        <Label>{field?.value}</Label>
+                        <Input placeholder={placeholder || "Text Input"} readOnly className='pointer-events-none' />
+                    </div>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    </FormControl>)
 
-   
+
 }
 
 
-const NumberInputViewItem = ({element}: {element:Element}) => {
-    return ( <FormControl>
-             <div>
-            <Label>{element.field?.label}</Label>
-            <Input placeholder={element.field?.placeholder || "Numeric Input"} readOnly className='pointer-events-none' type='number' />
-            </div>
-        </FormControl>)
-  
+const NumberInputViewItem = ({ index, form, placeholder }: { index: number, form: Form, placeholder: string | null | undefined }) => {
+    return   (<FormControl>
+        <FormField
+            control={form.control}
+            name={`elements.${index}.field.label`}
+            render={({ field }) => (
+                <FormItem>
+                    <div>
+                        <Label>{field?.value}</Label>
+                        <Input placeholder={placeholder || "Number Input"} readOnly className='pointer-events-none' />
+                    </div>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    </FormControl>)
+
 }
 
 
-const SelectInputViewItem = ({element,onChange,defaultValue}:{element: Element, onChange: () => void, defaultValue: string}) => {
+const SelectInputViewItem = ({ field, onChange, defaultValue }: { onChange: () => void, defaultValue: string, field: FieldType }) => {
     return <div>
-        <Label>{element.field?.label}</Label>
+        <Label>{field.value?.label}</Label>
         <Select onValueChange={onChange} defaultValue={defaultValue}>
             <FormControl>
                 <SelectTrigger>
@@ -60,35 +86,148 @@ const SelectInputViewItem = ({element,onChange,defaultValue}:{element: Element, 
                 </SelectTrigger>
             </FormControl>
             <SelectContent>
-                {element.field?.options.map((option, i) => <SelectItem key={option + i} value={option}>{option}</SelectItem>)}
+                {field.value?.options.map((option, i) => <SelectItem key={option + i} value={option}>{option}</SelectItem>)}
             </SelectContent>
         </Select>
 
     </div>
 }
 
-const CheckboxInputViewItem = ({element}: {element:Element}) => {
-    return  (<FormControl>
-        <div className='space-y-4 ' >
-            <FormLabel>{element.field?.label}</FormLabel>
-         
-            {element.field?.options.map((option,i) => <div key={option+i} className='flex items-center gap-3'> <Checkbox
+const CheckboxInputViewItem = ({ form, index, options }: { form: Form, index: number, options: string[] | undefined }) => {
+    return (
+        <FormControl>
+            <div className='space-y-4'>
 
-/><Label>{option}</Label></div>)}
+                <FormField
+                    control={form.control}
+                    name={`elements.${index}.field.label`}
+                    render={({ field }) => (
+                        <FormItem>
+                            <div>
+                                <Label>{field?.value}</Label>
+                            </div>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name={`elements.${index}.field.options`}
+                    render={({ field }) => (
+                        <FormItem className='grid grid-cols-2 gap-3 space-y-0'>
+                            {(options || []).map((item, i) => (
+                                <FormField
+                                    key={uuidv4()}
+                                    control={form.control}
+                                    name={`elements.${index}.field.options`}
+                                    render={({ field: optionField }) => {
+
+                                        return (
+
+                                            <FormField
+                                            control={form.control}
+                                            name={`elements.${index}.field.options.${i}`}
+                                            render={({ field }) => (
+                                                <FormItem
+                                                key={uuidv4()}
+                                                className="flex flex-row items-start space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer"
+                                            >
+                                                <FormControl>
+
+                                                </FormControl>
+                                                <FormLabel className="font-normal">
+                                                    {item}
+                                                </FormLabel>
+                                                <FormMessage />
+                                            </FormItem>
+                                            )}
+                                        />
+                                           
+                                        );
+                                    }}
+                                />
+                            ))}
+                            {field.value.length === 0 && <FormMessage />}
+                        </FormItem>
+                    )}
+                />
             </div>
-      
-
-        </FormControl>)
-
-   
+        </FormControl>
+    );
 }
 
-const ServiceViewItem = ({element}: {element:Element}) => {
-    if(!element.service?.id) return <div className='flex items-center justify-center p-4 border'>choose service</div>
+
+const RadioInputViewItem = ({ form, index, options }: { form: Form, index: number, options: string[] | undefined }) => {
+    return (
+        <FormControl>
+            <div className='space-y-4'>
+
+                <FormField
+                    control={form.control}
+                    name={`elements.${index}.field.label`}
+                    render={({ field }) => (
+                        <FormItem>
+                            <div>
+                                <Label>{field?.value}</Label>
+                            </div>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name={`elements.${index}.field.options`}
+                    render={({ field }) => (
+                        <FormItem className='grid grid-cols-2 gap-3 space-y-0'>
+                            {(options || []).map((item, i) => (
+                                <FormField
+                                    key={uuidv4()}
+                                    control={form.control}
+                                    name={`elements.${index}.field.options`}
+                                    render={({ field: optionField }) => {
+
+                                        return (
+
+                                            <FormField
+                                            control={form.control}
+                                            name={`elements.${index}.field.options.${i}`}
+                                            render={({ field }) => (
+                                                <FormItem
+                                                key={uuidv4()}
+                                                className="flex flex-row items-start space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer"
+                                            >
+                                                <FormControl>
+
+                                                </FormControl>
+                                                <FormLabel className="font-normal">
+                                                    {item}
+                                                </FormLabel>
+                                                <FormMessage />
+                                            </FormItem>
+                                            )}
+                                        />
+                                           
+                                        );
+                                    }}
+                                />
+                            ))}
+                            {field.value.length === 0 && <FormMessage />}
+                        </FormItem>
+                    )}
+                />
+            </div>
+        </FormControl>
+    );
+}
+
+const ServiceViewItem = ({ field }: { field: ServiceElementType }) => {
+    if (!field.value?.id) return <div className='flex items-center justify-center p-4 border'>choose service</div>
     return <div>
-        <h3>{element.service?.name}</h3>
+        <h3>{field.value.name}</h3>
         <div className='gird grid-2 gap-3'>
-            {element.service?.options.map((option, i) => <div key={option.name + i} className='border rounded-lg'>
+            {field.value.options?.map((option, i) => <div key={option.name + i} className='border rounded-lg'>
                 <h4>{option.name}</h4>
                 <p>€ {option.price}</p>
             </div>)}
@@ -97,30 +236,67 @@ const ServiceViewItem = ({element}: {element:Element}) => {
 }
 
 
-const FormViewItem = ({ form, i, element }: Props) => {
+const FormViewItem = ({ form, i, element,handleDelete }: Props) => {
+
+const {setSelectedElement} = useSelectedElement()
+
+const handleSelectedElementClick =()=>{
+    setSelectedElement({id:element.id,type:element.type})
+    console.log(element)
+}
+
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: element.id })
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        ...(isDragging ? { height: 'auto', width: 'auto' } : {})
+    };
 
     const fieldName = element.type === 'FIELD' ? `elements.${i}.field` as const : `elements.${i}.service` as const
 
+    if (element.type === 'SERVICE_ELEMENT') return <div ref={setNodeRef} className={cn(' p-8 relative  group h-fit',isDragging && 'z-10 opacity-60 relative')} style={style}>
+             <Button {...attributes} {...listeners} type='button' variant={'ghost'} className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
+        <FormField
+        control={form.control}
+        name={`elements.${i}.service`}
+        render={({ field }) => (
+            <FormItem>
 
-    return (
+                {!!(element.type === 'SERVICE_ELEMENT') && <ServiceViewItem field={field} />}
+               
+                <FormMessage />
+            </FormItem>
+        )}
+    />
+    </div>
+
+    else return (<div ref={setNodeRef} className={cn(' p-8 relative  group h-fit',isDragging && 'z-10 opacity-60 relative ')} style={style} onClick={handleSelectedElementClick}>
+          <Button onClick={()=>handleDelete(element.id)}  type='button' variant={'ghost'} className="-right-4 opacity-0 group-hover:opacity-100 transition top-3 -translate-y-1/2 absolute hover:bg-transparent aspect-square  hover:shadow-gray-300  shadow-md rounded-lg text-gray-200 hover:shadow-lg flex items-center justify-center  p-1"><XIcon /></Button>
+
+        <Button {...attributes} {...listeners} type='button' variant={'ghost'} className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
         <FormField
             control={form.control}
-            name={fieldName}
+            name={`elements.${i}.field`}
             render={({ field }) => (
-                <FormItem>
-                 
-{!!(element.type==='SERVICE_ELEMENT') && <ServiceViewItem element={element}/>}
-{!!(element.type==='FIELD' && element.field?.type==="text") && <TextInputViewItem  element={element}/>}
-{!!(element.type==='FIELD' && element.field?.type==="number") && <NumberInputViewItem element={element}/>}
-{!!(element.type==='FIELD' && element.field?.type==="checkbox") && <CheckboxInputViewItem element={element}/>}
+                <FormItem >
+                    {!!(element.type === 'FIELD' && element.field?.type === "text") && <TextInputViewItem form={form} index={i} placeholder={field.value?.placeholder} />}
+                    {!!(element.type === 'FIELD' && element.field?.type === "number") && <NumberInputViewItem form={form} index={i} placeholder={field.value?.placeholder} />}
+                    {!!(element.type === 'FIELD' && element.field?.type === "checkbox") && <CheckboxInputViewItem form={form} index={i} options={field.value?.options} />}
+                    {!!(element.type === 'FIELD' && element.field?.type === "radio") && <RadioInputViewItem form={form} index={i} options={field.value?.options} />}
 
-
-
-
-                    <FormMessage />
                 </FormItem>
             )}
         />
+    </div>
+
     )
 }
 

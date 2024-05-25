@@ -1,10 +1,11 @@
 import { controllerElements, formSchema } from '@/schemas'
 import { Form } from '@prisma/client'
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 import FormItemWrapper from './form-item-wrapper'
 import { Button } from "@/components/ui/button"
+import { v4 as uuidv4 } from 'uuid';
 import {
   Form as FormComponent,
   FormControl,
@@ -19,6 +20,9 @@ import QuillEditor from '../quill-editor'
 import LoadingButton from '../loading-button'
 import { Label } from '../ui/label'
 import FormViewItem from './form-view-item'
+import { SortableContext, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
+import Scroller from '../scroller'
 
 type Props = {
   fetchedForm: Form | null | undefined,
@@ -27,10 +31,38 @@ type Props = {
 }
 
 const FieldsComponent = ({ fetchedForm, form, onSubmit }: Props) => {
-const isLoading = form.formState.isSubmitting
+  const previousVar = useRef(1)
+
+  const handleDelete = (id: string) => {
+    const newOptions = form.watch('elements')
+    const filteredOptions = newOptions.filter((el, i) => el.id !== id)
+    form.setValue('elements', filteredOptions)
+    previousVar.current--
+
+}
+  const isLoading = form.formState.isSubmitting
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+
+      const items = form.watch('elements')
+      const oldIndex = items.findIndex(item => item.id === active.id);
+      const newIndex = items.findIndex(item => item.id === over.id);
+      const newElements = arrayMove(items, oldIndex, newIndex);
+
+      form.setValue('elements', newElements)
+ 
+        ;
+    }
+  };
 
   return (
-    <section className='flex 2xl:gap-40 gap-20'>
+ 
+
+
+    <section className='flex 2xl:gap-40 gap-20 relative min-h-screen'>
 
       {/* left part _canvas_ */}
       <div className='flex-1 '>
@@ -69,41 +101,61 @@ const isLoading = form.formState.isSubmitting
                   )}
                 />
               </div>
-{/* Form Elements */}
-              <div className='bg-white p-8 space-y-8'>
-              <FormField
-                  control={form.control}
-                  name="elements"
-                  render={({ field }) => (
-                    <FormItem>
-                    
-                      <FormControl>
-                    <div className='space-y-8'>
-                      {!field.value.length  ? <div className='text-muted-foreground border-dashed p-8 flex items-center justify-center border-2 '>Start by drag and drop a field...</div> 
-                      : field.value.map((element,i)=><div key={i}>
-                        <FormViewItem  element={element} form={form} i={i}/>
-                      </div>)
-                    
-                    }
+              {/* Form Elements */}
+              <DndContext
+                sensors={useSensors(
+                  useSensor(PointerSensor),
+                  useSensor(KeyboardSensor, {
+                    coordinateGetter: sortableKeyboardCoordinates,
+                  })
+                )}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext items={form.watch('elements')}>
+                  <div className='bg-white p-8 space-y-8'>
+                    <FormField
+                      control={form.control}
+                      name="elements"
+                      render={({ field }) => (
+                        <FormItem>
 
-                    </div>
-                      </FormControl>
+                          <FormControl>
 
-                      {form.formState.errors.elements && form.formState.errors.elements.message && <FormMessage />}
-                     
-                    </FormItem>
-                  )}
-                />
+                            <div className=''>
+                              {!field.value.length ? <div className='text-muted-foreground border-dashed p-8 flex items-center justify-center border-2 '>Start by drag and drop a field...</div>
+                                : field.value.map((element, i) => <div key={element.id}>
+                                  <FormViewItem  handleDelete={(id:string)=>handleDelete(id)} element={element} form={form} i={i} />
+                                </div>)
+
+                              }
+
+                            </div>
+
+                          </FormControl>
+
+                          {form.formState.errors.elements && form.formState.errors.elements.message && <FormMessage />}
+
+                        </FormItem>
+                      )}
+                    />
+
+                  </div>
+                </SortableContext>
+        
               
-              </div>
-
-              <LoadingButton isLoading={isLoading} title='Submit'/>
+              </DndContext>
+              <LoadingButton isLoading={isLoading} title='Submit' />
             </form>
           </FormComponent>
         </div>
+        <Scroller variable={form.watch('elements').length} previousVar={previousVar}/>
       </div>
 
       {/* right part _controller_ */}
+    
+
+     
       <div className=' space-y-6 shrink-0'>
         {controllerElements.map(element => <div >
           <h3 className='text-sm text-muted-foreground'>{element.section}</h3>
@@ -113,8 +165,9 @@ const isLoading = form.formState.isSubmitting
 
         </div>)}
       </div>
-
+  
     </section>
+    
   )
 }
 
