@@ -29,7 +29,7 @@ type Props = {
     form: Form,
     i: number,
     element: Element,
-    handleDelete: (id: string,e:MouseEvent<HTMLButtonElement>) => void
+    handleDelete: (id: string, e: MouseEvent<HTMLButtonElement>) => void
 
 }
 
@@ -238,7 +238,7 @@ const ServiceViewItem = ({ field }: { field: ServiceElementType }) => {
 
 const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
 
-    const { setSelectedElement } = useSelectedElement()
+    const { setSelectedElement,selectedElement} = useSelectedElement()
 
     const handleSelectedElementClick = () => {
         setSelectedElement({ id: element.id, type: element.type })
@@ -262,10 +262,20 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
 
     const fieldName = element.type === 'FIELD' ? `elements.${i}.field` as const : `elements.${i}.service` as const
 
-    if (element.type === 'SERVICE_ELEMENT') return <div ref={setNodeRef} className={cn(' p-8 relative  group h-fit', isDragging && 'z-10 opacity-60 relative')} style={style}>
-        <Button {...attributes} {...listeners} type='button' 
-        variant={'ghost'}
-         className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
+    if (element.type === 'SERVICE_ELEMENT') return <div
+
+        onClick={handleSelectedElementClick}
+        ref={setNodeRef}
+        className={cn(' p-8 relative  group h-fit cursor-pointer', isDragging && 'z-10 opacity-60 relative',selectedElement?.id===element.id && 'bg-muted/50 rounded-lg')}
+        style={style}>
+        <Button onClick={(e) => handleDelete(element.id, e)} type='button' variant={'ghost'}
+            className="right-2 hover:bg-white  opacity-0 group-hover:opacity-100
+            transition top-6 -translate-y-1/2 absolute 
+            aspect-square   hover:shadow-gray-300  shadow-md rounded-lg bg-white
+             text-gray-300 hover:shadow-lg flex items-center justify-center  p-1"><XIcon /></Button>
+        <Button {...attributes} {...listeners} type='button'
+            variant={'ghost'}
+            className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
         <FormField
             control={form.control}
             name={`elements.${i}.service`}
@@ -281,11 +291,11 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
     </div>
 
     else return (<div ref={setNodeRef}
-     className={cn(' p-8 relative  group h-fit cursor-pointer ', isDragging && 'z-10 opacity-60 relative ')} 
-     style={style}
-     onClick={handleSelectedElementClick}>
-        <Button onClick={(e) => handleDelete(element.id,e)} type='button' variant={'ghost'}
-            className="right-4  opacity-0 group-hover:opacity-100
+        className={cn(' p-8 relative  group h-fit cursor-pointer ', isDragging && 'z-10 opacity-60 relative ',selectedElement?.id===element.id && 'bg-muted/50 rounded-lg')}
+        style={style}
+        onClick={handleSelectedElementClick}>
+        <Button onClick={(e) => handleDelete(element.id, e)} type='button' variant={'ghost'}
+            className="right-4  opacity-0 group-hover:opacity-100 hover:bg-white
             transition top-6 -translate-y-1/2 absolute hover:bg-transparent
             aspect-square bg-white  hover:shadow-gray-300  shadow-md rounded-lg
              text-gray-300 hover:shadow-lg flex items-center justify-center  p-1"><XIcon /></Button>
