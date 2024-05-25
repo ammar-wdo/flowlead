@@ -1,6 +1,6 @@
 import { controllerElements, formSchema } from '@/schemas'
 import { Form } from '@prisma/client'
-import React, { useRef, useState } from 'react'
+import React, { MouseEvent, useRef, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 import FormItemWrapper from './form-item-wrapper'
@@ -23,6 +23,7 @@ import FormViewItem from './form-view-item'
 import { SortableContext, arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import Scroller from '../scroller'
+import { useSelectedElement } from '@/hooks/selected-element-hook'
 
 type Props = {
   fetchedForm: Form | null | undefined,
@@ -33,11 +34,19 @@ type Props = {
 const FieldsComponent = ({ fetchedForm, form, onSubmit }: Props) => {
   const previousVar = useRef(1)
 
-  const handleDelete = (id: string) => {
+  const {selectedElement,setSelectedElementNull} = useSelectedElement()
+
+  const handleDelete = (id: string,e:MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     const newOptions = form.watch('elements')
     const filteredOptions = newOptions.filter((el, i) => el.id !== id)
     form.setValue('elements', filteredOptions)
     previousVar.current--
+  
+    if(selectedElement && id===selectedElement.id){
+
+      setSelectedElementNull()
+    }
 
 }
   const isLoading = form.formState.isSubmitting
@@ -125,7 +134,7 @@ const FieldsComponent = ({ fetchedForm, form, onSubmit }: Props) => {
                             <div className=''>
                               {!field.value.length ? <div className='text-muted-foreground border-dashed p-8 flex items-center justify-center border-2 '>Start by drag and drop a field...</div>
                                 : field.value.map((element, i) => <div key={element.id}>
-                                  <FormViewItem  handleDelete={(id:string)=>handleDelete(id)} element={element} form={form} i={i} />
+                                  <FormViewItem  handleDelete={(id:string,e:MouseEvent<HTMLButtonElement>)=>handleDelete(id,e)} element={element} form={form} i={i} />
                                 </div>)
 
                               }
@@ -134,7 +143,8 @@ const FieldsComponent = ({ fetchedForm, form, onSubmit }: Props) => {
 
                           </FormControl>
 
-                          {form.formState.errors.elements && form.formState.errors.elements.message && <FormMessage />}
+                          {form.formState.errors.elements && form.watch('elements').length===0 && <span className='text-red-500 mt-3'>At least one field or service</span>}
+                       
 
                         </FormItem>
                       )}
@@ -156,15 +166,15 @@ const FieldsComponent = ({ fetchedForm, form, onSubmit }: Props) => {
     
 
      
-      <div className=' space-y-6 shrink-0'>
+      {!selectedElement ? <div className=' space-y-6 shrink-0'>
         {controllerElements.map(element => <div >
           <h3 className='text-sm text-muted-foreground'>{element.section}</h3>
           <div className='grid grid-cols-2 gap-4 mt-2'>
-            {element.elements.map(elementComponent => <FormItemWrapper key={elementComponent.type} elementComponent={elementComponent} form={form} />)}
+            {element.elements.map(elementComponent => <FormItemWrapper key={uuidv4()} elementComponent={elementComponent} form={form} />)}
           </div>
 
         </div>)}
-      </div>
+      </div> : <div>{selectedElement.type}</div>}
   
     </section>
     

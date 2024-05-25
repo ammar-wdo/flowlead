@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { MouseEvent } from 'react'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { ControllerRenderProps, UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
@@ -29,7 +29,7 @@ type Props = {
     form: Form,
     i: number,
     element: Element,
-    handleDelete:(id:string)=>void
+    handleDelete: (id: string,e:MouseEvent<HTMLButtonElement>) => void
 
 }
 
@@ -57,7 +57,7 @@ const TextInputViewItem = ({ index, form, placeholder }: { index: number, form: 
 
 
 const NumberInputViewItem = ({ index, form, placeholder }: { index: number, form: Form, placeholder: string | null | undefined }) => {
-    return   (<FormControl>
+    return (<FormControl>
         <FormField
             control={form.control}
             name={`elements.${index}.field.label`}
@@ -126,24 +126,24 @@ const CheckboxInputViewItem = ({ form, index, options }: { form: Form, index: nu
                                         return (
 
                                             <FormField
-                                            control={form.control}
-                                            name={`elements.${index}.field.options.${i}`}
-                                            render={({ field }) => (
-                                                <FormItem
-                                                key={uuidv4()}
-                                                className="flex flex-row items-start space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer"
-                                            >
-                                                <FormControl>
+                                                control={form.control}
+                                                name={`elements.${index}.field.options.${i}`}
+                                                render={({ field }) => (
+                                                    <FormItem
+                                                        key={uuidv4()}
+                                                        className="flex flex-row items-start space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer"
+                                                    >
+                                                        <FormControl>
 
-                                                </FormControl>
-                                                <FormLabel className="font-normal">
-                                                    {item}
-                                                </FormLabel>
-                                                <FormMessage />
-                                            </FormItem>
-                                            )}
-                                        />
-                                           
+                                                        </FormControl>
+                                                        <FormLabel className="font-normal">
+                                                            {item}
+                                                        </FormLabel>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+
                                         );
                                     }}
                                 />
@@ -191,24 +191,24 @@ const RadioInputViewItem = ({ form, index, options }: { form: Form, index: numbe
                                         return (
 
                                             <FormField
-                                            control={form.control}
-                                            name={`elements.${index}.field.options.${i}`}
-                                            render={({ field }) => (
-                                                <FormItem
-                                                key={uuidv4()}
-                                                className="flex flex-row items-start space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer"
-                                            >
-                                                <FormControl>
+                                                control={form.control}
+                                                name={`elements.${index}.field.options.${i}`}
+                                                render={({ field }) => (
+                                                    <FormItem
+                                                        key={uuidv4()}
+                                                        className="flex flex-row items-start space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer"
+                                                    >
+                                                        <FormControl>
 
-                                                </FormControl>
-                                                <FormLabel className="font-normal">
-                                                    {item}
-                                                </FormLabel>
-                                                <FormMessage />
-                                            </FormItem>
-                                            )}
-                                        />
-                                           
+                                                        </FormControl>
+                                                        <FormLabel className="font-normal">
+                                                            {item}
+                                                        </FormLabel>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+
                                         );
                                     }}
                                 />
@@ -236,14 +236,14 @@ const ServiceViewItem = ({ field }: { field: ServiceElementType }) => {
 }
 
 
-const FormViewItem = ({ form, i, element,handleDelete }: Props) => {
+const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
 
-const {setSelectedElement} = useSelectedElement()
+    const { setSelectedElement } = useSelectedElement()
 
-const handleSelectedElementClick =()=>{
-    setSelectedElement({id:element.id,type:element.type})
-    console.log(element)
-}
+    const handleSelectedElementClick = () => {
+        setSelectedElement({ id: element.id, type: element.type })
+        console.log(element)
+    }
 
     const {
         attributes,
@@ -262,26 +262,37 @@ const handleSelectedElementClick =()=>{
 
     const fieldName = element.type === 'FIELD' ? `elements.${i}.field` as const : `elements.${i}.service` as const
 
-    if (element.type === 'SERVICE_ELEMENT') return <div ref={setNodeRef} className={cn(' p-8 relative  group h-fit',isDragging && 'z-10 opacity-60 relative')} style={style}>
-             <Button {...attributes} {...listeners} type='button' variant={'ghost'} className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
+    if (element.type === 'SERVICE_ELEMENT') return <div ref={setNodeRef} className={cn(' p-8 relative  group h-fit', isDragging && 'z-10 opacity-60 relative')} style={style}>
+        <Button {...attributes} {...listeners} type='button' 
+        variant={'ghost'}
+         className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
         <FormField
-        control={form.control}
-        name={`elements.${i}.service`}
-        render={({ field }) => (
-            <FormItem>
+            control={form.control}
+            name={`elements.${i}.service`}
+            render={({ field }) => (
+                <FormItem>
 
-                {!!(element.type === 'SERVICE_ELEMENT') && <ServiceViewItem field={field} />}
-               
-                <FormMessage />
-            </FormItem>
-        )}
-    />
+                    {!!(element.type === 'SERVICE_ELEMENT') && <ServiceViewItem field={field} />}
+
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
     </div>
 
-    else return (<div ref={setNodeRef} className={cn(' p-8 relative  group h-fit',isDragging && 'z-10 opacity-60 relative ')} style={style} onClick={handleSelectedElementClick}>
-          <Button onClick={()=>handleDelete(element.id)}  type='button' variant={'ghost'} className="-right-4 opacity-0 group-hover:opacity-100 transition top-3 -translate-y-1/2 absolute hover:bg-transparent aspect-square  hover:shadow-gray-300  shadow-md rounded-lg text-gray-200 hover:shadow-lg flex items-center justify-center  p-1"><XIcon /></Button>
+    else return (<div ref={setNodeRef}
+     className={cn(' p-8 relative  group h-fit cursor-pointer ', isDragging && 'z-10 opacity-60 relative ')} 
+     style={style}
+     onClick={handleSelectedElementClick}>
+        <Button onClick={(e) => handleDelete(element.id,e)} type='button' variant={'ghost'}
+            className="right-4  opacity-0 group-hover:opacity-100
+            transition top-6 -translate-y-1/2 absolute hover:bg-transparent
+            aspect-square bg-white  hover:shadow-gray-300  shadow-md rounded-lg
+             text-gray-300 hover:shadow-lg flex items-center justify-center  p-1"><XIcon /></Button>
 
-        <Button {...attributes} {...listeners} type='button' variant={'ghost'} className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
+        <Button {...attributes} {...listeners} type='button' variant={'ghost'}
+            className="-left-4 text-gray-300 opacity-0 group-hover:opacity-100 
+        transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
         <FormField
             control={form.control}
             name={`elements.${i}.field`}
