@@ -1,6 +1,6 @@
 'use client'
 
-import { Form } from '@prisma/client'
+import { Form, Service } from '@prisma/client'
 import React, { useState } from 'react'
 import { Button } from '../ui/button'
 import { cn } from '@/lib/utils'
@@ -10,9 +10,10 @@ import { useFormElements } from '@/hooks/form-elements-hook'
 
 type Props = {
   fetchedForm: Form | null | undefined
+  services:Service[]
 }
 
-const FormRuleWrapper = ({ fetchedForm }: Props) => {
+const FormRuleWrapper = ({ fetchedForm ,services}: Props) => {
 
   const [activeComponent, setActiveComponent] = useState<'fields' | 'rules'>('fields')
   const { form, onSubmit } = useFormElements(fetchedForm)
@@ -26,7 +27,7 @@ const FormRuleWrapper = ({ fetchedForm }: Props) => {
       </div>
       {/* form rules components */}
       <div className='mt-4'>
-        {activeComponent === 'fields' ? <FieldsComponent onSubmit={onSubmit} form={form} fetchedForm={fetchedForm} /> : <RulesComponent form={form} fetchedForm={fetchedForm} />}
+        {activeComponent === 'fields' ? <FieldsComponent services={services} onSubmit={onSubmit} form={form}  /> : <RulesComponent form={form} fetchedForm={fetchedForm} />}
       </div>
 
 

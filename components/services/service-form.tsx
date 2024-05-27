@@ -221,6 +221,7 @@ const ServiceForm = ({ service }: Props) => {
                 <Scroller previousVar={previousVar} variable={form.watch('options').length} />
 
                 <LoadingButton className='ml-auto  flex bg-second hover:bg-second/90' title={!service ? 'Submit' : 'Update'} isLoading={isLoading} />
+                {JSON.stringify(form.formState.errors,null,2)}
             </form>
         </Form>
     )

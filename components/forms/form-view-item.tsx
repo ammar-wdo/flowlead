@@ -35,7 +35,7 @@ type Props = {
 
 
 
-const TextInputViewItem = ({ index, form, placeholder }: { index: number, form: Form, placeholder: string | null | undefined }) => {
+const TextInputViewItem = ({ index, form, }: { index: number, form: Form}) => {
     return (<FormControl>
         <FormField
             control={form.control}
@@ -43,8 +43,8 @@ const TextInputViewItem = ({ index, form, placeholder }: { index: number, form: 
             render={({ field }) => (
                 <FormItem>
                     <div>
-                        <Label>{field?.value}</Label>
-                        <Input placeholder={placeholder || "Text Input"} readOnly className='pointer-events-none' />
+                        <Label>{form.watch('elements')[index].field?.label}</Label>
+                        <Input placeholder={form.watch('elements')[index].field?.placeholder || ""} readOnly className='pointer-events-none' />
                     </div>
                     <FormMessage />
                 </FormItem>
@@ -222,13 +222,15 @@ const RadioInputViewItem = ({ form, index, options }: { form: Form, index: numbe
     );
 }
 
-const ServiceViewItem = ({ field }: { field: ServiceElementType }) => {
-    if (!field.value?.id) return <div className='flex items-center justify-center p-4 border'>choose service</div>
-    return <div>
-        <h3>{field.value.name}</h3>
-        <div className='gird grid-2 gap-3'>
-            {field.value.options?.map((option, i) => <div key={option.name + i} className='border rounded-lg'>
-                <h4>{option.name}</h4>
+const ServiceViewItem = ({ field,form ,i}: { field: ServiceElementType ,form:UseFormReturn<z.infer<typeof formSchema>>,i:number}) => {
+    if (!form.watch('elements')[i].service?.id) return <div className='flex p-4 border'><p>Select one service to show in this field</p></div>
+    else return <div>
+
+        
+        <h3 className='capitalize '>service selected: <span className='text-muted-foreground'>{form.watch('elements')[i].service?.name}</span></h3>
+        <div className='grid grid-cols-2 gap-3 mt-4'>
+            {form.watch('elements')[i].service?.options?.map((option, i) => <div key={option.name + i} className='border rounded-lg p-4 bg-white'>
+                <h4 className='capitalize'>{option.name}</h4>
                 <p>€ {option.price}</p>
             </div>)}
         </div>
@@ -260,7 +262,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
         ...(isDragging ? { height: 'auto', width: 'auto' } : {})
     };
 
-    const fieldName = element.type === 'FIELD' ? `elements.${i}.field` as const : `elements.${i}.service` as const
+
 
     if (element.type === 'SERVICE_ELEMENT') return <div
 
@@ -276,15 +278,18 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
         <Button {...attributes} {...listeners} type='button'
             variant={'ghost'}
             className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
-        <FormField
+     
+      <FormField
             control={form.control}
             name={`elements.${i}.service`}
             render={({ field }) => (
                 <FormItem>
 
-                    {!!(element.type === 'SERVICE_ELEMENT') && <ServiceViewItem field={field} />}
+                    {!!(element.type === 'SERVICE_ELEMENT') && <ServiceViewItem i={i} form={form} field={field} />}
+                
+                    
 
-                    <FormMessage />
+                  
                 </FormItem>
             )}
         />
@@ -308,7 +313,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
             name={`elements.${i}.field`}
             render={({ field }) => (
                 <FormItem >
-                    {!!(element.type === 'FIELD' && element.field?.type === "text") && <TextInputViewItem form={form} index={i} placeholder={field.value?.placeholder} />}
+                    {!!(element.type === 'FIELD' && element.field?.type === "text") && <TextInputViewItem form={form} index={i}  />}
                     {!!(element.type === 'FIELD' && element.field?.type === "number") && <NumberInputViewItem form={form} index={i} placeholder={field.value?.placeholder} />}
                     {!!(element.type === 'FIELD' && element.field?.type === "checkbox") && <CheckboxInputViewItem form={form} index={i} options={field.value?.options} />}
                     {!!(element.type === 'FIELD' && element.field?.type === "radio") && <RadioInputViewItem form={form} index={i} options={field.value?.options} />}
@@ -316,6 +321,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
                 </FormItem>
             )}
         />
+        
     </div>
 
     )

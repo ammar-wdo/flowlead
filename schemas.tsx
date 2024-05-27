@@ -65,7 +65,7 @@ export const optionSchema = z.object({
 
 
 export const serviceSchema = z.object({
-  id:requiredString,
+id:optionalString,
   name: requiredString,
   description: optionalString.nullable(),
   pricingType: z.enum(pricingTypeEnum).default('SINGLE_PRICE').refine(el => pricingTypeEnum.includes(el), { message: "Invalid Pricing Type", path: ['pricingType'] }),
@@ -133,8 +133,8 @@ export const fieldTypeArray = ["text",
     max: z.coerce.number().nullable().optional(),
     pattern: z.string().nullable().optional(),
   });
-
-  const elementTypeArray = ["FIELD","SERVICE_ELEMENT"]
+  export type ElementTypeMapper = (typeof elementTypeEnum)[number]
+const elementTypeArray = ["FIELD","SERVICE_ELEMENT"]
   const elementTypeEnum = ["FIELD","SERVICE_ELEMENT"] as const
 
   const fieldSchema = z.object({
@@ -143,7 +143,7 @@ export const fieldTypeArray = ["text",
     placeholder:optionalString.nullable().optional(),
     hint:optionalString.nullable().optional(),
     type:z.nativeEnum(FieldType),
-    options:z.array(requiredString).min(1,"Atleast one option"),
+    options:z.array(requiredString),
     validations:validationOptionsSchema.nullable().optional(),
     conditional:conditionalOptions.nullable().optional()
   })
@@ -178,7 +178,7 @@ export const fieldTypeArray = ["text",
     type:'SERVICE_ELEMENT',
     component:<div className="flex items-center gap-2 text-[12px] "><IoIosAddCircle size={20} />Add Service</div>,
     service:{
-      id:'',
+   id:'',
       addToQoutation:false,
       isLineItem:false,
       isRequired:false,

@@ -23,6 +23,12 @@ if(!userId) throw new CustomError("Unauthorized")
       }
     })
 
+    const services = await prisma.service.findMany({
+      where:{
+        userId
+      }
+    })
+
 
 
 
@@ -33,7 +39,7 @@ if(!userId) throw new CustomError("Unauthorized")
       <Heading title='Add Form'/>
 
       <div className='mt-12'>
-        <FormRuleWrapper fetchedForm={form}/>
+        <FormRuleWrapper fetchedForm={form} services={services}/>
       </div>
     </div>
   )
