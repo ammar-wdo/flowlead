@@ -132,13 +132,7 @@ const handleLabelChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
     .watch("elements")
     .findIndex((el) => el.id === selectedElement.id);
 
-    const newLabel=e.target.value
-    const elements = form.watch("elements")
-    elements[elementIndex] = { ...elements[elementIndex], field: {...elements[elementIndex].field,label:newLabel} };
-
-    form.setValue("elements", elements)
-
-    console.log(form.watch('elements'))
+    form.setValue(`elements.${elementIndex}.field.label`, e.target.value)
 
 }
 const handlePlaceholderChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
@@ -146,13 +140,7 @@ const handlePlaceholderChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
     .watch("elements")
     .findIndex((el) => el.id === selectedElement.id);
 
-    const placeholder=e.target.value
-    const elements = form.watch("elements")
-    elements[elementIndex] = { ...elements[elementIndex], field: {...elements[elementIndex].field,placeholder:placeholder} };
-
-    form.setValue("elements", elements)
-
-    console.log(form.watch('elements'))
+    form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value)
 
 }
   return (
