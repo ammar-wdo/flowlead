@@ -65,7 +65,7 @@ export const optionSchema = z.object({
 
 
 export const serviceSchema = z.object({
-id:requiredString,
+
   name: requiredString,
   description: optionalString.nullable(),
   pricingType: z.enum(pricingTypeEnum).default('SINGLE_PRICE').refine(el => pricingTypeEnum.includes(el), { message: "Invalid Pricing Type", path: ['pricingType'] }),
@@ -161,7 +161,9 @@ const elementTypeArray = ["FIELD","SERVICE_ELEMENT"]
     id:requiredString,
     type:z.nativeEnum(ElementType),
     field:fieldSchema.nullable().optional(),
-    service:serviceSchema.nullable().optional()
+    service:serviceSchema.extend({
+      id: requiredString,
+    }).nullable().optional()
   })
 
 
