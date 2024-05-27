@@ -199,7 +199,7 @@ const FieldsComponent = ({ form, onSubmit,services }: Props) => {
           {!selectedElement ? (
             <div className="space-y-6">
               {controllerElements.map((element) => (
-                <div>
+                <div  key={uuidv4()}>
                   <h3 className="text-sm text-muted-foreground">
                     {element.section}
                   </h3>
