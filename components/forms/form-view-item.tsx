@@ -64,8 +64,8 @@ const NumberInputViewItem = ({ index, form, placeholder }: { index: number, form
             render={({ field }) => (
                 <FormItem>
                     <div>
-                        <Label>{field?.value}</Label>
-                        <Input placeholder={placeholder || "Number Input"} readOnly className='pointer-events-none' />
+                        <Label>{form.watch('elements')[index].field?.label}</Label>
+                        <Input placeholder={form.watch('elements')[index].field?.placeholder || ""} type='number' readOnly className='pointer-events-none' />
                     </div>
                     <FormMessage />
                 </FormItem>

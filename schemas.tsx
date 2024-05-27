@@ -92,6 +92,14 @@ export const fieldTypeArray = ["text",
   "breaker",
 ]
 
+export type FieldTypeMapper = ["text",
+"number",
+"select",
+"radio",
+"checkbox",
+"breaker",
+][number]
+
   export const fieldTypeEnum = ["text",
   "number",
   "select",

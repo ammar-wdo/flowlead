@@ -1,5 +1,5 @@
 import { useSelectedElement } from "@/hooks/selected-element-hook";
-import { ElementTypeMapper, formSchema, serviceSchema } from "@/schemas";
+import { ElementTypeMapper, FieldTypeMapper, formSchema, serviceSchema } from "@/schemas";
 import { Service } from "@prisma/client";
 import React, { ReactNode, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -109,10 +109,25 @@ const FieldEditor = ({
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>;
 }) => {
+const {selectedElement}=useSelectedElement()
+if(!selectedElement) return
+const element = form.watch('elements').find(el=>el.id===selectedElement.id)?.field
+
+    const componentsEditorMapper: { [key in FieldTypeMapper]: ReactNode } = {
+       text:  <TextInputEditor form={form}/>,
+        number: <NumberInputEditor form={form} />,
+        breaker:null,
+        checkbox:null,
+        radio:null,
+        select:null
+      };
+
   return <div>
-    <TextInputEditor form={form}/>
+    {componentsEditorMapper[element?.type!]}
   </div>;
 };
+
+
 
 const TextInputEditor = ({
   form,
@@ -143,6 +158,14 @@ const handlePlaceholderChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
     form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value)
 
 }
+const handleHintChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    const elementIndex = form
+    .watch("elements")
+    .findIndex((el) => el.id === selectedElement.id);
+
+    form.setValue(`elements.${elementIndex}.field.hint`, e.target.value)
+
+}
   return (
     <div className="space-y-3">
       <div>
@@ -153,6 +176,66 @@ const handlePlaceholderChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
         <Label>Placeholder:</Label>
         <Input value={element?.field?.placeholder||''} onChange={e=>handlePlaceholderChange(e)}/>
       </div>
+      <div>
+        <Label>Hint:</Label>
+        <Input value={element?.field?.hint||''} onChange={e=>handleHintChange(e)}/>
+      </div>
     </div>
   );
 };
+
+
+const NumberInputEditor = ({
+    form,
+  }: {
+    form: UseFormReturn<z.infer<typeof formSchema>>;
+  }) => {
+    const { selectedElement } = useSelectedElement();
+    if (!selectedElement) return;
+  
+    const element = form
+      .watch("elements")
+      .find((el) => el.id === selectedElement.id);
+  
+  
+  const handleLabelChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+      const elementIndex = form
+      .watch("elements")
+      .findIndex((el) => el.id === selectedElement.id);
+  
+      form.setValue(`elements.${elementIndex}.field.label`, e.target.value)
+  
+  }
+  const handlePlaceholderChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+      const elementIndex = form
+      .watch("elements")
+      .findIndex((el) => el.id === selectedElement.id);
+  
+      form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value)
+  
+  }
+  const handleHintChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+      const elementIndex = form
+      .watch("elements")
+      .findIndex((el) => el.id === selectedElement.id);
+  
+      form.setValue(`elements.${elementIndex}.field.hint`, e.target.value)
+  
+  }
+    return (
+      <div className="space-y-3">
+        <div>
+          <Label>Label:</Label>
+          <Input value={element?.field?.label} onChange={e=>handleLabelChange(e)}/>
+        </div>
+        <div>
+          <Label>Placeholder:</Label>
+          <Input value={element?.field?.placeholder||''} onChange={e=>handlePlaceholderChange(e)}/>
+        </div>
+        <div>
+          <Label>Hint:</Label>
+          <Input value={element?.field?.hint||''} onChange={e=>handleHintChange(e)}/>
+        </div>
+      </div>
+    );
+  };
