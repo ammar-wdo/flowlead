@@ -22,6 +22,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import { v4 as uuidv4 } from "uuid";
+import { inputsLabelsMap } from "@/mapping";
 
 
 type Props = {
@@ -36,18 +37,24 @@ const FormRightController = ({ services, form }: Props) => {
   };
 
   const { selectedElement, setSelectedElementNull } = useSelectedElement();
-
+  const elementType = form.watch('elements').find(el=>el.id===selectedElement?.id)?.field?.type
   if (!selectedElement) return;
+
+ 
   return (
-    <div className="bg-white w-full px-12 py-6 relative">
+    <div className="bg-white w-full px-12 py-6 ">
+      <div className="flex items-center justify-between mb-4">
+      <p className="font-semibold">{inputsLabelsMap[elementType!] || "Service"}</p>
       <Button
         size={"icon"}
         onClick={setSelectedElementNull}
-        className="absolute top-1 right-1"
+        className=""
         variant={"ghost"}
       >
         <XIcon />
       </Button>
+      </div>
+    
       {componentsEditorMapper[selectedElement?.type]}
     </div>
   );
@@ -55,62 +62,7 @@ const FormRightController = ({ services, form }: Props) => {
 
 export default FormRightController;
 
-const AddService = ({
-  services,
-  form,
-}: {
-  services: Service[];
-  form: UseFormReturn<z.infer<typeof formSchema>>;
-}) => {
-  const [open, setOpen] = useState(false);
-  const { selectedElement } = useSelectedElement();
-  if (!selectedElement) return;
 
-  const element = form
-    .watch("elements")
-    .find((el) => el.id === selectedElement.id);
-
-  const service = element?.service;
-
-  const onSelect = (serviceElement: Service) => {
-    //extract selected element index to mutate it
-    const elementIndex = form
-      .watch("elements")
-      .findIndex((el) => el.id === selectedElement.id);
-    const newService = serviceElement;
-
-    form.setValue(`elements.${elementIndex}.service`, newService);
-
-    setOpen(false);
-  };
-
-  return (
-    <div>
-      <h3 className="text-sm text-muted-foreground">Add Service</h3>
-
-      <Select open={open} onOpenChange={setOpen}>
-        <SelectTrigger className="w-full capitalize font-semibold">
-          <SelectValue
-            className=""
-            placeholder={service?.name || "Select service"}
-          />
-        </SelectTrigger>
-        <SelectContent>
-          {services.map((serviceElement) => (
-            <Button
-              key={serviceElement.id}
-              className="w-full justify-start capitalize"
-              variant={"ghost"}
-              onClick={() => onSelect(serviceElement)}
-            >
-              {serviceElement.name}
-            </Button>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-};
 
 const FieldEditor = ({
   form,
@@ -133,7 +85,9 @@ const FieldEditor = ({
     sectionBreaker: <SectionBreakEditor form={form} />,
   };
 
-  return <div>{componentsEditorMapper[element?.type!]}</div>;
+  return <div>
+    {componentsEditorMapper[element?.type!]}
+    </div>;
 };
 
 const TextInputEditor = ({
@@ -766,6 +720,63 @@ const CheckboxInputEditor = ({
       
       
    
+      </div>
+    );
+  };
+
+  const AddService = ({
+    services,
+    form,
+  }: {
+    services: Service[];
+    form: UseFormReturn<z.infer<typeof formSchema>>;
+  }) => {
+    const [open, setOpen] = useState(false);
+    const { selectedElement } = useSelectedElement();
+    if (!selectedElement) return;
+  
+    const element = form
+      .watch("elements")
+      .find((el) => el.id === selectedElement.id);
+  
+    const service = element?.service;
+  
+    const onSelect = (serviceElement: Service) => {
+      //extract selected element index to mutate it
+      const elementIndex = form
+        .watch("elements")
+        .findIndex((el) => el.id === selectedElement.id);
+      const newService = serviceElement;
+  
+      form.setValue(`elements.${elementIndex}.service`, newService);
+  
+      setOpen(false);
+    };
+  
+    return (
+      <div>
+        <h3 className="text-sm text-muted-foreground">Add Service</h3>
+  
+        <Select open={open} onOpenChange={setOpen}>
+          <SelectTrigger className="w-full capitalize font-semibold">
+            <SelectValue
+              className=""
+              placeholder={service?.name || "Select service"}
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {services.map((serviceElement) => (
+              <Button
+                key={serviceElement.id}
+                className="w-full justify-start capitalize"
+                variant={"ghost"}
+                onClick={() => onSelect(serviceElement)}
+              >
+                {serviceElement.name}
+              </Button>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     );
   };
