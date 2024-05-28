@@ -465,11 +465,7 @@ const CheckboxInputEditor = ({
   }) => {
     const { selectedElement } = useSelectedElement();
 
-    const { fields, append } = useFieldArray({
-      control: form.control,
-        // @ts-ignore
-      name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
-    });
+ 
     type FieldArrayPath = `elements.${number}.field.options`;
   
     const element = form
@@ -479,6 +475,12 @@ const CheckboxInputEditor = ({
     const elementIndex = form
       .watch("elements")
       .findIndex((el) => el.id === selectedElement?.id);
+
+      const { fields, append } = useFieldArray({
+        control: form.control,
+          // @ts-ignore
+        name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
+      });
   
     const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
