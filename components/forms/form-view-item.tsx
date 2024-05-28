@@ -23,7 +23,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Check, GripVertical, Trash, XIcon } from "lucide-react";
+import { Check, GripVertical, Square, SquareCheckBig, Trash, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSelectedElement } from "@/hooks/selected-element-hook";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
@@ -74,9 +74,9 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
         onClick={(e) => handleSelectedElementClick()}
         ref={setNodeRef}
         className={cn(
-          " p-8 relative  group h-fit cursor-pointer",
+          " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px]  mb-4",
           isDragging && "z-10 opacity-60 relative",
-          selectedElement?.id === element.id && "bg-muted/50 rounded-lg"
+          selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
         style={style}
       >
@@ -169,6 +169,12 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
               {!!(
                 element.type === "FIELD" && element.field?.type === "select"
               ) && <SelectInputViewItem form={form} index={i} />}
+              {!!(
+                element.type === "FIELD" && element.field?.type === "breaker"
+              ) && <Breaker form={form} index={i} />}
+              {!!(
+                element.type === "FIELD" && element.field?.type === "sectionBreaker"
+              ) && <SectionBreaker form={form} index={i} />}
             </FormItem>
           )}
         />
@@ -340,16 +346,15 @@ const CheckboxInputViewItem = ({
   form: Form;
   index: number;
 }) => {
+  const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
 
-const [checkedOptions, setCheckedOptions] = useState<string[]>([])
-
-const handleClick = (value:string)=>{
-if(!!checkedOptions.includes(value)){
-setCheckedOptions(prev=>prev.filter(el=>el!==value))
-} else{
-  setCheckedOptions(prev=>[...prev,value])
-}
-}
+  const handleClick = (value: string) => {
+    if (!!checkedOptions.includes(value)) {
+      setCheckedOptions((prev) => prev.filter((el) => el !== value));
+    } else {
+      setCheckedOptions((prev) => [...prev, value]);
+    }
+  };
 
   return (
     <FormControl>
@@ -384,17 +389,23 @@ setCheckedOptions(prev=>prev.filter(el=>el!==value))
           {(form.watch(`elements.${index}.field.options`) || []).map(
             (item, i) => (
               <FormField
-              key={uuidv4()}
+                key={uuidv4()}
                 control={form.control}
                 name={`elements.${index}.field.options.${i}`}
                 render={({ field }) => (
                   <FormItem
                     key={uuidv4()}
-                    className={cn("flex flex-row items-center space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer",!!checkedOptions.includes(item) && "bg-second text-white")}
-                    onClick={()=>handleClick(item)}
-
+                    className={cn(
+                      "flex flex-row items-center space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer",
+                      !!checkedOptions.includes(item) && "bg-second text-white"
+                    )}
+                    onClick={() => handleClick(item)}
                   >
-<div className="h-6">{!!checkedOptions.includes(item) && <Check className="h-6"/>}</div>
+                    <div className="h-6">
+                      {!!checkedOptions.includes(item)  ?
+                        <SquareCheckBig className="h-6" /> :<Square className="h-6" />
+                      }
+                    </div>
                     <FormLabel className="font-normal">
                       {item || `Option ${i + 1}`}
                     </FormLabel>
@@ -507,3 +518,52 @@ const ServiceViewItem = ({
       </div>
     );
 };
+
+
+const Breaker = ({ index, form }: { index: number; form: Form })=>{
+  return (
+    <div>
+          <FormControl>
+      <FormField
+        control={form.control}
+        name={`elements.${index}.field.label`}
+        render={({ field }) => (
+          <FormItem>
+            <div className="flex flex-col gap-2">
+              <Button className="w-fit" disabled={true}>
+             {form.watch("elements")[index].field?.label || ""}
+              </Button>
+              { !!form.watch("elements")[index].field?.hint && <p className="text-sm text-muted-foreground">{form.watch("elements")[index].field?.hint}</p> }          
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormControl>
+
+    </div>
+  )
+}
+
+const SectionBreaker = ({ index, form }: { index: number; form: Form })=>{
+  return (
+    <div>
+          <FormControl>
+      <FormField
+        control={form.control}
+        name={`elements.${index}.field.hint`}
+        render={({ field }) => (
+          <FormItem>
+            <div className="">
+            
+              { !!form.watch("elements")[index].field?.label && <p className="text-sm text-muted-foreground">{form.watch("elements")[index].field?.label}</p> }          
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormControl>
+
+    </div>
+  )
+}

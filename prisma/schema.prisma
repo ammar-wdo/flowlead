@@ -130,6 +130,7 @@ enum FieldType {
   radio
   checkbox
   breaker
+  sectionBreaker
 }
 
 enum LogicOperator {

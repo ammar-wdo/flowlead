@@ -8,6 +8,7 @@ import { IoCheckboxSharp } from "react-icons/io5";
 import { IoOptionsSharp } from "react-icons/io5";
 import { IoArrowDownCircle } from "react-icons/io5";
 import { BsFileBreakFill } from "react-icons/bs";
+import { Minus } from "lucide-react";
 
 const requiredString = z.string().min(1, "Required field");
 const optionalString = z.string().optional()
@@ -90,6 +91,7 @@ export const fieldTypeArray = ["text",
   "radio",
   "checkbox",
   "breaker",
+  "sectionBreaker"
 ]
 
 export type FieldTypeMapper = ["text",
@@ -98,6 +100,7 @@ export type FieldTypeMapper = ["text",
 "radio",
 "checkbox",
 "breaker",
+"sectionBreaker"
 ][number]
 
   export const fieldTypeEnum = ["text",
@@ -105,7 +108,8 @@ export type FieldTypeMapper = ["text",
   "select",
   "radio",
   "checkbox",
-  "breaker"] as const
+  "breaker",
+"sectionBreaker"] as const
 
  export const logicOperatorArray = [
     "AND","OR","NOT"
@@ -288,6 +292,20 @@ const elementTypeArray = ["FIELD","SERVICE_ELEMENT"]
       validations:null,  
     },
   }
+  export const emptySectionBreakerElement:ElementComponentType = {
+    id:'',
+    type:'FIELD',
+    component:<div className="flex items-center gap-2 text-[12px] "> <Minus size={20} />Section Break</div>,
+    field:{
+      id:'',
+      label:'Section Break',
+      placeholder:"",
+      options:[],
+      type:'sectionBreaker',
+      conditional:null,
+      validations:null,  
+    },
+  }
 
   export const controllerElements = [
 
@@ -301,7 +319,7 @@ const elementTypeArray = ["FIELD","SERVICE_ELEMENT"]
     },
     {
       section:"Utilities",
-      elements:[emptyBreakerElement]
+      elements:[emptyBreakerElement,emptySectionBreakerElement]
     },
   ]
   

@@ -126,10 +126,11 @@ const FieldEditor = ({
   const componentsEditorMapper: { [key in FieldTypeMapper]: ReactNode } = {
     text: <TextInputEditor form={form} />,
     number: <NumberInputEditor form={form} />,
-    breaker: null,
+    breaker: <PageBreakEditor form={form} />,
     checkbox: <CheckboxInputEditor form={form} />,
     radio: <RadioGroupInputEditor form={form} />,
     select: <SelectInputEditor form={form} />,
+    sectionBreaker: <SectionBreakEditor form={form} />,
   };
 
   return <div>{componentsEditorMapper[element?.type!]}</div>;
@@ -679,4 +680,92 @@ const CheckboxInputEditor = ({
       </div>
     );
   };
+
+
+  const PageBreakEditor = ({
+    form,
+  }: {
+    form: UseFormReturn<z.infer<typeof formSchema>>;
+  }) => {
+    const { selectedElement } = useSelectedElement();
+    if (!selectedElement) return;
   
+    const element = form
+      .watch("elements")
+      .find((el) => el.id === selectedElement.id);
+  
+    const elementIndex = form
+      .watch("elements")
+      .findIndex((el) => el.id === selectedElement.id);
+    const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
+    };
+  
+    const handleHintChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.setValue(`elements.${elementIndex}.field.hint`, e.target.value);
+    };
+  
+
+    return (
+      <div className="space-y-3">
+        <div>
+          <Label>Label:</Label>
+          <Input
+            value={element?.field?.label}
+            onChange={(e) => handleLabelChange(e)}
+          />
+        </div>
+       
+        <div>
+          <Label>Hint:</Label>
+          <Input
+            value={element?.field?.hint || ""}
+            onChange={(e) => handleHintChange(e)}
+          />
+        </div>
+      
+      
+   
+      </div>
+    );
+  };
+  
+
+  const SectionBreakEditor = ({
+    form,
+  }: {
+    form: UseFormReturn<z.infer<typeof formSchema>>;
+  }) => {
+    const { selectedElement } = useSelectedElement();
+    if (!selectedElement) return;
+  
+    const element = form
+      .watch("elements")
+      .find((el) => el.id === selectedElement.id);
+  
+    const elementIndex = form
+      .watch("elements")
+      .findIndex((el) => el.id === selectedElement.id);
+    const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
+    };
+  
+    
+  
+  
+    return (
+      <div className="space-y-3">
+        <div>
+          <Label>Label:</Label>
+          <Input
+            value={element?.field?.label}
+            onChange={(e) => handleLabelChange(e)}
+          />
+        </div>
+       
+      
+      
+   
+      </div>
+    );
+  };
