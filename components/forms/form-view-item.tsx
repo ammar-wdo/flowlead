@@ -1,4 +1,4 @@
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useState } from "react";
 import {
   FormControl,
   FormField,
@@ -6,7 +6,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { ControllerRenderProps, UseFormReturn} from "react-hook-form";
+import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { elementSchema, formSchema } from "@/schemas";
 import { Label } from "../ui/label";
@@ -23,9 +23,10 @@ import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Trash, XIcon } from "lucide-react";
+import { Check, GripVertical, Trash, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSelectedElement } from "@/hooks/selected-element-hook";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 type Form = UseFormReturn<z.infer<typeof formSchema>>;
 type FieldType = ControllerRenderProps<
@@ -70,7 +71,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
   if (element.type === "SERVICE_ELEMENT")
     return (
       <div
-        onClick={handleSelectedElementClick}
+        onClick={(e) => handleSelectedElementClick()}
         ref={setNodeRef}
         className={cn(
           " p-8 relative  group h-fit cursor-pointer",
@@ -96,7 +97,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
           {...listeners}
           type="button"
           variant={"ghost"}
-          className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"
+          className="-left-6 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"
         >
           <GripVertical />
         </Button>
@@ -119,9 +120,9 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
       <div
         ref={setNodeRef}
         className={cn(
-          " p-8 relative  group h-fit cursor-pointer ",
+          " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px] mb-4",
           isDragging && "z-10 opacity-60 relative ",
-          selectedElement?.id === element.id && "bg-muted/50 rounded-lg"
+          selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
         style={style}
         onClick={handleSelectedElementClick}
@@ -143,7 +144,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
           {...listeners}
           type="button"
           variant={"ghost"}
-          className="-left-4 text-gray-300 opacity-0 group-hover:opacity-100 
+          className="-left-6 text-gray-300 opacity-0 group-hover:opacity-100 
         transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"
         >
           <GripVertical />
@@ -161,22 +162,10 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
               ) && <NumberInputViewItem form={form} index={i} />}
               {!!(
                 element.type === "FIELD" && element.field?.type === "checkbox"
-              ) && (
-                <CheckboxInputViewItem
-                  form={form}
-                  index={i}
-                  options={field.value?.options}
-                />
-              )}
+              ) && <CheckboxInputViewItem form={form} index={i} />}
               {!!(
                 element.type === "FIELD" && element.field?.type === "radio"
-              ) && (
-                <RadioInputViewItem
-                  form={form}
-                  index={i}
-                  options={field.value?.options}
-                />
-              )}
+              ) && <RadioInputViewItem form={form} index={i} />}
               {!!(
                 element.type === "FIELD" && element.field?.type === "select"
               ) && <SelectInputViewItem form={form} index={i} />}
@@ -314,10 +303,25 @@ const SelectInputViewItem = ({
               {/* select */}
               <Select>
                 <SelectTrigger className="w-[380px]">
-                  <SelectValue placeholder={form.watch("elements")[index].field?.placeholder || "Select Item"} />
+                  <SelectValue
+                    placeholder={
+                      form.watch("elements")[index].field?.placeholder ||
+                      "Select Item"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                {form.watch('elements')[index].field?.options.map((option,i)=> <SelectItem className="cursor-pointer" key={uuidv4()} value={option || `Option ${i+1}`}>{option || `Option ${i+1}`}</SelectItem>)}
+                  {form
+                    .watch("elements")
+                    [index].field?.options.map((option, i) => (
+                      <SelectItem
+                        className="cursor-pointer"
+                        key={uuidv4()}
+                        value={option || `Option ${i + 1}`}
+                      >
+                        {option || `Option ${i + 1}`}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -332,12 +336,21 @@ const SelectInputViewItem = ({
 const CheckboxInputViewItem = ({
   form,
   index,
-  options,
 }: {
   form: Form;
   index: number;
-  options: string[] | undefined;
 }) => {
+
+const [checkedOptions, setCheckedOptions] = useState<string[]>([])
+
+const handleClick = (value:string)=>{
+if(!!checkedOptions.includes(value)){
+setCheckedOptions(prev=>prev.filter(el=>el!==value))
+} else{
+  setCheckedOptions(prev=>[...prev,value])
+}
+}
+
   return (
     <FormControl>
       <div className="space-y-4">
@@ -346,64 +359,57 @@ const CheckboxInputViewItem = ({
           name={`elements.${index}.field.label`}
           render={({ field }) => (
             <FormItem>
-              <div>
-                <Label>{field?.value}</Label>
+              <div className="flex flex-col gap-1">
+                <Label className="flex items-center gap-1">
+                  {form.watch("elements")[index].field?.label}
+                  {form.watch("elements")[index].field?.validations
+                    ?.required ? (
+                    "*"
+                  ) : (
+                    <span className="bg-muted px-2 py-1 rounded-md text-xs">
+                      Optional
+                    </span>
+                  )}
+                </Label>
+                <Label className="text-sm text-muted-foreground font-light">
+                  {form.watch("elements")[index].field?.hint}
+                </Label>
               </div>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name={`elements.${index}.field.options`}
-          render={({ field }) => (
-            <FormItem className="grid grid-cols-2 gap-3 space-y-0">
-              {(options || []).map((item, i) => (
-                <FormField
-                  key={uuidv4()}
-                  control={form.control}
-                  name={`elements.${index}.field.options`}
-                  render={({ field: optionField }) => {
-                    return (
-                      <FormField
-                        control={form.control}
-                        name={`elements.${index}.field.options.${i}`}
-                        render={({ field }) => (
-                          <FormItem
-                            key={uuidv4()}
-                            className="flex flex-row items-start space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer"
-                          >
-                            <FormControl></FormControl>
-                            <FormLabel className="font-normal">
-                              {item}
-                            </FormLabel>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    );
-                  }}
-                />
-              ))}
-              {field.value.length === 0 && <FormMessage />}
-            </FormItem>
+        <FormItem className="grid grid-cols-2 gap-3 space-y-0">
+          {(form.watch(`elements.${index}.field.options`) || []).map(
+            (item, i) => (
+              <FormField
+                control={form.control}
+                name={`elements.${index}.field.options.${i}`}
+                render={({ field }) => (
+                  <FormItem
+                    key={uuidv4()}
+                    className={cn("flex flex-row items-center space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer",!!checkedOptions.includes(item) && "bg-second text-white")}
+                    onClick={()=>handleClick(item)}
+
+                  >
+<div className="h-6">{!!checkedOptions.includes(item) && <Check className="h-6"/>}</div>
+                    <FormLabel className="font-normal">
+                      {item || `Option ${i + 1}`}
+                    </FormLabel>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )
           )}
-        />
+        </FormItem>
       </div>
     </FormControl>
   );
 };
 
-const RadioInputViewItem = ({
-  form,
-  index,
-  options,
-}: {
-  form: Form;
-  index: number;
-  options: string[] | undefined;
-}) => {
+const RadioInputViewItem = ({ form, index }: { form: Form; index: number }) => {
   return (
     <FormControl>
       <div className="space-y-4">
@@ -412,50 +418,49 @@ const RadioInputViewItem = ({
           name={`elements.${index}.field.label`}
           render={({ field }) => (
             <FormItem>
-              <div>
-                <Label>{field?.value}</Label>
+              <div className="flex flex-col gap-1">
+                <Label className="flex items-center gap-1">
+                  {form.watch("elements")[index].field?.label}
+                  {form.watch("elements")[index].field?.validations
+                    ?.required ? (
+                    "*"
+                  ) : (
+                    <span className="bg-muted px-2 py-1 rounded-md text-xs">
+                      Optional
+                    </span>
+                  )}
+                </Label>
+                <Label className="text-sm text-muted-foreground font-light">
+                  {form.watch("elements")[index].field?.hint}
+                </Label>
               </div>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <FormField
-          control={form.control}
-          name={`elements.${index}.field.options`}
-          render={({ field }) => (
-            <FormItem className="grid grid-cols-2 gap-3 space-y-0">
-              {(options || []).map((item, i) => (
-                <FormField
-                  key={uuidv4()}
-                  control={form.control}
-                  name={`elements.${index}.field.options`}
-                  render={({ field: optionField }) => {
-                    return (
-                      <FormField
-                        control={form.control}
-                        name={`elements.${index}.field.options.${i}`}
-                        render={({ field }) => (
-                          <FormItem
-                            key={uuidv4()}
-                            className="flex flex-row items-start space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer"
-                          >
-                            <FormControl></FormControl>
-                            <FormLabel className="font-normal">
-                              {item}
-                            </FormLabel>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    );
-                  }}
-                />
-              ))}
-              {field.value.length === 0 && <FormMessage />}
-            </FormItem>
+        {/* Options */}
+        <RadioGroup
+          className="grid grid-cols-2 gap-3 space-y-0"
+          name="options"
+          defaultValue={form.watch(`elements.${index}.field.options`)[0]}
+        >
+          {(form.watch(`elements.${index}.field.options`) || []).map(
+            (item, i) => (
+              <div
+                key={uuidv4()}
+                className="flex flex-row items-start space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer"
+              >
+                <RadioGroupItem value={item} id={`option-${item}-${i}`} />
+                <FormLabel
+                  htmlFor={`option-${item}-${i}`}
+                  className="font-normal"
+                >
+                  {item}
+                </FormLabel>
+              </div>
+            )
           )}
-        />
+        </RadioGroup>
       </div>
     </FormControl>
   );

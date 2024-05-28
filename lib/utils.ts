@@ -142,7 +142,12 @@ export const getForms = async (companySlug: string, userId: string)=>{
     select:{
       name:true,
       createdAt:true,
-      slug:true
+      slug:true,
+      company:{
+        select:{
+          slug:true
+        }
+      }
     }
   })
 

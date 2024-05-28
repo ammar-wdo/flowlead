@@ -127,8 +127,8 @@ const FieldEditor = ({
     text: <TextInputEditor form={form} />,
     number: <NumberInputEditor form={form} />,
     breaker: null,
-    checkbox: null,
-    radio: null,
+    checkbox: <CheckboxInputEditor form={form} />,
+    radio: <RadioGroupInputEditor form={form} />,
     select: <SelectInputEditor form={form} />,
   };
 
@@ -386,6 +386,17 @@ const SelectInputEditor = ({
       e.target.value)
     ;
   };
+
+  const handleAddOption = ()=>{
+    const options = form.getValues(`elements.${elementIndex}.field.options`)
+    form.setValue(`elements.${elementIndex}.field.options`,[...options,`Option ${options.length +1}`])
+  }
+
+  const handleDeleteOption = (i:number)=>{
+    const options = form.getValues(`elements.${elementIndex}.field.options`)
+    const newOptions = options.filter((option,index)=>index !== i)
+    form.setValue(`elements.${elementIndex}.field.options`,newOptions)
+  }
   return (
     <div className="space-y-3">
       <div>
@@ -422,16 +433,17 @@ const SelectInputEditor = ({
       <div>
         <div className="flex items-center justify-between">
         <h3 className="">Options</h3>
-        <Button className="text-sm" variant={'secondary'}>Add Option</Button>
+        <Button onClick={handleAddOption} className="text-sm" variant={'secondary'}>Add Option</Button>
         </div>
       
         <div className="mt-4 space-y-2">
         {fields.map((field, i) => (
-            <div key={field.id}>
+            <div key={field.id} className="flex items-center gap-4">
               <Input
                 value={form.watch(`elements.${elementIndex}.field.options.${i}`) || `Option ${i + 1}`}
                 onChange={(e) => handleOptionChange(e, i)}
               />
+              {!!(fields.length > 1) && <Button onClick={()=>handleDeleteOption(i)} size={'icon'} variant={'ghost'}><XIcon/></Button>}
             </div>
           ))}
         </div>
@@ -439,3 +451,222 @@ const SelectInputEditor = ({
     </div>
   );
 };
+
+
+
+const CheckboxInputEditor = ({
+    form,
+  }: {
+    form: UseFormReturn<z.infer<typeof formSchema>>;
+  }) => {
+    const { selectedElement } = useSelectedElement();
+    if (!selectedElement) return;
+  
+    type FieldArrayPath = `elements.${number}.field.options`;
+  
+    const element = form
+      .watch("elements")
+      .find((el) => el.id === selectedElement.id);
+  
+    const elementIndex = form
+      .watch("elements")
+      .findIndex((el) => el.id === selectedElement.id);
+  
+    const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
+    };
+    const handlePlaceholderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value);
+    };
+    const handleHintChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.setValue(`elements.${elementIndex}.field.hint`, e.target.value);
+    };
+    const handleRequired = () => {
+      form.setValue(
+        `elements.${elementIndex}.field.validations.required`,
+        !form.watch(`elements.${elementIndex}.field.validations.required`)
+      );
+    };
+  
+  
+    const { fields, append } = useFieldArray({
+      control: form.control,
+        // @ts-ignore
+      name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
+    });
+  
+    const handleOptionChange = (e:React.ChangeEvent<HTMLInputElement>,i:number) => {
+      form.setValue(
+        `elements.${elementIndex}.field.options.${i}`,
+        e.target.value)
+      ;
+    };
+  
+    const handleAddOption = ()=>{
+      const options = form.getValues(`elements.${elementIndex}.field.options`)
+      form.setValue(`elements.${elementIndex}.field.options`,[...options,`Option ${options.length +1}`])
+    }
+  
+    const handleDeleteOption = (i:number)=>{
+      const options = form.getValues(`elements.${elementIndex}.field.options`)
+      const newOptions = options.filter((option,index)=>index !== i)
+      form.setValue(`elements.${elementIndex}.field.options`,newOptions)
+    }
+    return (
+      <div className="space-y-3">
+        <div>
+          <Label>Label:</Label>
+          <Input
+            value={element?.field?.label}
+            onChange={(e) => handleLabelChange(e)}
+          />
+        </div>
+      
+        <div>
+          <Label>Hint:</Label>
+          <Input
+            value={element?.field?.hint || ""}
+            onChange={(e) => handleHintChange(e)}
+          />
+        </div>
+        <div className="flex items-center gap-1">
+          <Checkbox
+            id="required"
+            onCheckedChange={handleRequired}
+            checked={
+              !!form.watch(`elements.${elementIndex}.field.validations.required`)
+            }
+          />
+          <Label htmlFor="required">Is Required</Label>
+        </div>
+        <div>
+          <div className="flex items-center justify-between">
+          <h3 className="">Options</h3>
+          <Button onClick={handleAddOption} className="text-sm" variant={'secondary'}>Add Option</Button>
+          </div>
+        
+          <div className="mt-4 space-y-2">
+          {fields.map((field, i) => (
+              <div key={field.id} className="flex items-center gap-4">
+                <Input
+                  value={form.watch(`elements.${elementIndex}.field.options.${i}`) || `Option ${i + 1}`}
+                  onChange={(e) => handleOptionChange(e, i)}
+                />
+                {!!(fields.length > 1) && <Button onClick={()=>handleDeleteOption(i)} size={'icon'} variant={'ghost'}><XIcon/></Button>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+
+
+  const RadioGroupInputEditor = ({
+    form,
+  }: {
+    form: UseFormReturn<z.infer<typeof formSchema>>;
+  }) => {
+    const { selectedElement } = useSelectedElement();
+    if (!selectedElement) return;
+  
+    type FieldArrayPath = `elements.${number}.field.options`;
+  
+    const element = form
+      .watch("elements")
+      .find((el) => el.id === selectedElement.id);
+  
+    const elementIndex = form
+      .watch("elements")
+      .findIndex((el) => el.id === selectedElement.id);
+  
+    const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
+    };
+    const handlePlaceholderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value);
+    };
+    const handleHintChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      form.setValue(`elements.${elementIndex}.field.hint`, e.target.value);
+    };
+    const handleRequired = () => {
+      form.setValue(
+        `elements.${elementIndex}.field.validations.required`,
+        !form.watch(`elements.${elementIndex}.field.validations.required`)
+      );
+    };
+  
+  
+    const { fields, append } = useFieldArray({
+      control: form.control,
+        // @ts-ignore
+      name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
+    });
+  
+    const handleOptionChange = (e:React.ChangeEvent<HTMLInputElement>,i:number) => {
+      form.setValue(
+        `elements.${elementIndex}.field.options.${i}`,
+        e.target.value)
+      ;
+    };
+  
+    const handleAddOption = ()=>{
+      const options = form.getValues(`elements.${elementIndex}.field.options`)
+      form.setValue(`elements.${elementIndex}.field.options`,[...options,`Option ${options.length +1}`])
+    }
+  
+    const handleDeleteOption = (i:number)=>{
+      const options = form.getValues(`elements.${elementIndex}.field.options`)
+      const newOptions = options.filter((option,index)=>index !== i)
+      form.setValue(`elements.${elementIndex}.field.options`,newOptions)
+    }
+    return (
+      <div className="space-y-3">
+        <div>
+          <Label>Label:</Label>
+          <Input
+            value={element?.field?.label}
+            onChange={(e) => handleLabelChange(e)}
+          />
+        </div>
+      
+        <div>
+          <Label>Hint:</Label>
+          <Input
+            value={element?.field?.hint || ""}
+            onChange={(e) => handleHintChange(e)}
+          />
+        </div>
+        <div className="flex items-center gap-1">
+          <Checkbox
+            id="required"
+            onCheckedChange={handleRequired}
+            checked={
+              !!form.watch(`elements.${elementIndex}.field.validations.required`)
+            }
+          />
+          <Label htmlFor="required">Is Required</Label>
+        </div>
+        <div>
+          <div className="flex items-center justify-between">
+          <h3 className="">Options</h3>
+          <Button onClick={handleAddOption} className="text-sm" variant={'secondary'}>Add Option</Button>
+          </div>
+        
+          <div className="mt-4 space-y-2">
+          {fields.map((field, i) => (
+              <div key={field.id} className="flex items-center gap-4">
+                <Input
+                  value={form.watch(`elements.${elementIndex}.field.options.${i}`) || `Option ${i + 1}`}
+                  onChange={(e) => handleOptionChange(e, i)}
+                />
+                {!!(fields.length > 1) && <Button onClick={()=>handleDeleteOption(i)} size={'icon'} variant={'ghost'}><XIcon/></Button>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+  

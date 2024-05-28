@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import FieldsComponent from './fields-component'
 import RulesComponent from './rules-compoent'
 import { useFormElements } from '@/hooks/form-elements-hook'
+import { useSelectedElement } from '@/hooks/selected-element-hook'
 
 type Props = {
   fetchedForm: Form | null | undefined
@@ -17,6 +18,7 @@ const FormRuleWrapper = ({ fetchedForm ,services}: Props) => {
 
   const [activeComponent, setActiveComponent] = useState<'fields' | 'rules'>('fields')
   const { form, onSubmit } = useFormElements(fetchedForm)
+  const {setSelectedElementNull} = useSelectedElement()
 
 
   return (
@@ -27,7 +29,7 @@ const FormRuleWrapper = ({ fetchedForm ,services}: Props) => {
       </div>
       {/* form rules components */}
       <div className='mt-4'>
-        {activeComponent === 'fields' ? <FieldsComponent services={services} onSubmit={onSubmit} form={form}  /> : <RulesComponent form={form} fetchedForm={fetchedForm} />}
+        {activeComponent === 'fields' ? <FieldsComponent fetchedForm={fetchedForm} services={services} onSubmit={onSubmit} form={form}  /> : <RulesComponent form={form} fetchedForm={fetchedForm} />}
       </div>
 
 

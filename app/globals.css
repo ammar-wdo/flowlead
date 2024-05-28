@@ -91,18 +91,19 @@
     padding: 10px; /* Add padding */
     border-radius: 5px;
     min-height: 150px;
+    border-color: "#e2e8f0" !important;
   }
   
   .ql-toolbar {
   
-
+    border-color: #e2e8f0 !important;
     border-radius: 5px 5px 0 0;
   }
 
  
   
   .ql-container.ql-snow {
-
+    border-color: #e2e8f0 !important;
     border-radius:0 0 5px 5px;
   }
   

@@ -7,7 +7,7 @@ import { toast } from "sonner"
 import { useParams, useRouter } from "next/navigation"
 import { useModal } from "./modal-hook"
 import { Form } from "@prisma/client"
-import { addForm } from "@/actions/form-actions"
+import { addForm, editForm } from "@/actions/form-actions"
 
 
 export const useFormElements = (fetchedForm:Form | undefined | null) => {
@@ -28,15 +28,21 @@ export const useFormElements = (fetchedForm:Form | undefined | null) => {
 
 const params = useParams<{companySlug:string}>()
   const router = useRouter()
-  const { setClose } = useModal()
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    let res
     try {
-      const res = await addForm(values,params.companySlug)
+      if(!fetchedForm)
+       {res = await addForm(values,params.companySlug)}
+      else {
+        res = await editForm(values,params.companySlug,fetchedForm.id)
+      }
 
       if (!res.success) return toast.error(res.error)
       toast.success(res.message)
+    router.push(`/dashboard/${params.companySlug}/forms`)
     router.refresh()
-    setClose()
+
    
 
     } catch (error) {

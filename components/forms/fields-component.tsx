@@ -47,9 +47,10 @@ type Props = {
     values: z.infer<typeof formSchema>
   ) => Promise<string | number | undefined>;
   services: Service[];
+  fetchedForm:Form | null | undefined
 };
 
-const FieldsComponent = ({ form, onSubmit,services }: Props) => {
+const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
   const previousVar = useRef(1);
 
   const { selectedElement, setSelectedElementNull } = useSelectedElement();
@@ -111,9 +112,9 @@ const FieldsComponent = ({ form, onSubmit,services }: Props) => {
                     <FormItem>
                       <FormLabel>
                         Service Description{" "}
-                        <span className="text-muted-foreground">
-                          (optional)
-                        </span>
+                        <span className="bg-muted px-2 py-1 rounded-md text-xs">
+                      Optional
+                    </span>
                       </FormLabel>
                       <FormControl>
                         <QuillEditor
@@ -185,7 +186,7 @@ const FieldsComponent = ({ form, onSubmit,services }: Props) => {
                 variable={form.watch("elements").length}
                 previousVar={previousVar}
               />
-              <LoadingButton isLoading={isLoading} title="Submit" />
+              <LoadingButton isLoading={isLoading} title={fetchedForm ? "Update" : "Submit"} />
               {JSON.stringify(form.formState.errors,null,2)}
         
             </form>

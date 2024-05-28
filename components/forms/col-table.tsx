@@ -3,6 +3,8 @@
 import { Service } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { Button } from "../ui/button"
+import Link from "next/link"
+import PushButton from "../push-button"
 
 
 // This type is used to define the shape of our data.
@@ -13,6 +15,7 @@ type PartialForm = {
     name:string
 createdAt:Date
     slug:string
+    company:{slug:string}
 
 }
 
@@ -21,7 +24,7 @@ export const formColums: ColumnDef<PartialForm>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    cell:({row})=><p className=" capitalize font-semibold">{row.getValue('name')}</p>
+    cell:({row})=><PushButton className="hover:bg-transparent hover:underline" href={`/dashboard/${row.original.company.slug}/forms/${row.original.slug}`}><p className=" capitalize font-semibold">{row.getValue('name')}</p></PushButton>
   },
   {
     accessorKey: "slug",
