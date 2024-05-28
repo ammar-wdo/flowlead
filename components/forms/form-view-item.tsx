@@ -35,6 +35,102 @@ type Props = {
 
 
 
+
+
+
+const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
+
+    const { setSelectedElement,selectedElement} = useSelectedElement()
+
+    const handleSelectedElementClick = () => {
+        setSelectedElement({ id: element.id, type: element.type })
+        console.log(element)
+    }
+
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: element.id })
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        ...(isDragging ? { height: 'auto', width: 'auto' } : {})
+    };
+
+
+
+    if (element.type === 'SERVICE_ELEMENT') return <div
+
+        onClick={handleSelectedElementClick}
+        ref={setNodeRef}
+        className={cn(' p-8 relative  group h-fit cursor-pointer', isDragging && 'z-10 opacity-60 relative',selectedElement?.id===element.id && 'bg-muted/50 rounded-lg')}
+        style={style}>
+        <Button size={'icon'} onClick={(e) => handleDelete(element.id, e)} type='button' variant={'ghost'}
+            className="right-1  opacity-0 group-hover:opacity-100 
+            transition top-1  absolute hover:bg-white
+            bg-white  hover:shadow-gray-300  shadow-md rounded-lg
+             text-gray-300 hover:shadow-lg flex items-center justify-center w-8 h-8  p-0.5"><XIcon  /></Button>
+        <Button {...attributes} {...listeners} type='button'
+            variant={'ghost'}
+            className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
+     
+      <FormField
+            control={form.control}
+            name={`elements.${i}.service`}
+            render={({ field }) => (
+                <FormItem>
+
+                    {!!(element.type === 'SERVICE_ELEMENT') && <ServiceViewItem i={i} form={form} field={field} />}
+                
+                    
+
+                  
+                </FormItem>
+            )}
+        />
+    </div>
+
+    else return (<div ref={setNodeRef}
+        className={cn(' p-8 relative  group h-fit cursor-pointer ', isDragging && 'z-10 opacity-60 relative ',selectedElement?.id===element.id && 'bg-muted/50 rounded-lg')}
+        style={style}
+        onClick={handleSelectedElementClick}>
+        <Button onClick={(e) => handleDelete(element.id, e)} type='button' variant={'ghost'}
+            className="right-1  opacity-0 group-hover:opacity-100 
+            transition top-1  absolute hover:bg-white
+            bg-white  hover:shadow-gray-300  shadow-md rounded-lg
+             text-gray-300 hover:shadow-lg flex items-center justify-center w-8 h-8  p-0.5"><XIcon /></Button>
+
+        <Button {...attributes} {...listeners} type='button' variant={'ghost'}
+            className="-left-4 text-gray-300 opacity-0 group-hover:opacity-100 
+        transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
+        <FormField
+            control={form.control}
+            name={`elements.${i}.field`}
+            render={({ field }) => (
+                <FormItem >
+                    {!!(element.type === 'FIELD' && element.field?.type === "text") && <TextInputViewItem form={form} index={i}  />}
+                    {!!(element.type === 'FIELD' && element.field?.type === "number") && <NumberInputViewItem form={form} index={i} placeholder={field.value?.placeholder} />}
+                    {!!(element.type === 'FIELD' && element.field?.type === "checkbox") && <CheckboxInputViewItem form={form} index={i} options={field.value?.options} />}
+                    {!!(element.type === 'FIELD' && element.field?.type === "radio") && <RadioInputViewItem form={form} index={i} options={field.value?.options} />}
+
+                </FormItem>
+            )}
+        />
+        
+    </div>
+
+    )
+}
+
+export default FormViewItem
+
+
+
 const TextInputViewItem = ({ index, form, }: { index: number, form: Form}) => {
     return (<FormControl>
         <FormField
@@ -43,7 +139,12 @@ const TextInputViewItem = ({ index, form, }: { index: number, form: Form}) => {
             render={({ field }) => (
                 <FormItem>
                     <div>
-                        <Label>{form.watch('elements')[index].field?.label}</Label>
+                        <div className='flex flex-col gap-1'>
+                        <Label className='flex items-center gap-1'>{form.watch('elements')[index].field?.label}{form.watch('elements')[index].field?.validations?.required ?'*' : <span className='bg-muted px-2 py-1 rounded-md text-xs'>Optional</span>}</Label>
+                        <Label className='text-sm text-muted-foreground font-light'>{form.watch('elements')[index].field?.hint}</Label>
+                        </div>
+
+                   
                         <Input placeholder={form.watch('elements')[index].field?.placeholder || ""} readOnly className='pointer-events-none' />
                     </div>
                     <FormMessage />
@@ -64,7 +165,10 @@ const NumberInputViewItem = ({ index, form, placeholder }: { index: number, form
             render={({ field }) => (
                 <FormItem>
                     <div>
-                        <Label>{form.watch('elements')[index].field?.label}</Label>
+                    <div className='flex flex-col gap-1'>
+                    <Label className='flex items-center gap-1'>{form.watch('elements')[index].field?.label}{form.watch('elements')[index].field?.validations?.required ?'*' : <span className='bg-muted px-2 py-1 rounded-md text-xs'>Optional</span>}</Label>
+                        <Label className='text-sm text-muted-foreground font-light'>{form.watch('elements')[index].field?.hint}</Label>
+                        </div>
                         <Input placeholder={form.watch('elements')[index].field?.placeholder || ""} type='number' readOnly className='pointer-events-none' />
                     </div>
                     <FormMessage />
@@ -223,7 +327,7 @@ const RadioInputViewItem = ({ form, index, options }: { form: Form, index: numbe
 }
 
 const ServiceViewItem = ({ field,form ,i}: { field: ServiceElementType ,form:UseFormReturn<z.infer<typeof formSchema>>,i:number}) => {
-    if (!form.watch('elements')[i].service?.id) return <div className='flex p-4 border'><p>Select one service to show in this field</p></div>
+    if (!form.watch('elements')[i].service?.id) return <div className='flex p-3 text-center rounded-md border-dashed border-2  justify-center'><p className='font-semibold leading-relaxed text-muted-foreground ' >Click to choose a service</p></div>
     else return <div>
 
         
@@ -236,95 +340,3 @@ const ServiceViewItem = ({ field,form ,i}: { field: ServiceElementType ,form:Use
         </div>
     </div>
 }
-
-
-const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
-
-    const { setSelectedElement,selectedElement} = useSelectedElement()
-
-    const handleSelectedElementClick = () => {
-        setSelectedElement({ id: element.id, type: element.type })
-        console.log(element)
-    }
-
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging
-    } = useSortable({ id: element.id })
-
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        ...(isDragging ? { height: 'auto', width: 'auto' } : {})
-    };
-
-
-
-    if (element.type === 'SERVICE_ELEMENT') return <div
-
-        onClick={handleSelectedElementClick}
-        ref={setNodeRef}
-        className={cn(' p-8 relative  group h-fit cursor-pointer', isDragging && 'z-10 opacity-60 relative',selectedElement?.id===element.id && 'bg-muted/50 rounded-lg')}
-        style={style}>
-        <Button onClick={(e) => handleDelete(element.id, e)} type='button' variant={'ghost'}
-            className="right-2 hover:bg-white  opacity-0 group-hover:opacity-100
-            transition top-6 -translate-y-1/2 absolute 
-            aspect-square   hover:shadow-gray-300  shadow-md rounded-lg bg-white
-             text-gray-300 hover:shadow-lg flex items-center justify-center  p-1"><XIcon /></Button>
-        <Button {...attributes} {...listeners} type='button'
-            variant={'ghost'}
-            className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
-     
-      <FormField
-            control={form.control}
-            name={`elements.${i}.service`}
-            render={({ field }) => (
-                <FormItem>
-
-                    {!!(element.type === 'SERVICE_ELEMENT') && <ServiceViewItem i={i} form={form} field={field} />}
-                
-                    
-
-                  
-                </FormItem>
-            )}
-        />
-    </div>
-
-    else return (<div ref={setNodeRef}
-        className={cn(' p-8 relative  group h-fit cursor-pointer ', isDragging && 'z-10 opacity-60 relative ',selectedElement?.id===element.id && 'bg-muted/50 rounded-lg')}
-        style={style}
-        onClick={handleSelectedElementClick}>
-        <Button onClick={(e) => handleDelete(element.id, e)} type='button' variant={'ghost'}
-            className="right-4  opacity-0 group-hover:opacity-100 hover:bg-white
-            transition top-6 -translate-y-1/2 absolute hover:bg-transparent
-            aspect-square bg-white  hover:shadow-gray-300  shadow-md rounded-lg
-             text-gray-300 hover:shadow-lg flex items-center justify-center  p-1"><XIcon /></Button>
-
-        <Button {...attributes} {...listeners} type='button' variant={'ghost'}
-            className="-left-4 text-gray-300 opacity-0 group-hover:opacity-100 
-        transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical /></Button>
-        <FormField
-            control={form.control}
-            name={`elements.${i}.field`}
-            render={({ field }) => (
-                <FormItem >
-                    {!!(element.type === 'FIELD' && element.field?.type === "text") && <TextInputViewItem form={form} index={i}  />}
-                    {!!(element.type === 'FIELD' && element.field?.type === "number") && <NumberInputViewItem form={form} index={i} placeholder={field.value?.placeholder} />}
-                    {!!(element.type === 'FIELD' && element.field?.type === "checkbox") && <CheckboxInputViewItem form={form} index={i} options={field.value?.options} />}
-                    {!!(element.type === 'FIELD' && element.field?.type === "radio") && <RadioInputViewItem form={form} index={i} options={field.value?.options} />}
-
-                </FormItem>
-            )}
-        />
-        
-    </div>
-
-    )
-}
-
-export default FormViewItem

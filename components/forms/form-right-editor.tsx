@@ -15,6 +15,7 @@ import { Button } from "../ui/button";
 import { XIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Checkbox } from "../ui/checkbox";
 
 type Props = {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -70,11 +71,9 @@ const AddService = ({
       .watch("elements")
       .findIndex((el) => el.id === selectedElement.id);
     const newService = serviceElement;
-    const elements = form.watch("elements");
+ 
 
-    elements[elementIndex] = { ...elements[elementIndex], service: newService };
-
-    form.setValue("elements", elements);
+    form.setValue(`elements.${elementIndex}.service`, newService)
 
     setOpen(false);
   };
@@ -84,14 +83,14 @@ const AddService = ({
       <h3 className="text-sm text-muted-foreground">Add Service</h3>
 
       <Select open={open} onOpenChange={setOpen}>
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder={service?.name || "Select service"} />
+        <SelectTrigger className="w-full capitalize font-semibold">
+          <SelectValue className="" placeholder={service?.name || "Select service"} />
         </SelectTrigger>
         <SelectContent>
           {services.map((serviceElement) => (
             <Button
               key={serviceElement.id}
-              className="w-full"
+              className="w-full justify-start capitalize"
               variant={"ghost"}
               onClick={() => onSelect(serviceElement)}
             >
@@ -141,30 +140,37 @@ const TextInputEditor = ({
     .watch("elements")
     .find((el) => el.id === selectedElement.id);
 
-
-const handleLabelChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
     const elementIndex = form
     .watch("elements")
-    .findIndex((el) => el.id === selectedElement.id);
+    .findIndex((el) => el.id === selectedElement.id)
+const handleLabelChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+   ;
 
     form.setValue(`elements.${elementIndex}.field.label`, e.target.value)
 
 }
 const handlePlaceholderChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
-    const elementIndex = form
-    .watch("elements")
-    .findIndex((el) => el.id === selectedElement.id);
+   ;
 
     form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value)
 
 }
 const handleHintChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
-    const elementIndex = form
-    .watch("elements")
-    .findIndex((el) => el.id === selectedElement.id);
+   ;
 
     form.setValue(`elements.${elementIndex}.field.hint`, e.target.value)
 
+}
+
+const handleRequired = ()=>{
+    form.setValue(`elements.${elementIndex}.field.validations.required`, !form.watch(`elements.${elementIndex}.field.validations.required`))
+}
+
+const maxLength = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    form.setValue(`elements.${elementIndex}.field.validations.maxLength`, +e.target.value)
+}
+const minLength = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    form.setValue(`elements.${elementIndex}.field.validations.minLength`, +e.target.value)
 }
   return (
     <div className="space-y-3">
@@ -180,6 +186,21 @@ const handleHintChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
         <Label>Hint:</Label>
         <Input value={element?.field?.hint||''} onChange={e=>handleHintChange(e)}/>
       </div>
+      <div className="flex items-center gap-1">
+      <Checkbox id="required" onCheckedChange={handleRequired} checked={!!form.watch(`elements.${elementIndex}.field.validations.required`)} />
+      <Label htmlFor="required">Is Required</Label>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+      <div>
+        <Label>Max Length:</Label>
+        <Input min={1} type="number" value={element?.field?.validations?.maxLength || undefined} onChange={e=>maxLength(e)}/>
+      </div>
+      <div>
+        <Label>Min Length:</Label>
+        <Input min={1}  type="number" value={element?.field?.validations?.minLength || undefined} onChange={e=>minLength(e)}/>
+      </div>
+      </div>
+     
     </div>
   );
 };
@@ -197,31 +218,39 @@ const NumberInputEditor = ({
       .watch("elements")
       .find((el) => el.id === selectedElement.id);
   
-  
-  const handleLabelChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
       const elementIndex = form
       .watch("elements")
-      .findIndex((el) => el.id === selectedElement.id);
+      .findIndex((el) => el.id === selectedElement.id)
+
+  const handleLabelChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+ ;
   
       form.setValue(`elements.${elementIndex}.field.label`, e.target.value)
   
   }
   const handlePlaceholderChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
-      const elementIndex = form
-      .watch("elements")
-      .findIndex((el) => el.id === selectedElement.id);
+    
   
       form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value)
   
   }
   const handleHintChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
-      const elementIndex = form
-      .watch("elements")
-      .findIndex((el) => el.id === selectedElement.id);
+  
   
       form.setValue(`elements.${elementIndex}.field.hint`, e.target.value)
   
   }
+
+  const handleRequired = ()=>{
+    form.setValue(`elements.${elementIndex}.field.validations.required`, !form.watch(`elements.${elementIndex}.field.validations.required`))
+}
+
+const max = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    form.setValue(`elements.${elementIndex}.field.validations.max`, +e.target.value)
+}
+const min = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    form.setValue(`elements.${elementIndex}.field.validations.min`, +e.target.value)
+}
     return (
       <div className="space-y-3">
         <div>
@@ -236,6 +265,22 @@ const NumberInputEditor = ({
           <Label>Hint:</Label>
           <Input value={element?.field?.hint||''} onChange={e=>handleHintChange(e)}/>
         </div>
+        <div className="flex items-center gap-1">
+      <Checkbox id="required" onCheckedChange={handleRequired} checked={!!form.watch(`elements.${elementIndex}.field.validations.required`)} />
+      <Label htmlFor="required">Is Required</Label>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+      <div>
+        <Label>Max Value:</Label>
+        <Input min={1} type="number" value={element?.field?.validations?.max || undefined} onChange={e=>max(e)}/>
+      </div>
+      <div>
+        <Label>Min Value:</Label>
+        <Input min={0}  type="number" value={element?.field?.validations?.min || undefined} onChange={e=>min(e)}/>
+      </div>
+      </div>
+    
       </div>
     );
   };
