@@ -344,18 +344,26 @@ const SelectInputEditor = ({
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>;
 }) => {
+
+
   const { selectedElement } = useSelectedElement();
-  if (!selectedElement) return;
+
 
   type FieldArrayPath = `elements.${number}.field.options`;
 
   const element = form
     .watch("elements")
-    .find((el) => el.id === selectedElement.id);
+    .find((el) => el.id === selectedElement?.id);
 
   const elementIndex = form
     .watch("elements")
-    .findIndex((el) => el.id === selectedElement.id);
+    .findIndex((el) => el.id === selectedElement?.id);
+
+    const { fields, append } = useFieldArray({
+      control: form.control,
+        // @ts-ignore
+      name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
+    });
 
   const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
@@ -374,11 +382,7 @@ const SelectInputEditor = ({
   };
 
 
-  const { fields, append } = useFieldArray({
-    control: form.control,
-      // @ts-ignore
-    name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
-  });
+ 
 
   const handleOptionChange = (e:React.ChangeEvent<HTMLInputElement>,i:number) => {
     form.setValue(
@@ -460,17 +464,21 @@ const CheckboxInputEditor = ({
     form: UseFormReturn<z.infer<typeof formSchema>>;
   }) => {
     const { selectedElement } = useSelectedElement();
-    if (!selectedElement) return;
-  
+
+    const { fields, append } = useFieldArray({
+      control: form.control,
+        // @ts-ignore
+      name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
+    });
     type FieldArrayPath = `elements.${number}.field.options`;
   
     const element = form
       .watch("elements")
-      .find((el) => el.id === selectedElement.id);
+      .find((el) => el.id === selectedElement?.id);
   
     const elementIndex = form
       .watch("elements")
-      .findIndex((el) => el.id === selectedElement.id);
+      .findIndex((el) => el.id === selectedElement?.id);
   
     const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
@@ -489,11 +497,7 @@ const CheckboxInputEditor = ({
     };
   
   
-    const { fields, append } = useFieldArray({
-      control: form.control,
-        // @ts-ignore
-      name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
-    });
+   
   
     const handleOptionChange = (e:React.ChangeEvent<HTMLInputElement>,i:number) => {
       form.setValue(
@@ -568,18 +572,27 @@ const CheckboxInputEditor = ({
   }: {
     form: UseFormReturn<z.infer<typeof formSchema>>;
   }) => {
-    const { selectedElement } = useSelectedElement();
-    if (!selectedElement) return;
+    const { selectedElement } = useSelectedElement()
+    const elementIndex = form
+    .watch("elements")
+    .findIndex((el) => el.id === selectedElement?.id);
+
+    const { fields, append } = useFieldArray({
+      control: form.control,
+        // @ts-ignore
+      name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
+    });
+
+  ;
+ 
   
     type FieldArrayPath = `elements.${number}.field.options`;
   
     const element = form
       .watch("elements")
-      .find((el) => el.id === selectedElement.id);
+      .find((el) => el.id === selectedElement?.id);
   
-    const elementIndex = form
-      .watch("elements")
-      .findIndex((el) => el.id === selectedElement.id);
+ 
   
     const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
@@ -598,11 +611,6 @@ const CheckboxInputEditor = ({
     };
   
   
-    const { fields, append } = useFieldArray({
-      control: form.control,
-        // @ts-ignore
-      name: `elements.${elementIndex}.field.options` as FieldArrayPath ,
-    });
   
     const handleOptionChange = (e:React.ChangeEvent<HTMLInputElement>,i:number) => {
       form.setValue(
