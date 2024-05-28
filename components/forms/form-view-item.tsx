@@ -384,6 +384,7 @@ setCheckedOptions(prev=>prev.filter(el=>el!==value))
           {(form.watch(`elements.${index}.field.options`) || []).map(
             (item, i) => (
               <FormField
+              key={uuidv4()}
                 control={form.control}
                 name={`elements.${index}.field.options.${i}`}
                 render={({ field }) => (
