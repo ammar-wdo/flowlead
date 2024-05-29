@@ -97,7 +97,8 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
           {...listeners}
           type="button"
           variant={"ghost"}
-          className="-left-6 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"
+          className="-left-6 text-gray-300 opacity-0 group-hover:opacity-100 
+          transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"
         >
           <GripVertical />
         </Button>
