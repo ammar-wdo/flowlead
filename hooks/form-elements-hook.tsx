@@ -8,6 +8,8 @@ import { useParams, useRouter } from "next/navigation"
 import { useModal } from "./modal-hook"
 import { Form } from "@prisma/client"
 import { addForm, editForm } from "@/actions/form-actions"
+import { useSelectedElement } from "./selected-element-hook"
+import { useEffect } from "react"
 
 
 export const useFormElements = (fetchedForm:Form | undefined | null) => {
@@ -24,7 +26,11 @@ export const useFormElements = (fetchedForm:Form | undefined | null) => {
     },
   })
 
+const {setSelectedElementNull} = useSelectedElement()
 
+useEffect(()=>{
+  setSelectedElementNull()
+},[])
 
 const params = useParams<{companySlug:string}>()
   const router = useRouter()
@@ -42,11 +48,15 @@ const params = useParams<{companySlug:string}>()
       toast.success(res.message)
     router.push(`/dashboard/${params.companySlug}/forms`)
     router.refresh()
+ 
 
    
 
     } catch (error) {
       toast.error("Something went wrong")
+    
+    } finally {
+      setSelectedElementNull()
     }
 
   }
