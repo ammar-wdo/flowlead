@@ -21,5 +21,6 @@ export const inputsLabelsMap : {[key in FieldTypeMapper]:string} ={
     radio:"Radio Button Group",
     breaker:"Page Break",
     number:"Number Input",
-    sectionBreaker:"Section Break"
+    sectionBreaker:"Section Break",
+    longText:"Long Text"
 }

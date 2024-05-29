@@ -78,7 +78,7 @@ model Form {
 
   elements   Element[]
   views    Viewd[]
-  services Service[]
+  services    String[] @db.ObjectId
 
   accountId String @db.ObjectId
   account Account @relation(fields: [accountId],references: [id])
@@ -105,8 +105,7 @@ model Service {
   accountId String @db.ObjectId
   account Account @relation(fields: [accountId],references: [id])
 
-  formId String? @db.ObjectId
-  form   Form?   @relation(fields: [formId], references: [id])
+ forms         String[] @db.ObjectId
 
     companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])

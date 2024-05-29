@@ -86,9 +86,7 @@ export const addForm = async (values: z.infer<typeof formSchema>, companySlug: s
                 companyId:companyId.id,
                 slug:randomSlug,
                 ...validData.data,
-                services:{
-                    connect:serviceIds.map(id=>({id}))
-                }
+                services: serviceIds 
             }
         })
       
@@ -158,10 +156,7 @@ export const editForm = async (values: z.infer<typeof formSchema>, companySlug: 
               
               
                 ...validData.data,
-                services:{
-                    set:[],
-                    connect:serviceIds.map(id=>({id}))
-                }
+                services: serviceIds 
             }
         })
       
@@ -216,19 +211,38 @@ export const deleteForm = async ( companySlug: string,formSlug:string) => {
 
         //set connected services to 0
 
-        const updatedForm = await prisma.form.update({
+        const form = await prisma.form.findUnique({
             where:{
                 slug:formSlug,
                 userId,
                 accountId:account.id,
                 companyId:companyId.id,
             },
-            data:{
-                services:{
-                    set:[], 
-                }
-            }
+           
         })
+
+        if (form && form.services.length > 0) {
+         
+                for (const serviceId of form.services) {
+                  // Find the service to get the current forms
+                  const service = await prisma.service.findUnique({
+                    where: { id: serviceId },
+                    select: { forms: true },
+                  });
+          
+                  if (service) {
+                    // Filter out the formId from the service's forms array
+                    const updatedForms = service.forms.filter(id => id !== form.id);
+          
+                    // Update the service with the filtered forms array
+                    await prisma.service.update({
+                      where: { id: serviceId },
+                      data: { forms: updatedForms },
+                    });
+                  }
+                }
+              
+          }
 // delete
 
         await prisma.form.delete({

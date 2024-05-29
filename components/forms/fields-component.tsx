@@ -80,7 +80,11 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
       form.setValue("elements", newElements);
     }
   };
+  const labels = form.watch('elements')
+    .filter(element => element.field !== undefined && element.field !== null)
+    .map(element => element.field!.label);
 
+  const hasDuplicateLabels = labels.length !== new Set(labels).size;
   return (
     <section className="flex 2xl:gap-40 gap-20  ">
       {/* left part _canvas_ */}
@@ -175,7 +179,10 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
                                 At least one field or service
                               </span>
                             )}
-                             {!!form.formState.errors.elements && form.watch('elements').some(el=>(!!el.service && !el.service?.id)) && <span className='text-rose-500 mt-12'>Please choose service</span>}
+                             {!!form.formState.errors.elements && form.watch('elements').some(el=>(!!el.service && !el.service?.id)) && <span className='text-rose-500 mt-12 block'>Please choose service</span>}
+                             {!!(form.formState.errors.elements && hasDuplicateLabels)  && (
+        <span className='text-rose-500 mt-12 block'>Fields must have unique labels</span>
+      )}
                         </FormItem>
                       )}
                     />
