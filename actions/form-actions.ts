@@ -89,6 +89,21 @@ export const addForm = async (values: z.infer<typeof formSchema>, companySlug: s
                 services: serviceIds 
             }
         })
+
+            // update each related service to include the new form ID
+    for (const serviceId of serviceIds) {
+        const service = await prisma.service.findUnique({
+          where: { id: serviceId },
+          select: { forms: true },
+        });
+  
+        if (service) {
+          await prisma.service.update({
+            where: { id: serviceId },
+            data: { forms: [...service.forms, newForm.id] },
+          });
+        }
+      }
       
 
 
