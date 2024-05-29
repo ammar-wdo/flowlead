@@ -73,9 +73,10 @@ export const addForm = async (values: z.infer<typeof formSchema>, companySlug: s
 
             // extratct services ids
 
-            const serviceIds = validData.data.elements
+             // extract service ids and ensure uniqueness
+        const serviceIds = Array.from(new Set(validData.data.elements
             .filter(element => element.service !== undefined && element.service !== null)
-            .map(element => element.service!.id)
+            .map(element => element.service!.id)));
 
         //create form
 
@@ -100,7 +101,7 @@ export const addForm = async (values: z.infer<typeof formSchema>, companySlug: s
         if (service) {
           await prisma.service.update({
             where: { id: serviceId },
-            data: { forms: [...service.forms, newForm.id] },
+            data: { forms: Array.from(new Set([...service.forms, newForm.id])) },
           });
         }
       }
@@ -153,10 +154,35 @@ export const editForm = async (values: z.infer<typeof formSchema>, companySlug: 
         })
         if (!companyId) throw new CustomError("Company Id not found,check provided slug")
 
-            //extract services ids
-            const serviceIds = validData.data.elements
-            .filter(element => element.service !== undefined && element.service !== null)
-            .map(element => element.service!.id);
+         // extract service ids from the new data and ensure uniqueness
+    const newServiceIds = Array.from(new Set(validData.data.elements
+        .filter((element) => element.service !== undefined && element.service !== null)
+        .map((element) => element.service!.id)));
+
+             // fetch the current form to get the current services
+    const currentForm = await prisma.form.findUnique({
+        where: { id: formId },
+        select: { services: true },
+      });
+      if (!currentForm) throw new CustomError("Form not found");
+  
+      // determine services to be removed
+      const removedServiceIds = currentForm.services.filter((serviceId) => !newServiceIds.includes(serviceId));
+  
+      // update services to remove the form's ID
+      for (const serviceId of removedServiceIds) {
+        const service = await prisma.service.findUnique({
+          where: { id: serviceId },
+          select: { forms: true },
+        });
+  
+        if (service) {
+          await prisma.service.update({
+            where: { id: serviceId },
+            data: { forms: service.forms.filter((id) => id !== formId) },
+          });
+        }
+      }
 
         //update form
 
@@ -171,9 +197,24 @@ export const editForm = async (values: z.infer<typeof formSchema>, companySlug: 
               
               
                 ...validData.data,
-                services: serviceIds 
+                services: newServiceIds 
             }
         })
+
+         // update new services to include the form's ID
+    for (const serviceId of newServiceIds) {
+        const service = await prisma.service.findUnique({
+          where: { id: serviceId },
+          select: { forms: true },
+        });
+  
+        if (service && !service.forms.includes(formId)) {
+          await prisma.service.update({
+            where: { id: serviceId },
+            data: { forms: [...service.forms, formId] },
+          });
+        }
+      }
       
 
 
@@ -195,69 +236,58 @@ export const editForm = async (values: z.infer<typeof formSchema>, companySlug: 
 
 
 
-export const deleteForm = async ( companySlug: string,formSlug:string) => {
-
-
+export const deleteForm = async (companySlug: string, formSlug: string) => {
     try {
-
         // auth
-        const { userId } = auth()
-        if (!userId) throw new CustomError("Unauthorized")
+        const { userId } = auth();
+        if (!userId) throw new CustomError("Unauthorized");
+
         // account fetch
         const account = await prisma.account.findUnique({
-            where: {
-                userId
-            }
-        })
-        if (!account) throw new CustomError("Account needed")
-        //fetch company id to add in the form record
-        const companyId = await prisma.company.findUnique({
-            where: {
-                userId,
-                slug: companySlug
-            },
-            select: {
-                id: true
-            }
-        })
-        if (!companyId) throw new CustomError("Company Id not found,check provided slug")
+            where: { userId },
+        });
+        if (!account) throw new CustomError("Account needed");
 
-        
+        // fetch company id to add in the form record
+        const company = await prisma.company.findUnique({
+            where: { userId, slug: companySlug },
+            select: { id: true },
+        });
+        if (!company) throw new CustomError("Company Id not found, check provided slug");
 
-        //set connected services to 0
-
+        // fetch form to be deleted
         const form = await prisma.form.findUnique({
-            where:{
-                slug:formSlug,
+            where: {
+                slug: formSlug,
                 userId,
-                accountId:account.id,
-                companyId:companyId.id,
+                accountId: account.id,
+                companyId: company.id,
             },
-           
-        })
+        });
 
-        if (form && form.services.length > 0) {
-         
-                for (const serviceId of form.services) {
-                  // Find the service to get the current forms
-                  const service = await prisma.service.findUnique({
+        if (!form) throw new CustomError("Form not found");
+
+        // remove form id from associated services
+        if (form.services.length > 0) {
+            for (const serviceId of form.services) {
+                // Find the service to get the current forms
+                const service = await prisma.service.findUnique({
                     where: { id: serviceId },
                     select: { forms: true },
-                  });
-          
-                  if (service) {
+                });
+
+                if (service) {
                     // Filter out the formId from the service's forms array
                     const updatedForms = service.forms.filter(id => id !== form.id);
-          
+
                     // Update the service with the filtered forms array
                     await prisma.service.update({
-                      where: { id: serviceId },
-                      data: { forms: updatedForms },
+                        where: { id: serviceId },
+                        data: { forms: updatedForms },
                     });
-                  }
                 }
-              
-          }
+            }
+        }
 // delete
 
         await prisma.form.delete({
@@ -265,7 +295,7 @@ export const deleteForm = async ( companySlug: string,formSlug:string) => {
                 slug:formSlug,
                 userId,
                 accountId:account.id,
-                companyId:companyId.id,
+                companyId:company.id,
             }
         })
       
