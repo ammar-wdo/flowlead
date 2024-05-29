@@ -8,7 +8,7 @@ import { IoCheckboxSharp } from "react-icons/io5";
 import { IoOptionsSharp } from "react-icons/io5";
 import { IoArrowDownCircle } from "react-icons/io5";
 import { BsFileBreakFill } from "react-icons/bs";
-import { Minus } from "lucide-react";
+import { Minus, NotepadText } from "lucide-react";
 
 const requiredString = z.string().min(1, "Required field");
 const optionalString = z.string().optional()
@@ -86,6 +86,7 @@ export const serviceSchema = z.object({
 //FORM SCHEMA 
 
 export const fieldTypeArray = ["text",
+"longText",
   "number",
   "select",
   "radio",
@@ -95,6 +96,7 @@ export const fieldTypeArray = ["text",
 ]
 
 export type FieldTypeMapper = ["text",
+"longText",
 "number",
 "select",
 "radio",
@@ -104,6 +106,7 @@ export type FieldTypeMapper = ["text",
 ][number]
 
   export const fieldTypeEnum = ["text",
+  "longText",
   "number",
   "select",
   "radio",
@@ -219,6 +222,20 @@ const elementTypeArray = ["FIELD","SERVICE_ELEMENT"]
       validations:null,  
     },
   }
+  export const emptyLongTextFieldElement:ElementComponentType = {
+    id:'',
+    type:'FIELD',
+    component:<div className="flex items-center gap-2 text-[12px] "> <NotepadText className=" " size={20} />Long Text</div>,
+    field:{
+      id:'',
+      label:'Long Text Input',
+      placeholder:"",
+      options:[],
+      type:'longText',
+      conditional:null,
+      validations:null,  
+    },
+  }
 
   
   export const emptyNumberFieldElement:ElementComponentType = {
@@ -315,7 +332,7 @@ const elementTypeArray = ["FIELD","SERVICE_ELEMENT"]
     },
     {
       section:"Form Fields",
-      elements:[emptyTextFieldElement,emptyNumberFieldElement,emptyCheckBoxFieldElement,emptyRadioFieldElement,emptySelectElement]
+      elements:[emptyTextFieldElement,emptyLongTextFieldElement,emptyNumberFieldElement,emptyCheckBoxFieldElement,emptyRadioFieldElement,emptySelectElement]
     },
     {
       section:"Utilities",

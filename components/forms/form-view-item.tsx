@@ -23,10 +23,18 @@ import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Check, GripVertical, Square, SquareCheckBig, Trash, XIcon } from "lucide-react";
+import {
+  Check,
+  GripVertical,
+  Square,
+  SquareCheckBig,
+  Trash,
+  XIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSelectedElement } from "@/hooks/selected-element-hook";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Textarea } from "../ui/textarea";
 
 type Form = UseFormReturn<z.infer<typeof formSchema>>;
 type FieldType = ControllerRenderProps<
@@ -174,8 +182,12 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
                 element.type === "FIELD" && element.field?.type === "breaker"
               ) && <Breaker form={form} index={i} />}
               {!!(
-                element.type === "FIELD" && element.field?.type === "sectionBreaker"
+                element.type === "FIELD" &&
+                element.field?.type === "sectionBreaker"
               ) && <SectionBreaker form={form} index={i} />}
+              {!!(
+                element.type === "FIELD" && element.field?.type === "longText"
+              ) && <LongTextInputViewItem form={form} index={i} />}
             </FormItem>
           )}
         />
@@ -193,24 +205,22 @@ const TextInputViewItem = ({ index, form }: { index: number; form: Form }) => {
         name={`elements.${index}.field.label`}
         render={({ field }) => (
           <FormItem>
-            <div>
-              <div className="flex flex-col gap-1">
-                <Label className="flex items-center gap-1">
-                  {form.watch("elements")[index].field?.label}
-                  {form.watch("elements")[index].field?.validations
-                    ?.required ? (
-                    "*"
-                  ) : (
-                    <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                      Optional
-                    </span>
-                  )}
-                </Label>
-                <Label className="text-sm text-muted-foreground font-light">
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.label}
+                {form.watch("elements")[index].field?.validations?.required ? (
+                  "*"
+                ) : (
+                  <span className="bg-muted px-2 py-1 rounded-md text-xs">
+                    Optional
+                  </span>
+                )}
+              </Label>
+              {form.watch("elements")[index].field?.hint && (
+                <Label className="text-sm text-muted-foreground font-light ">
                   {form.watch("elements")[index].field?.hint}
                 </Label>
-              </div>
-
+              )}
               <Input
                 placeholder={
                   form.watch("elements")[index].field?.placeholder || ""
@@ -219,6 +229,55 @@ const TextInputViewItem = ({ index, form }: { index: number; form: Form }) => {
                 className="pointer-events-none"
               />
             </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormControl>
+  );
+};
+
+const LongTextInputViewItem = ({
+  index,
+  form,
+}: {
+  index: number;
+  form: Form;
+}) => {
+  return (
+    <FormControl>
+      <FormField
+        control={form.control}
+        name={`elements.${index}.field.label`}
+        render={({ field }) => (
+          <FormItem>
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.label}
+                {form.watch("elements")[index].field?.validations?.required ? (
+                  "*"
+                ) : (
+                  <span className="bg-muted px-2 py-1 rounded-md text-xs">
+                    Optional
+                  </span>
+                )}
+              </Label>
+              {form.watch("elements")[index].field?.hint && (
+                <Label className="text-sm text-muted-foreground font-light">
+                  {form.watch("elements")[index].field?.hint}
+                </Label>
+              )}
+
+              <Textarea
+                placeholder={
+                  form.watch("elements")[index].field?.placeholder || ""
+                }
+                readOnly
+                className="pointer-events-none resize-none min-h-[200px]"
+              />
+            </div>
+
             <FormMessage />
           </FormItem>
         )}
@@ -241,7 +300,7 @@ const NumberInputViewItem = ({
         name={`elements.${index}.field.label`}
         render={({ field }) => (
           <FormItem>
-            <div>
+       
               <div className="flex flex-col gap-1">
                 <Label className="flex items-center gap-1">
                   {form.watch("elements")[index].field?.label}
@@ -257,8 +316,7 @@ const NumberInputViewItem = ({
                 <Label className="text-sm text-muted-foreground font-light">
                   {form.watch("elements")[index].field?.hint}
                 </Label>
-              </div>
-              <Input
+                <Input
                 placeholder={
                   form.watch("elements")[index].field?.placeholder || ""
                 }
@@ -266,7 +324,8 @@ const NumberInputViewItem = ({
                 readOnly
                 className="pointer-events-none"
               />
-            </div>
+              </div>
+      
             <FormMessage />
           </FormItem>
         )}
@@ -403,9 +462,11 @@ const CheckboxInputViewItem = ({
                     onClick={() => handleClick(item)}
                   >
                     <div className="h-6">
-                      {!!checkedOptions.includes(item)  ?
-                        <SquareCheckBig className="h-6" /> :<Square className="h-6" />
-                      }
+                      {!!checkedOptions.includes(item) ? (
+                        <SquareCheckBig className="h-6" />
+                      ) : (
+                        <Square className="h-6" />
+                      )}
                     </div>
                     <FormLabel className="font-normal">
                       {item || `Option ${i + 1}`}
@@ -520,51 +581,55 @@ const ServiceViewItem = ({
     );
 };
 
-
-const Breaker = ({ index, form }: { index: number; form: Form })=>{
+const Breaker = ({ index, form }: { index: number; form: Form }) => {
   return (
     <div>
-          <FormControl>
-      <FormField
-        control={form.control}
-        name={`elements.${index}.field.label`}
-        render={({ field }) => (
-          <FormItem>
-            <div className="flex flex-col gap-2">
-              <Button className="w-fit px-8 py-2" disabled={true}>
-             {form.watch("elements")[index].field?.label || ""}
-              </Button>
-              { !!form.watch("elements")[index].field?.hint && <p className="text-sm text-muted-foreground">{form.watch("elements")[index].field?.hint}</p> }          
-            </div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </FormControl>
-
+      <FormControl>
+        <FormField
+          control={form.control}
+          name={`elements.${index}.field.label`}
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex flex-col gap-2">
+                <Button className="w-fit px-8 py-2" disabled={true}>
+                  {form.watch("elements")[index].field?.label || ""}
+                </Button>
+                {!!form.watch("elements")[index].field?.hint && (
+                  <p className="text-sm text-muted-foreground">
+                    {form.watch("elements")[index].field?.hint}
+                  </p>
+                )}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </FormControl>
     </div>
-  )
-}
+  );
+};
 
-const SectionBreaker = ({ index, form }: { index: number; form: Form })=>{
+const SectionBreaker = ({ index, form }: { index: number; form: Form }) => {
   return (
     <div>
-          <FormControl>
-      <FormField
-        control={form.control}
-        name={`elements.${index}.field.hint`}
-        render={({ field }) => (
-          <FormItem>
-            <div className="">
-            
-              { !!form.watch("elements")[index].field?.label && <p className="text-sm text-muted-foreground">{form.watch("elements")[index].field?.label}</p> }          
-            </div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </FormControl>
-
+      <FormControl>
+        <FormField
+          control={form.control}
+          name={`elements.${index}.field.hint`}
+          render={({ field }) => (
+            <FormItem>
+              <div className="">
+                {!!form.watch("elements")[index].field?.label && (
+                  <p className="text-sm text-muted-foreground">
+                    {form.watch("elements")[index].field?.label}
+                  </p>
+                )}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </FormControl>
     </div>
-  )
-}
+  );
+};

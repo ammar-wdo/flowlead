@@ -125,6 +125,7 @@ model Viewd {
 
 enum FieldType {
   text
+  longText
   number
   select
   radio

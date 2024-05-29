@@ -83,6 +83,7 @@ const FieldEditor = ({
     radio: <RadioGroupInputEditor form={form} />,
     select: <SelectInputEditor form={form} />,
     sectionBreaker: <SectionBreakEditor form={form} />,
+    longText:<LongTextInputEditor form={form} />
   };
 
   return <div>
@@ -91,6 +92,107 @@ const FieldEditor = ({
 };
 
 const TextInputEditor = ({
+  form,
+}: {
+  form: UseFormReturn<z.infer<typeof formSchema>>;
+}) => {
+  const { selectedElement } = useSelectedElement();
+  if (!selectedElement) return;
+
+  const element = form
+    .watch("elements")
+    .find((el) => el.id === selectedElement.id);
+
+  const elementIndex = form
+    .watch("elements")
+    .findIndex((el) => el.id === selectedElement.id);
+  const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
+  };
+  const handlePlaceholderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value);
+  };
+  const handleHintChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.hint`, e.target.value);
+  };
+
+  const handleRequired = () => {
+    form.setValue(
+      `elements.${elementIndex}.field.validations.required`,
+      !form.watch(`elements.${elementIndex}.field.validations.required`)
+    );
+  };
+
+  const maxLength = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(
+      `elements.${elementIndex}.field.validations.maxLength`,
+      +e.target.value
+    );
+  };
+  const minLength = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(
+      `elements.${elementIndex}.field.validations.minLength`,
+      +e.target.value
+    );
+  };
+  return (
+    <div className="space-y-3">
+      <div>
+        <Label>Label:</Label>
+        <Input
+          value={element?.field?.label}
+          onChange={(e) => handleLabelChange(e)}
+        />
+      </div>
+      <div>
+        <Label>Placeholder:</Label>
+        <Input
+          value={element?.field?.placeholder || ""}
+          onChange={(e) => handlePlaceholderChange(e)}
+        />
+      </div>
+      <div>
+        <Label>Hint:</Label>
+        <Input
+          value={element?.field?.hint || ""}
+          onChange={(e) => handleHintChange(e)}
+        />
+      </div>
+      <div className="flex items-center gap-1">
+        <Checkbox
+          id="required"
+          onCheckedChange={handleRequired}
+          checked={
+            !!form.watch(`elements.${elementIndex}.field.validations.required`)
+          }
+        />
+        <Label htmlFor="required">Is Required</Label>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label>Max Length:</Label>
+          <Input
+            min={1}
+            type="number"
+            value={element?.field?.validations?.maxLength || undefined}
+            onChange={(e) => maxLength(e)}
+          />
+        </div>
+        <div>
+          <Label>Min Length:</Label>
+          <Input
+            min={1}
+            type="number"
+            value={element?.field?.validations?.minLength || undefined}
+            onChange={(e) => minLength(e)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LongTextInputEditor = ({
   form,
 }: {
   form: UseFormReturn<z.infer<typeof formSchema>>;
