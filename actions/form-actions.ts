@@ -185,7 +185,7 @@ export const editForm = async (values: z.infer<typeof formSchema>, companySlug: 
 
 
 
-export const deleteForm = async (values: z.infer<typeof formSchema>, companySlug: string,formId:string) => {
+export const deleteForm = async ( companySlug: string,formSlug:string) => {
 
 
     try {
@@ -218,7 +218,7 @@ export const deleteForm = async (values: z.infer<typeof formSchema>, companySlug
 
         const updatedForm = await prisma.form.update({
             where:{
-                id:formId,
+                slug:formSlug,
                 userId,
                 accountId:account.id,
                 companyId:companyId.id,
@@ -233,7 +233,7 @@ export const deleteForm = async (values: z.infer<typeof formSchema>, companySlug
 
         await prisma.form.delete({
             where:{
-                id:formId,
+                slug:formSlug,
                 userId,
                 accountId:account.id,
                 companyId:companyId.id,

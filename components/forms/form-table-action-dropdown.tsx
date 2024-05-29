@@ -1,4 +1,6 @@
 'use client'
+
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,22 +15,23 @@ import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { useModal } from "@/hooks/modal-hook"
 import { deleteService } from "@/actions/service-actions"
+import { deleteForm } from "@/actions/form-actions"
 
 type Props = {
-    serviceId:string
+    formSlug:string
 }
 
 
 
-const TableActionsDropdown = ({serviceId}: Props) => {
+const FormTableActionDropdown = ({formSlug}: Props) => {
     const params = useParams()
 
-   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/services/${serviceId}`
+   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/forms/${formSlug}`
 
    const {setOpen} = useModal()
 
 const handleDeleteModalOpen = ()=>{
-setOpen({type:'delete',deleteFunction:()=>deleteService(params.companySlug as string,serviceId)})
+setOpen({type:'delete',deleteFunction:()=>deleteForm(params.companySlug as string,formSlug)})
   
 }
     
@@ -51,7 +54,7 @@ setOpen({type:'delete',deleteFunction:()=>deleteService(params.companySlug as st
   )
 }
 
-export default TableActionsDropdown
+export default FormTableActionDropdown
 
 
 

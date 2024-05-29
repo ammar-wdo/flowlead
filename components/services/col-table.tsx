@@ -3,7 +3,8 @@
 import { Service } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { Button } from "../ui/button"
-import TableActionsDropdown from "./table-actions-dropdown"
+import ServiceTableActionsDropdown from "./service-table-actions-dropdown"
+
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -37,7 +38,7 @@ export const columns: ColumnDef<PartialService>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell:({row})=><TableActionsDropdown serviceId={row.original.id}/>
+    cell:({row})=><ServiceTableActionsDropdown serviceId={row.original.id}/>
    
   },
 ]

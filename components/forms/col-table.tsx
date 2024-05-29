@@ -5,6 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Button } from "../ui/button"
 import Link from "next/link"
 import PushButton from "../push-button"
+import FormTableActionDropdown from "./form-table-action-dropdown"
 
 
 // This type is used to define the shape of our data.
@@ -40,7 +41,7 @@ export const formColums: ColumnDef<PartialForm>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell:({row})=><div></div>
+    cell:({row})=><FormTableActionDropdown formSlug={row.original.slug} />
    
   },
 ]
