@@ -26,14 +26,14 @@ model Account {
   image     String?
   companies Company[]
   services  Service[]
-  forms Form[]
+  forms     Form[]
 }
 
 model Company {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String   
+  userId    String
   slug      String   @unique
 
   name          String
@@ -44,7 +44,7 @@ model Company {
   websiteUrl    String?
   logo          String?
   phone         String
-  companyEmail  String @unique
+  companyEmail  String  @unique
   serviceEmail  String?
   cocNumber     String?
   industry      String?
@@ -56,7 +56,7 @@ model Company {
   qoutationSettings QoutesSettings
   invoiceSettings   InvoiceSettings
 
-  forms Form[]
+  forms    Form[]
   services Service[]
 
   accountId String  @db.ObjectId
@@ -67,21 +67,25 @@ model Form {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId  String
+  userId    String
 
   name        String
   description String?
-  slug        String @unique
+  slug        String  @unique
 
   isPublished Boolean @default(false)
   isWidjet    Boolean @default(false)
 
-  elements   Element[]
-  views    Viewd[]
-  services    String[] @db.ObjectId
+  elements Element[]
+rules       Rule[]
 
-  accountId String @db.ObjectId
-  account Account @relation(fields: [accountId],references: [id])
+  views    Viewd[]
+
+
+  services String[]  @db.ObjectId
+
+  accountId String  @db.ObjectId
+  account   Account @relation(fields: [accountId], references: [id])
 
   companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
@@ -95,19 +99,19 @@ model Service {
 
   name           String
   description    String?
-  pricingType   PricingType
+  pricingType    PricingType
   isRequired     Boolean     @default(false)
-  isLineItem   Boolean     @default(false)
-  taxPercentage Float
+  isLineItem     Boolean     @default(false)
+  taxPercentage  Float
   options        Option[]
   addToQoutation Boolean     @default(false)
 
-  accountId String @db.ObjectId
-  account Account @relation(fields: [accountId],references: [id])
+  accountId String  @db.ObjectId
+  account   Account @relation(fields: [accountId], references: [id])
 
- forms         String[] @db.ObjectId
+  forms String[] @db.ObjectId
 
-    companyId String  @db.ObjectId
+  companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 }
 
@@ -130,39 +134,84 @@ enum FieldType {
   radio
   checkbox
   address
+  phone
   breaker
   sectionBreaker
 }
 
-enum LogicOperator {
+enum LogicalOperator {
   AND
   OR
   NOT
 }
 
+enum Action {
+  SHOW
+  HIDE
+}
+
 enum ComparisonOperator {
-  EQ //Equals
-  NE //Not Equals
-  GT // Greater Than
-  LT //Less Than
-  GTE //Greater than or Equals
-  LTE //Less than or Equals
+  CONTAINS
+  EMPTY
+  NOT_EMPTY
+  IS
+  IS_NOT
+  EQ
+  NEQ
+  GT
+  LT
+  BEFORE
+  AFTER
 }
 
-type SimpleCondition {
-  fieldId    String?
-  operator   ComparisonOperator?
-  value      String?
+enum TextComparisonOperator {
+  CONTAINS
+  EMPTY
+  NOT_EMPTY
+  IS
 }
 
-type CompoundCondition {
-  logic      LogicOperator
-  conditions SimpleCondition[]
+enum NumberComparisonOperator {
+  EQ
+  NEQ
+  GT
+  LT
+  EMPTY
+  NOT_EMPTY
 }
 
-type ConditionalOptions {
-  logic      LogicOperator
-  conditions CompoundCondition[]
+enum ServiceAndMultipleComparisonOperator {
+  IS
+  IS_NOT
+  NOT_EMPTY
+  EMPTY
+}
+
+enum DateComparisonOperator {
+  BEFORE
+  AFTER
+}
+
+enum PhoneComparisonOperator {
+  EMPTY
+  NOT_EMPTY
+}
+
+type Rule {
+  conditions  Condition[]
+  then        Then
+}
+
+type Condition {
+  field           String
+  operator        ComparisonOperator
+  value           Json
+  logicalOperator LogicalOperator?
+}
+
+type Then {
+  field  String
+  action Action
 }
 
 type ValidationOptions {
@@ -180,25 +229,25 @@ enum ElementType {
 }
 
 type Element {
-  id String 
-  type ElementType
-field Field?
-service ServiceElement?
+  id      String
+  type    ElementType
+  field   Field?
+  service ServiceElement?
 }
 
 type Address {
-  addressLabel String?
-  addressShow  Boolean? @default(true)
-  houseNumberLabel String? 
+  addressLabel     String?
+  addressShow      Boolean? @default(true)
+  houseNumberLabel String?
   houseNumberShow  Boolean? @default(true)
-  postalCodeLabel String?
-  postalCodeShow Boolean? @default(true)
-  cityLabel String?
-  cityShow Boolean? @default(true)
+  postalCodeLabel  String?
+  postalCodeShow   Boolean? @default(true)
+  cityLabel        String?
+  cityShow         Boolean? @default(true)
   stateRegionLabel String?
-  stateRegionShow Boolean? @default(true)
-  countryLabel String?
-  countryShow Boolean? @default(true)
+  stateRegionShow  Boolean? @default(true)
+  countryLabel     String?
+  countryShow      Boolean? @default(true)
 }
 
 type Field {
@@ -210,22 +259,19 @@ type Field {
   options     String[]
   address     Address?
   validations ValidationOptions?
-  conditional ConditionalOptions?
 }
 
 type ServiceElement {
-id String
- name           String
+  id             String
+  name           String
   description    String?
-  pricingType   PricingType
+  pricingType    PricingType
   isRequired     Boolean     @default(false)
-  isLineItem   Boolean     @default(false)
-  taxPercentage Float
+  isLineItem     Boolean     @default(false)
+  taxPercentage  Float
   options        Option[]
   addToQoutation Boolean     @default(false)
 }
-
-
 
 type QoutesSettings {
   dueDays               Int    @default(14)
@@ -251,7 +297,7 @@ enum PricingType {
 }
 
 type Option {
-  id String 
+  id             String
   name           String
   description    String?
   image          String?

@@ -1,9 +1,4 @@
-import {
-  ComparisonOperator,
-  ElementType,
-  FieldType,
-  LogicOperator,
-} from "@prisma/client";
+import { Action, ComparisonOperator, ElementType, FieldType, LogicalOperator } from "@prisma/client";
 import { ReactNode } from "react";
 import * as z from "zod";
 import { IoIosAddCircle } from "react-icons/io";
@@ -13,8 +8,9 @@ import { IoCheckboxSharp } from "react-icons/io5";
 import { IoOptionsSharp } from "react-icons/io5";
 import { IoArrowDownCircle } from "react-icons/io5";
 import { BsFileBreakFill } from "react-icons/bs";
-import { Minus, NotepadText } from "lucide-react";
+import { Minus, NotepadText, Phone } from "lucide-react";
 import { FaAddressCard } from "react-icons/fa";
+import { MdLocalPhone } from "react-icons/md";
 
 const requiredString = z.string().min(1, "Required field");
 const optionalString = z.string().optional();
@@ -106,6 +102,7 @@ export const fieldTypeArray = [
   "radio",
   "checkbox",
   "address",
+  "phone",
   "breaker",
   "sectionBreaker",
 ];
@@ -118,6 +115,7 @@ export type FieldTypeMapper = [
   "radio",
   "checkbox",
   "address",
+  "phone",
   "breaker",
   "sectionBreaker"
 ][number];
@@ -130,6 +128,7 @@ export const fieldTypeEnum = [
   "radio",
   "checkbox",
   "address",
+  "phone",
   "breaker",
   "sectionBreaker",
 ] as const;
@@ -137,31 +136,75 @@ export const fieldTypeEnum = [
 export const logicOperatorArray = ["AND", "OR", "NOT"];
 export const logicOperatorEnum = ["AND", "OR", "NOT"] as const;
 
-export const comparisonOperatorArray = ["EQ", "NE", "GT", "LT", "GTE", "LTE"];
-export const comparisonOperatorEnum = [
+export const comparisonOperatorArray = [
+  "CONTAINS",
+  "EMPTY",
+  "NOT_EMPTY",
+  "IS",
+  "IS_NOT",
   "EQ",
-  "NE",
+  "NEQ",
   "GT",
   "LT",
-  "GTE",
-  "LTE",
+  "BEFORE",
+  "AFTER",
+];
+export const comparisonOperatorEnum = [
+  "CONTAINS",
+  "EMPTY",
+  "NOT_EMPTY",
+  "IS",
+  "IS_NOT",
+  "EQ",
+  "NEQ",
+  "GT",
+  "LT",
+  "BEFORE",
+  "AFTER",
 ] as const;
 
-const simpleConditionSchema = z.object({
-  fieldId: z.string().nullable().optional(),
-  operator: z.nativeEnum(ComparisonOperator).nullable().optional(),
-  value: z.string().nullable().optional(),
-});
+export const textComparisonOperatorArray = [
+  "CONTAINS",
+  "EMPTY",
+  "NOT_EMPTY",
+  "IS",
+];
 
-const compundConditionSchema = z.object({
-  logic: z.nativeEnum(LogicOperator),
-  conditions: z.array(simpleConditionSchema).optional(),
-});
+export const numberComparisonOperator = [
+  "EQ",
+  "NEQ",
+  "GT",
+  "LT",
+  "EMPTY",
+  "NOT_EMPTY",
+];
 
-const conditionalOptions = z.object({
-  logic: z.nativeEnum(LogicOperator),
-  conditions: z.array(compundConditionSchema),
-});
+export const serviceAndMultipleComparisonOperator = [
+  "IS",
+  "IS_NOT",
+  "NOT_EMPTY",
+  "EMPTY",
+];
+
+export const dateComparisonOperator = ["BEFORE", "AFTER"];
+
+export const phoneComparisonOperator = ["EMPTY", "NOT_EMPTY"];
+
+// const simpleConditionSchema = z.object({
+//   fieldId: z.string().nullable().optional(),
+//   operator: z.nativeEnum(ComparisonOperator).nullable().optional(),
+//   value: z.string().nullable().optional(),
+// });
+
+// const compundConditionSchema = z.object({
+//   logic: z.nativeEnum(LogicOperator),
+//   conditions: z.array(simpleConditionSchema).optional(),
+// });
+
+// const conditionalOptions = z.object({
+//   logic: z.nativeEnum(LogicOperator),
+//   conditions: z.array(compundConditionSchema),
+// });
 
 const validationOptionsSchema = z.object({
   required: z.boolean().nullable().optional(),
@@ -175,20 +218,23 @@ export type ElementTypeMapper = (typeof elementTypeEnum)[number];
 const elementTypeArray = ["FIELD", "SERVICE_ELEMENT"];
 const elementTypeEnum = ["FIELD", "SERVICE_ELEMENT"] as const;
 
-const addressSchema = z.object({
-  addressLabel: z.string().optional().nullable(),
-  addressShow: z.boolean().optional().nullable().default(true),
-  houseNumberLabel: z.string().optional().nullable(),
-  houseNumberShow: z.boolean().optional().nullable().default(true),
-  postalCodeLabel: z.string().optional().nullable(),
-  postalCodeShow: z.boolean().optional().nullable().default(true),
-  cityLabel: z.string().optional().nullable(),
-  cityShow: z.boolean().optional().nullable().default(true),
-  stateRegionLabel: z.string().optional().nullable(),
-  stateRegionShow: z.boolean().optional().nullable().default(true),
-  countryLabel: z.string().optional().nullable(),
-  countryShow: z.boolean().optional().nullable().default(true),
-}).optional().nullable();
+const addressSchema = z
+  .object({
+    addressLabel: z.string().optional().nullable(),
+    addressShow: z.boolean().optional().nullable().default(true),
+    houseNumberLabel: z.string().optional().nullable(),
+    houseNumberShow: z.boolean().optional().nullable().default(true),
+    postalCodeLabel: z.string().optional().nullable(),
+    postalCodeShow: z.boolean().optional().nullable().default(true),
+    cityLabel: z.string().optional().nullable(),
+    cityShow: z.boolean().optional().nullable().default(true),
+    stateRegionLabel: z.string().optional().nullable(),
+    stateRegionShow: z.boolean().optional().nullable().default(true),
+    countryLabel: z.string().optional().nullable(),
+    countryShow: z.boolean().optional().nullable().default(true),
+  })
+  .optional()
+  .nullable();
 
 const fieldSchema = z.object({
   id: requiredString,
@@ -199,7 +245,6 @@ const fieldSchema = z.object({
   options: z.array(requiredString),
   address: addressSchema.optional().nullable(),
   validations: validationOptionsSchema.nullable().optional(),
-  conditional: conditionalOptions.nullable().optional(),
 });
 
 export const elementSchema = z.object({
@@ -214,6 +259,23 @@ export const elementSchema = z.object({
     .optional(),
 });
 
+export const conditionSchema = z.object({
+  field: z.string(),
+  operator: z.nativeEnum(ComparisonOperator),
+  value: z.union([z.string(), z.number(), z.boolean()]), // Using z.union to accommodate various types of values
+  logicalOperator: z.nativeEnum(LogicalOperator).optional(),
+});
+
+const thenSchema = z.object({
+  field: z.string(),
+  action: z.nativeEnum(Action),
+});
+
+export const ruleSchema = z.object({
+  conditions: z.array(conditionSchema),
+  then: thenSchema,
+});
+
 export const formSchema = z
   .object({
     name: requiredString,
@@ -221,6 +283,7 @@ export const formSchema = z
     isPublished: z.boolean().default(false),
     isWidjet: z.boolean().default(false),
     elements: z.array(elementSchema).min(1, "At least one field or service"),
+    rules: z.array(ruleSchema).optional()
   })
   .refine(
     (data) => {
@@ -282,7 +345,7 @@ export const emptyTextFieldElement: ElementComponentType = {
     placeholder: "",
     options: [],
     type: "text",
-    conditional: null,
+
     validations: null,
   },
 };
@@ -302,7 +365,7 @@ export const emptyLongTextFieldElement: ElementComponentType = {
     placeholder: "",
     options: [],
     type: "longText",
-    conditional: null,
+
     validations: null,
   },
 };
@@ -323,7 +386,7 @@ export const emptyNumberFieldElement: ElementComponentType = {
     placeholder: "",
     options: [],
     type: "number",
-    conditional: null,
+
     validations: null,
   },
 };
@@ -343,7 +406,7 @@ export const emptyCheckBoxFieldElement: ElementComponentType = {
     placeholder: "",
     options: ["Option 1", "Option 2", "Option 3"],
     type: "checkbox",
-    conditional: null,
+
     validations: null,
   },
 };
@@ -364,7 +427,7 @@ export const emptyRadioFieldElement: ElementComponentType = {
     placeholder: "",
     options: ["Option 1", "Option 2", "Option 3"],
     type: "radio",
-    conditional: null,
+
     validations: null,
   },
 };
@@ -384,7 +447,27 @@ export const emptySelectElement: ElementComponentType = {
     placeholder: "",
     options: ["Option 1", "Option 2", "Option 3"],
     type: "select",
-    conditional: null,
+
+    validations: null,
+  },
+};
+export const emptyPhoneElement: ElementComponentType = {
+  id: "",
+  type: "FIELD",
+  component: (
+    <div className="flex items-center gap-2 text-[12px] ">
+      {" "}
+      <MdLocalPhone size={20} />
+      Phone
+    </div>
+  ),
+  field: {
+    id: "",
+    label: "Phone",
+    placeholder: "",
+    options: [],
+    type: "phone",
+
     validations: null,
   },
 };
@@ -400,25 +483,25 @@ export const emptyAddressElement: ElementComponentType = {
   ),
   field: {
     id: "",
-    label: "Address",
+    label: "Add Address",
     placeholder: "",
     options: [],
     type: "address",
-    address:{
-      addressLabel:"Address",
-      addressShow:true,
-      houseNumberLabel:"House Number",
-      houseNumberShow:true,
-      postalCodeLabel:"Postal Code",
-      postalCodeShow:true,
-      cityLabel:"City",
-      cityShow:true,
-      stateRegionLabel:"State/Region",
-      stateRegionShow:true,
-      countryLabel:"Country",
-      countryShow:true
+    address: {
+      addressLabel: "Address",
+      addressShow: true,
+      houseNumberLabel: "House Number",
+      houseNumberShow: true,
+      postalCodeLabel: "Postal Code",
+      postalCodeShow: true,
+      cityLabel: "City",
+      cityShow: true,
+      stateRegionLabel: "State/Region",
+      stateRegionShow: true,
+      countryLabel: "Country",
+      countryShow: true,
     },
-    conditional: null,
+
     validations: null,
   },
 };
@@ -438,7 +521,7 @@ export const emptyBreakerElement: ElementComponentType = {
     placeholder: "",
     options: [],
     type: "breaker",
-    conditional: null,
+
     validations: null,
   },
 };
@@ -458,7 +541,7 @@ export const emptySectionBreakerElement: ElementComponentType = {
     placeholder: "",
     options: [],
     type: "sectionBreaker",
-    conditional: null,
+
     validations: null,
   },
 };
@@ -470,7 +553,7 @@ export const controllerElements = [
   },
   {
     section: "Client Profile",
-    elements: [emptyAddressElement],
+    elements: [emptyAddressElement, emptyPhoneElement],
   },
   {
     section: "Form Fields",

@@ -86,6 +86,7 @@ const FieldEditor = ({
     sectionBreaker: <SectionBreakEditor form={form} />,
     longText: <LongTextInputEditor form={form} />,
     address: <AddressInputEditor form={form} />,
+    phone: <PhoneInputEditor form={form} />,
   };
 
   return <div>{componentsEditorMapper[element?.type!]}</div>;
@@ -1117,13 +1118,84 @@ function AddressControlItem({
   return (
     <div className="grid grid-cols-2 items-center gap-2 mb-2">
       <div className="flex items-center gap-2">
-        <Switch checked={showValue} onCheckedChange={(value)=>showChange(value)} /> <span>{label}</span>
+        <Switch id={label}   checked={showValue} onCheckedChange={(value)=>showChange(value)} /> <Label htmlFor={label}>{label}</Label>
       </div>
       <Input
         placeholder={label}
-        value={value}
+        value={value || label}
         onChange={(e) => onChange(e.target.value)}
       />
     </div>
   );
 }
+
+const PhoneInputEditor = ({
+  form,
+}: {
+  form: UseFormReturn<z.infer<typeof formSchema>>;
+}) => {
+  const { selectedElement } = useSelectedElement();
+  if (!selectedElement) return;
+
+  const element = form
+    .watch("elements")
+    .find((el) => el.id === selectedElement.id);
+
+  const elementIndex = form
+    .watch("elements")
+    .findIndex((el) => el.id === selectedElement.id);
+
+  const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.label`, e.target.value);
+  };
+  const handlePlaceholderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value);
+  };
+  const handleHintChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.hint`, e.target.value);
+  };
+
+  const handleRequired = () => {
+    form.setValue(
+      `elements.${elementIndex}.field.validations.required`,
+      !form.watch(`elements.${elementIndex}.field.validations.required`)
+    );
+  };
+
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <Label>Label:</Label>
+        <Input
+          value={element?.field?.label}
+          onChange={(e) => handleLabelChange(e)}
+        />
+      </div>
+      <div>
+        <Label>Placeholder:</Label>
+        <Input
+          value={element?.field?.placeholder || ""}
+          onChange={(e) => handlePlaceholderChange(e)}
+        />
+      </div>
+      <div>
+        <Label>Hint:</Label>
+        <Input
+          value={element?.field?.hint || ""}
+          onChange={(e) => handleHintChange(e)}
+        />
+      </div>
+      <div className="flex items-center gap-1">
+        <Checkbox
+          id="required"
+          onCheckedChange={handleRequired}
+          checked={
+            !!form.watch(`elements.${elementIndex}.field.validations.required`)
+          }
+        />
+        <Label htmlFor="required">Is Required</Label>
+      </div>
+    </div>
+  );
+};

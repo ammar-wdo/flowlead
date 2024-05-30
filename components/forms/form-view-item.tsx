@@ -191,6 +191,9 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
               {!!(
                 element.type === "FIELD" && element.field?.type === "address"
               ) && <AddressInputViewItem form={form} index={i} />}
+              {!!(
+                element.type === "FIELD" && element.field?.type === "phone"
+              ) && <PhoneInputViewItem form={form} index={i} />}
             </FormItem>
           )}
         />
@@ -666,7 +669,7 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
 
               {/* address fields */}
 
-              <div className="flex items-center gap-8  flex-wrap">
+              <div className="flex items-center gap-8  flex-wrap mt-6">
               {form.watch(`elements.${index}.field.address.addressShow`) && <FormField
         control={form.control}
         name={`elements.${index}.field.address.addressLabel`}
@@ -822,6 +825,54 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
             
             </div>
 
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormControl>
+  );
+};
+
+const PhoneInputViewItem = ({
+  index,
+  form,
+}: {
+  index: number;
+  form: Form;
+}) => {
+  return (
+    <FormControl>
+      <FormField
+        control={form.control}
+        name={`elements.${index}.field.label`}
+        render={({ field }) => (
+          <FormItem>
+       
+              <div className="flex flex-col gap-1">
+                <Label className="flex items-center gap-1">
+                  {form.watch("elements")[index].field?.label}
+                  {form.watch("elements")[index].field?.validations
+                    ?.required ? (
+                    "*"
+                  ) : (
+                    <span className="bg-muted px-2 py-1 rounded-md text-xs">
+                      Optional
+                    </span>
+                  )}
+                </Label>
+                <Label className="text-sm text-muted-foreground font-light">
+                  {form.watch("elements")[index].field?.hint}
+                </Label>
+                <Input
+                placeholder={
+                  form.watch("elements")[index].field?.placeholder || ""
+                }
+                type="number"
+                readOnly
+                className="pointer-events-none"
+              />
+              </div>
+      
             <FormMessage />
           </FormItem>
         )}

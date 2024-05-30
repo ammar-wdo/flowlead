@@ -23,5 +23,6 @@ export const inputsLabelsMap : {[key in FieldTypeMapper]:string} ={
     number:"Number Input",
     address:"Address",
     sectionBreaker:"Section Break",
-    longText:"Long Text"
+    longText:"Long Text",
+    phone:"Phone"
 }
