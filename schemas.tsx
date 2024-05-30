@@ -14,6 +14,7 @@ import { IoOptionsSharp } from "react-icons/io5";
 import { IoArrowDownCircle } from "react-icons/io5";
 import { BsFileBreakFill } from "react-icons/bs";
 import { Minus, NotepadText } from "lucide-react";
+import { FaAddressCard } from "react-icons/fa";
 
 const requiredString = z.string().min(1, "Required field");
 const optionalString = z.string().optional();
@@ -104,6 +105,7 @@ export const fieldTypeArray = [
   "select",
   "radio",
   "checkbox",
+  "address",
   "breaker",
   "sectionBreaker",
 ];
@@ -115,6 +117,7 @@ export type FieldTypeMapper = [
   "select",
   "radio",
   "checkbox",
+  "address",
   "breaker",
   "sectionBreaker"
 ][number];
@@ -126,6 +129,7 @@ export const fieldTypeEnum = [
   "select",
   "radio",
   "checkbox",
+  "address",
   "breaker",
   "sectionBreaker",
 ] as const;
@@ -171,6 +175,21 @@ export type ElementTypeMapper = (typeof elementTypeEnum)[number];
 const elementTypeArray = ["FIELD", "SERVICE_ELEMENT"];
 const elementTypeEnum = ["FIELD", "SERVICE_ELEMENT"] as const;
 
+const addressSchema = z.object({
+  addressLabel: z.string().optional().nullable(),
+  addressShow: z.boolean().optional().nullable().default(true),
+  houseNumberLabel: z.string().optional().nullable(),
+  houseNumberShow: z.boolean().optional().nullable().default(true),
+  postalCodeLabel: z.string().optional().nullable(),
+  postalCodeShow: z.boolean().optional().nullable().default(true),
+  cityLabel: z.string().optional().nullable(),
+  cityShow: z.boolean().optional().nullable().default(true),
+  stateRegionLabel: z.string().optional().nullable(),
+  stateRegionShow: z.boolean().optional().nullable().default(true),
+  countryLabel: z.string().optional().nullable(),
+  countryShow: z.boolean().optional().nullable().default(true),
+}).optional().nullable();
+
 const fieldSchema = z.object({
   id: requiredString,
   label: requiredString,
@@ -178,6 +197,7 @@ const fieldSchema = z.object({
   hint: optionalString.nullable().optional(),
   type: z.nativeEnum(FieldType),
   options: z.array(requiredString),
+  address: addressSchema.optional().nullable(),
   validations: validationOptionsSchema.nullable().optional(),
   conditional: conditionalOptions.nullable().optional(),
 });
@@ -368,6 +388,40 @@ export const emptySelectElement: ElementComponentType = {
     validations: null,
   },
 };
+export const emptyAddressElement: ElementComponentType = {
+  id: "",
+  type: "FIELD",
+  component: (
+    <div className="flex items-center gap-2 text-[12px] ">
+      {" "}
+      <FaAddressCard size={20} />
+      Address
+    </div>
+  ),
+  field: {
+    id: "",
+    label: "Address",
+    placeholder: "",
+    options: [],
+    type: "address",
+    address:{
+      addressLabel:"Address",
+      addressShow:true,
+      houseNumberLabel:"House Number",
+      houseNumberShow:true,
+      postalCodeLabel:"Postal Code",
+      postalCodeShow:true,
+      cityLabel:"City",
+      cityShow:true,
+      stateRegionLabel:"State/Region",
+      stateRegionShow:true,
+      countryLabel:"Country",
+      countryShow:true
+    },
+    conditional: null,
+    validations: null,
+  },
+};
 export const emptyBreakerElement: ElementComponentType = {
   id: "",
   type: "FIELD",
@@ -413,6 +467,10 @@ export const controllerElements = [
   {
     section: "Service Selection",
     elements: [emptyServiceElement],
+  },
+  {
+    section: "Client Profile",
+    elements: [emptyAddressElement],
   },
   {
     section: "Form Fields",

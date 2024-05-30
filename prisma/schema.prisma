@@ -129,6 +129,7 @@ enum FieldType {
   select
   radio
   checkbox
+  address
   breaker
   sectionBreaker
 }
@@ -185,6 +186,21 @@ field Field?
 service ServiceElement?
 }
 
+type Address {
+  addressLabel String?
+  addressShow  Boolean? @default(true)
+  houseNumberLabel String? 
+  houseNumberShow  Boolean? @default(true)
+  postalCodeLabel String?
+  postalCodeShow Boolean? @default(true)
+  cityLabel String?
+  cityShow Boolean? @default(true)
+  stateRegionLabel String?
+  stateRegionShow Boolean? @default(true)
+  countryLabel String?
+  countryShow Boolean? @default(true)
+}
+
 type Field {
   id          String
   label       String
@@ -192,6 +208,7 @@ type Field {
   hint        String?
   type        FieldType
   options     String[]
+  address     Address?
   validations ValidationOptions?
   conditional ConditionalOptions?
 }

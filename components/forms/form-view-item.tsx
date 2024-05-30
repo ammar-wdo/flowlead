@@ -188,6 +188,9 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
               {!!(
                 element.type === "FIELD" && element.field?.type === "longText"
               ) && <LongTextInputViewItem form={form} index={i} />}
+              {!!(
+                element.type === "FIELD" && element.field?.type === "address"
+              ) && <AddressInputViewItem form={form} index={i} />}
             </FormItem>
           )}
         />
@@ -631,5 +634,198 @@ const SectionBreaker = ({ index, form }: { index: number; form: Form }) => {
         />
       </FormControl>
     </div>
+  );
+};
+
+const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) => {
+  return (
+    <FormControl>
+      {/* address meta data */}
+      <FormField
+        control={form.control}
+        name={`elements.${index}.field.label`}
+        render={({ field }) => (
+          <FormItem>
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.label}
+                {form.watch("elements")[index].field?.validations?.required ? (
+                  "*"
+                ) : (
+                  <span className="bg-muted px-2 py-1 rounded-md text-xs">
+                    Optional
+                  </span>
+                )}
+              </Label>
+              {form.watch("elements")[index].field?.hint && (
+                <Label className="text-sm text-muted-foreground font-light ">
+                  {form.watch("elements")[index].field?.hint}
+                </Label>
+              )}
+           
+
+              {/* address fields */}
+
+              <div className="flex items-center gap-8  flex-wrap">
+              {form.watch(`elements.${index}.field.address.addressShow`) && <FormField
+        control={form.control}
+        name={`elements.${index}.field.address.addressLabel`}
+        render={({ field }) => (
+          <FormItem className="min-w-[60%] flex-1 ">
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.address?.addressLabel}
+               
+              </Label>
+              
+              <Input
+                placeholder={
+                  form.watch("elements")[index].field?.address?.addressLabel || ""
+                }
+                readOnly
+                className="pointer-events-none"
+              />
+              
+            </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />}
+        {form.watch(`elements.${index}.field.address.houseNumberShow`) && <FormField
+        control={form.control}
+        name={`elements.${index}.field.address.houseNumberLabel`}
+        render={({ field }) => (
+          <FormItem className="flex-1 min-w-[25%]">
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.address?.houseNumberLabel}
+               
+              </Label>
+             
+              <Input
+                placeholder={
+                  form.watch("elements")[index].field?.address?.houseNumberLabel || ""
+                }
+                readOnly
+                className="pointer-events-none"
+              />
+              
+            </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />}
+       {form.watch(`elements.${index}.field.address.postalCodeShow`) && <FormField
+        control={form.control}
+        name={`elements.${index}.field.address.postalCodeLabel`}
+        render={({ field }) => (
+          <FormItem className=" flex-1 min-w-[40%]">
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.address?.postalCodeLabel}
+               
+              </Label>
+              
+              <Input
+                placeholder={
+                  form.watch("elements")[index].field?.address?.postalCodeLabel || ""
+                }
+                readOnly
+                className="pointer-events-none"
+              />
+              
+            </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />}
+        {form.watch(`elements.${index}.field.address.cityShow`) && <FormField
+        control={form.control}
+        name={`elements.${index}.field.address.cityLabel`}
+        render={({ field }) => (
+          <FormItem className=" flex-1 min-w-[40%]">
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.address?.cityLabel}
+               
+              </Label>
+              
+              <Input
+                placeholder={
+                  form.watch("elements")[index].field?.address?.cityLabel || ""
+                }
+                readOnly
+                className="pointer-events-none"
+              />
+              
+            </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />}
+        {form.watch(`elements.${index}.field.address.stateRegionShow`) && <FormField
+        control={form.control}
+        name={`elements.${index}.field.address.stateRegionLabel`}
+        render={({ field }) => (
+          <FormItem className=" flex-1 min-w-[40%]">
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.address?.stateRegionLabel}
+               
+              </Label>
+              
+              <Input
+                placeholder={
+                  form.watch("elements")[index].field?.address?.stateRegionLabel || ""
+                }
+                readOnly
+                className="pointer-events-none"
+              />
+              
+            </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />}
+        {form.watch(`elements.${index}.field.address.countryShow`) && <FormField
+        control={form.control}
+        name={`elements.${index}.field.address.countryLabel`}
+        render={({ field }) => (
+          <FormItem className=" flex-1 min-w-[40%]">
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.address?.countryLabel}
+               
+              </Label>
+              
+              <Input
+                placeholder={
+                  form.watch("elements")[index].field?.address?.countryLabel || ""
+                }
+                readOnly
+                className="pointer-events-none"
+              />
+              
+            </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />}
+              </div>
+           
+            
+            </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormControl>
   );
 };
