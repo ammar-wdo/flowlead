@@ -128,7 +128,8 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
                           className={cn("p-6 hover:bg-muted/60 transition rounded-md relative group/two", )}
                           key={el.id}
                         >
-                           <Button
+                          { form
+                      .watch(`rules.${i}.conditions`).length > 1 && <Button
                     onClick={() => handleDeleteCondition(i,el.id)}
                     type="button"
                     variant={"ghost"}
@@ -138,7 +139,7 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
              text-gray-300 hover:shadow-lg flex items-center justify-center w-5 h-5  p-0.5"
                   >
                     <XIcon />
-                  </Button>
+                  </Button>}
                           <FormField
                             control={form.control}
                             name={`rules.${i}.conditions.${conditionsIndex}.field`}
@@ -311,6 +312,7 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
                                     <SelectContent>
                                       {logicOperatorEnum.map((operator) => (
                                         <SelectItem
+                                        key={operator}
                                           className="cursor-pointer"
                                           value={operator}
                                         >
