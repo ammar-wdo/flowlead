@@ -135,6 +135,7 @@ export const fieldTypeEnum = [
 
 export const logicOperatorArray = ["AND", "OR", "NOT"];
 export const logicOperatorEnum = ["AND", "OR", "NOT"] as const;
+export type  LogicalOperatorType = typeof logicOperatorArray[number]
 
 export const comparisonOperatorArray = [
   "CONTAINS",
@@ -149,6 +150,11 @@ export const comparisonOperatorArray = [
   "BEFORE",
   "AFTER",
 ];
+
+
+
+
+
 export const comparisonOperatorEnum = [
   "CONTAINS",
   "EMPTY",
@@ -162,13 +168,14 @@ export const comparisonOperatorEnum = [
   "BEFORE",
   "AFTER",
 ] as const;
+export type ComparisonOperatorType = typeof comparisonOperatorEnum[number]
 
 export const textComparisonOperatorArray = [
   "CONTAINS",
   "EMPTY",
   "NOT_EMPTY",
   "IS",
-];
+] as const ;
 
 export const numberComparisonOperator = [
   "EQ",
@@ -177,34 +184,22 @@ export const numberComparisonOperator = [
   "LT",
   "EMPTY",
   "NOT_EMPTY",
-];
+] as const;
 
 export const serviceAndMultipleComparisonOperator = [
   "IS",
   "IS_NOT",
   "NOT_EMPTY",
   "EMPTY",
-];
+] as const;
 
-export const dateComparisonOperator = ["BEFORE", "AFTER"];
+export const dateComparisonOperator = ["BEFORE", "AFTER"] as const;
 
-export const phoneComparisonOperator = ["EMPTY", "NOT_EMPTY"];
+export const phoneComparisonOperator = ["EMPTY", "NOT_EMPTY"] as const;
 
-// const simpleConditionSchema = z.object({
-//   fieldId: z.string().nullable().optional(),
-//   operator: z.nativeEnum(ComparisonOperator).nullable().optional(),
-//   value: z.string().nullable().optional(),
-// });
+export const rulesActionArray = ["SHOW","HIDE"]
 
-// const compundConditionSchema = z.object({
-//   logic: z.nativeEnum(LogicOperator),
-//   conditions: z.array(simpleConditionSchema).optional(),
-// });
 
-// const conditionalOptions = z.object({
-//   logic: z.nativeEnum(LogicOperator),
-//   conditions: z.array(compundConditionSchema),
-// });
 
 const validationOptionsSchema = z.object({
   required: z.boolean().nullable().optional(),
@@ -260,18 +255,20 @@ export const elementSchema = z.object({
 });
 
 export const conditionSchema = z.object({
-  field: z.string(),
+  id:requiredString,
+  field:requiredString,
   operator: z.nativeEnum(ComparisonOperator),
-  value: z.union([z.string(), z.number(), z.boolean()]), // Using z.union to accommodate various types of values
-  logicalOperator: z.nativeEnum(LogicalOperator).optional(),
-});
+  value:optionalString, // Using z.union to accommodate various types of values
+  logicalOperator: z.nativeEnum(LogicalOperator).nullable().optional(),
+}).refine(data=>((data.operator==='NOT_EMPTY' || data.operator==='EMPTY') ) || data.value,{message:"Required",path:['value']});
 
 const thenSchema = z.object({
-  field: z.string(),
+  field: requiredString,
   action: z.nativeEnum(Action),
 });
 
 export const ruleSchema = z.object({
+  id:requiredString,
   conditions: z.array(conditionSchema),
   then: thenSchema,
 });

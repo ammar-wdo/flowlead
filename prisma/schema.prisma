@@ -198,14 +198,16 @@ enum PhoneComparisonOperator {
 }
 
 type Rule {
+  id  String
   conditions  Condition[]
   then        Then
 }
 
 type Condition {
+   id  String
   field           String
   operator        ComparisonOperator
-  value           Json
+  value           String?
   logicalOperator LogicalOperator?
 }
 

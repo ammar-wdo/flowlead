@@ -1,4 +1,4 @@
-import { formSchema } from "@/schemas"
+import { formSchema, ruleSchema } from "@/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -6,7 +6,7 @@ import { z } from "zod"
 import { toast } from "sonner"
 import { useParams, useRouter } from "next/navigation"
 import { useModal } from "./modal-hook"
-import { Form } from "@prisma/client"
+import { Form, Rule } from "@prisma/client"
 import { addForm, editForm } from "@/actions/form-actions"
 import { useSelectedElement } from "./selected-element-hook"
 import { useEffect } from "react"
@@ -22,7 +22,8 @@ export const useFormElements = (fetchedForm:Form | undefined | null) => {
      description:fetchedForm?.description || "",
      isPublished:fetchedForm?.isPublished || false,
      isWidjet:fetchedForm?.isWidjet || false,
-     elements:fetchedForm?.elements || []
+     elements:fetchedForm?.elements || [],
+     rules:fetchedForm?.rules  as unknown as z.infer<typeof ruleSchema>[]
     },
   })
 

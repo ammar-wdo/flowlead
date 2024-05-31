@@ -8,6 +8,8 @@ import FieldsComponent from './fields-component'
 import RulesComponent from './rules-compoent'
 import { useFormElements } from '@/hooks/form-elements-hook'
 import { useSelectedElement } from '@/hooks/selected-element-hook'
+import { z } from 'zod'
+import { formSchema } from '@/schemas'
 
 type Props = {
   fetchedForm: Form | null | undefined
@@ -29,7 +31,7 @@ const FormRuleWrapper = ({ fetchedForm ,services}: Props) => {
       </div>
       {/* form rules components */}
       <div className='mt-4'>
-        {activeComponent === 'fields' ? <FieldsComponent fetchedForm={fetchedForm} services={services} onSubmit={onSubmit} form={form}  /> : <RulesComponent form={form} fetchedForm={fetchedForm} />}
+        {activeComponent === 'fields' ? <FieldsComponent fetchedForm={fetchedForm} services={services} onSubmit={onSubmit} form={form}  /> : <RulesComponent onSubmit={(values:z.infer<typeof formSchema>)=>onSubmit(values)} form={form} fetchedForm={fetchedForm} />}
       </div>
 
 

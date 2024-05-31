@@ -180,6 +180,7 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
                               </span>
                             )}
                              {!!form.formState.errors.elements && form.watch('elements').some(el=>(!!el.service && !el.service?.id)) && <span className='text-rose-500 mt-12 block'>Please choose service</span>}
+                             {!!form.formState.errors.rules && form.watch('rules')?.some(el=>((el.conditions.some(el=>!el.field || !el.value)|| !el.then.field))) && <span className='text-rose-500 mt-12 block'>Please Enter Valid Rules Inputs</span>}
                              {!!(form.formState.errors.elements && hasDuplicateLabels)  && (
         <span className='text-rose-500 mt-12 block'>Fields must have unique labels</span>
       )}
