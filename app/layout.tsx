@@ -32,7 +32,7 @@ export default function RootLayout({
       <EdgeStoreProvider>{children}
       <ModalsProvider/>
       </EdgeStoreProvider>
-      <Toaster richColors/>
+      <Toaster position="top-center" richColors/>
         </body>
    
     </html>

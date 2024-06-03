@@ -1,18 +1,21 @@
-import FormRuleWrapper from '@/components/forms/form-rules-wrapper'
-import Heading from '@/components/heading'
+import FormPreview from '@/components/forms/form-preview'
 import { CustomError } from '@/custom-error'
 import prisma from '@/lib/prisma'
+import { generateZodSchema } from '@/lib/utils'
 import { auth } from '@clerk/nextjs/server'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
 type Props = {
-  params:{formSlug:string,companySlug:string}
+  params:{formSlug:string
+    companySlug:string
+  }
 }
 
 const page = async({params:{formSlug,companySlug}}: Props) => {
 
-const {userId} = auth()
+
+  const {userId} = auth()
 if(!userId) throw new CustomError("Unauthorized")
 
 
@@ -27,29 +30,12 @@ if(!userId) throw new CustomError("Unauthorized")
       }
     })
 
-    if(!form  &&  formSlug !=='new') return notFound()
-
-    const services = await prisma.service.findMany({
-      where:{
-        userId
-      }
-    })
-
-
-
-
-
-
-
+    if(!form) return notFound()
 
   return (
     <div>
-      <Heading title={form ? `Update ${form.name}` : "Create New Form"}/>
-
-      <div className='mt-12'>
-        <FormRuleWrapper fetchedForm={form} services={services}/>
-      </div>
-    </div>
+  <FormPreview form={form}/>
+  </div>
   )
 }
 

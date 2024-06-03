@@ -17,7 +17,7 @@ const FormItemWrapper = ({elementComponent,form}: Props) => {
         element.id = uuidv4()
         const elements = form.getValues('elements');
      if(element.type==='FIELD' && element.field) {
-      element.field.id = String(Date.now())
+      element.field.id = uuidv4()
      }
         form.setValue('elements',[...elements,element])
     }
