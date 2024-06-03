@@ -39,6 +39,7 @@ import {
 import Scroller from "../scroller";
 import { useSelectedElement } from "@/hooks/selected-element-hook";
 import FormRightController from "./form-right-editor";
+import { toast } from "sonner";
 
 type Props = {
 
@@ -57,15 +58,38 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
 
   const handleDelete = (id: string, e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+  
+    // Update elements
     const newOptions = form.watch("elements");
-    const filteredOptions = newOptions.filter((el, i) => el.id !== id);
+    const filteredOptions = newOptions.filter((el) => el.id !== id);
     form.setValue("elements", filteredOptions);
     previousVar.current--;
-
+  
+    // Update selected element if necessary
     if (selectedElement && id === selectedElement.id) {
       setSelectedElementNull();
     }
-  };
+  
+    // Update rules and check if any rule is deleted
+    const rules = form.watch("rules") || [];
+    let ruleDeleted = false;
+    const filteredRules = rules.filter((rule) => {
+      const conditionsContainElement = rule.conditions.some(
+        (condition) => condition.field === id
+      );
+      const thenContainsElement = rule.then.field === id;
+      if (conditionsContainElement || thenContainsElement) {
+        ruleDeleted = true;
+      }
+      return !(conditionsContainElement || thenContainsElement);
+    });
+    form.setValue("rules", filteredRules);
+  
+    // Show toast notification if a rule is deleted
+    if (ruleDeleted) {
+      toast.success("A rule that contains this element has been also deleted");
+    }
+  }
   const isLoading = form.formState.isSubmitting;
 
   const handleDragEnd = (event: DragEndEvent) => {

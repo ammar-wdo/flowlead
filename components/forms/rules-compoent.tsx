@@ -146,7 +146,7 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
                             render={({ field }) => (
                               <FormItem className="">
                                 <Select
-                                  onValueChange={field.onChange}
+                                  onValueChange={(val=>{field.onChange(val);form.setValue(`rules.${i}.conditions.${conditionsIndex}.value`,'')})}
                                   defaultValue={field.value}
                                 >
                                   <FormControl>
@@ -528,7 +528,7 @@ const renderValueComponent = (
   }
 
   if (showTextInput) {
-    return <Input placeholder="Enter value" {...field} />;
+    return <Input  placeholder="Enter value" {...field} />;
   }
 
   return null;
