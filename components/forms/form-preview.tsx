@@ -238,7 +238,7 @@ const FormPreview = ({ form }: Props) => {
                       {serviceElement.pricingType === "SINGLE_PRICE" ? (
                         <FormItem
                           className={cn(
-                            "grid grid-cols-2 gap-3 rounded-lg border bg-white p-4 ",
+                            "grid grid-cols-2 gap-3 rounded-lg border bg-white p-4 max-w-[400px]",
                             !!(
                               field.value?.id === serviceElement.options[0].id
                             ) && "border-second "
@@ -413,7 +413,7 @@ None
                        { field.value &&   <FormItem
                         
                                 className={cn(
-                                  "grid grid-cols-2 gap-3 rounded-lg border bg-white p-4 mt-8 max-w-[400px]"
+                                  "grid grid-cols-2 gap-3 rounded-lg border bg-white p-4 mt-2 max-w-[400px]"
                                 )}
                               
                               >
