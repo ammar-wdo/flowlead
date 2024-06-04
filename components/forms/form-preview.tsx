@@ -71,6 +71,7 @@ const FormPreview = ({ form }: Props) => {
             return (
               <FormField
                 control={formPreview.control}
+                key={element.id}
                 name={serviceElement.name}
                 render={({ field }) => (
                   <FormItem>
