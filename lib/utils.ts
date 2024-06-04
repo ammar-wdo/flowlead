@@ -146,21 +146,34 @@ export const generateSingleFieldSchema = (
   // Initialize schema based on field type and apply validations
   switch (field.type) {
     case "number":
-    case "phone":
-      fieldSchema = z.coerce.number({ message: "Please Enter Valid Number" });
-      if (field.validations) {
-        const { min, max } = field.validations;
-        if (isRequired) fieldSchema = fieldSchema.min(1, "Required");
-        if (min)
-          fieldSchema = fieldSchema.gte(min, {
-            message: `Value should be greater than or equal to ${min}`,
-          });
-        if (max)
-          fieldSchema = fieldSchema.lte(max, {
-            message: `Value should be less than or equal to ${max}`,
-          });
-      }
-      break;
+      case "phone":
+        fieldSchema = z
+          .string()
+          .refine(val => !val || !isNaN(Number(val)), { message: "Please enter a valid number" })
+          .transform(val => (val ? Number(val) : undefined));
+        
+        if (field.validations) {
+          const { min, max, required } = field.validations;
+  
+          if (min)
+            fieldSchema = fieldSchema.refine(val => val === undefined || val >= min, {
+              message: `Value should be greater than or equal to ${min}`,
+            });
+  
+          if (max)
+            fieldSchema = fieldSchema.refine(val => val === undefined || val <= max, {
+              message: `Value should be less than or equal to ${max}`,
+            });
+  
+          if (isRequired) {
+            fieldSchema = fieldSchema.refine(val => val !== undefined, {
+              message: "Required",
+            });
+          } else {
+            fieldSchema = fieldSchema.optional();
+          }
+        }
+        break;
 
     case "text":
     case "radio":
@@ -179,9 +192,9 @@ export const generateSingleFieldSchema = (
       break;
 
     case "checkbox":
-      fieldSchema = z.array(z.string());
+      fieldSchema = z.array(z.string()).optional();
       if (field.validations && isRequired)
-        fieldSchema = fieldSchema.min(1, "Choose at lest one option");
+        fieldSchema = z.array(z.string()).min(1, "Choose at lest one option");
       break;
 
     default:
@@ -231,10 +244,10 @@ const evaluateCondition = (
   switch (operator) {
     case "CONTAINS":
       return fieldValue.includes(value);
-    case "EMPTY":
-      return fieldValue.length === 0;
-    case "NOT_EMPTY":
-      return fieldValue.length > 0;
+      case 'EMPTY':
+        return !fieldValue || fieldValue.length === 0;
+      case 'NOT_EMPTY':
+        return !!fieldValue && fieldValue.length > 0;
     case "IS":
       return fieldValue === value;
     case "IS_NOT":
@@ -256,7 +269,7 @@ const evaluateCondition = (
   }
 };
 
-const isFieldVisible = (
+export const isFieldVisible = (
   fieldId: string,
   rules: Rule[],
   elements: Element[],

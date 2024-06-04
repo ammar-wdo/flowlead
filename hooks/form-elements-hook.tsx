@@ -47,7 +47,7 @@ const params = useParams<{companySlug:string}>()
 
       if (!res.success) return toast.error(res.error)
       toast.success(res.message)
-    router.push(`/dashboard/${params.companySlug}/forms`)
+  
     router.refresh()
  
 

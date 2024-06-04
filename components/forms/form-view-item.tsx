@@ -217,9 +217,7 @@ const TextInputViewItem = ({ index, form }: { index: number; form: Form }) => {
                 {form.watch("elements")[index].field?.validations?.required ? (
                   "*"
                 ) : (
-                  <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                    Optional
-                  </span>
+                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
                 )}
               </Label>
               {form.watch("elements")[index].field?.hint && (
@@ -264,9 +262,7 @@ const LongTextInputViewItem = ({
                 {form.watch("elements")[index].field?.validations?.required ? (
                   "*"
                 ) : (
-                  <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                    Optional
-                  </span>
+                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
                 )}
               </Label>
               {form.watch("elements")[index].field?.hint && (
@@ -314,9 +310,7 @@ const NumberInputViewItem = ({
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                      Optional
-                    </span>
+                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
@@ -362,9 +356,7 @@ const SelectInputViewItem = ({
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                      Optional
-                    </span>
+                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
@@ -437,9 +429,7 @@ const CheckboxInputViewItem = ({
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                      Optional
-                    </span>
+                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
@@ -505,9 +495,7 @@ const RadioInputViewItem = ({ form, index }: { form: Form; index: number }) => {
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                      Optional
-                    </span>
+                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
@@ -655,9 +643,7 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
                 {form.watch("elements")[index].field?.validations?.required ? (
                   "*"
                 ) : (
-                  <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                    Optional
-                  </span>
+                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
                 )}
               </Label>
               {form.watch("elements")[index].field?.hint && (
@@ -855,9 +841,7 @@ const PhoneInputViewItem = ({
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                      Optional
-                    </span>
+                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
