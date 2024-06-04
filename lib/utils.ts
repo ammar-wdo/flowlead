@@ -212,20 +212,24 @@ export const generateSingleServiceSchema = (
   isRequired: boolean
 ) => {
   let serviceSchema: z.ZodTypeAny = z.string(); // Default value
-
+const optionSchema = z.object({
+  id:z.string().min(1),
+  price:z.coerce.number(),
+  quantity:z.coerce.number()
+})
   switch (service?.pricingType) {
     case "CHECKBOX_GROUP":
       serviceSchema = isRequired
-        ? z.array(z.string()).min(1, "At least one option")
-        : z.array(z.string()).optional();
+        ? z.array(optionSchema).min(1, "At least one option")
+        : z.array(optionSchema).optional();
       break;
 
     case "DROPDOWN_GROUP":
     case "RADIO_GROUP":
     case "SINGLE_PRICE":
       serviceSchema = isRequired
-        ? z.string().min(1, "Required")
-        : z.string().optional();
+        ? optionSchema
+        : optionSchema.optional();
       break;
 
     default:
