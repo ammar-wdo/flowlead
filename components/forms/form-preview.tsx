@@ -43,6 +43,7 @@ const FormPreview = ({ form }: Props) => {
           if (fieldElement) {
             return (
               <FormField
+              key={element.id}
                 control={formPreview.control}
                 name={fieldElement.label}
                 render={({ field }) => (
