@@ -143,37 +143,38 @@ export const generateSingleFieldSchema = (
 
   let fieldSchema;
 
-  // Initialize schema based on field type and apply validations
   switch (field.type) {
     case "number":
-      case "phone":
-        fieldSchema = z
-          .string()
-          .refine(val => !val || !isNaN(Number(val)), { message: "Please enter a valid number" })
-          .transform(val => (val ? Number(val) : undefined));
-        
-        if (field.validations) {
-          const { min, max, required } = field.validations;
-  
-          if (min)
-            fieldSchema = fieldSchema.refine(val => val === undefined || val >= min, {
-              message: `Value should be greater than or equal to ${min}`,
-            });
-  
-          if (max)
-            fieldSchema = fieldSchema.refine(val => val === undefined || val <= max, {
-              message: `Value should be less than or equal to ${max}`,
-            });
-  
-          if (isRequired) {
-            fieldSchema = fieldSchema.refine(val => val !== undefined, {
-              message: "Required",
-            });
-          } else {
-            fieldSchema = fieldSchema.optional();
-          }
-        }
-        break;
+    case "phone":
+      fieldSchema = z
+      .string()
+      .refine(val => !val || !isNaN(Number(val)), { message: "Please enter a valid number" })
+      .transform(val => (val ? Number(val) : undefined));
+    
+    if (field.validations) {
+      const { min, max } = field.validations;
+
+      if (!!min) {
+        fieldSchema = fieldSchema.refine(val => val === undefined || val >= min, {
+          message: `Value should be greater than or equal to ${min}`,
+        });
+      }
+
+      if (!!max) {
+        fieldSchema = fieldSchema.refine(val => val === undefined || val <= max, {
+          message: `Value should be less than or equal to ${max}`,
+        });
+      }
+    }
+
+    if (!isRequired) {
+      fieldSchema = fieldSchema.optional();
+    } else {
+      fieldSchema = fieldSchema.refine(val => val !== undefined, {
+        message: "Required",
+      });
+    }
+    break;
 
     case "text":
     case "radio":
@@ -183,22 +184,32 @@ export const generateSingleFieldSchema = (
       if (field.validations) {
         const { minLength, maxLength, pattern } = field.validations;
         if (pattern) fieldSchema = fieldSchema.regex(new RegExp(pattern));
-        if (minLength) fieldSchema = fieldSchema.min(minLength);
-        if (maxLength) fieldSchema = fieldSchema.max(maxLength);
-        isRequired
-          ? (fieldSchema = fieldSchema.min(1, "Required"))
-          : (fieldSchema = fieldSchema.optional());
+        if (minLength !== undefined && minLength !== null) fieldSchema = fieldSchema.min(minLength);
+        if (maxLength !== undefined  && maxLength !== null) fieldSchema = fieldSchema.max(maxLength);
+      }
+      if (isRequired) {
+        fieldSchema = fieldSchema.min(1, "Required");
+      } else {
+        fieldSchema = fieldSchema.optional();
       }
       break;
 
     case "checkbox":
-      fieldSchema = z.array(z.string()).optional();
-      if (field.validations && isRequired)
-        fieldSchema = z.array(z.string()).min(1, "Choose at lest one option");
+      fieldSchema = z.array(z.string());
+      if (isRequired) {
+        fieldSchema = fieldSchema.min(1, "Choose at least one option");
+      } else {
+        fieldSchema = fieldSchema.optional();
+      }
       break;
 
     default:
       fieldSchema = z.string();
+      if (isRequired) {
+        fieldSchema = fieldSchema.min(1, "Required");
+      } else {
+        fieldSchema = fieldSchema.optional();
+      }
       break;
   }
 
@@ -333,7 +344,7 @@ export const generateZodSchema = (
     const fieldSchema = generateSingleFieldSchema(field, !!isFieldRequired);
 
     if (field && fieldSchema) {
-      zodSchema[field.label] = fieldSchema;
+      zodSchema[`${field.label}-field`] = fieldSchema;
     }
 
     const service = element.service;
@@ -346,7 +357,7 @@ export const generateZodSchema = (
     );
 
     if (service && serviceSchema) {
-      zodSchema[service.name] = serviceSchema;
+      zodSchema[`${service.name}-service`] = serviceSchema;
     }
   });
 

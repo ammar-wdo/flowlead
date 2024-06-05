@@ -58,7 +58,7 @@ const FormPreview = ({ form }: Props) => {
               <FormField
                 key={element.id}
                 control={formPreview.control}
-                name={fieldElement.label}
+                name={`${fieldElement.label}-field`}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-1">
@@ -169,24 +169,24 @@ const FormPreview = ({ form }: Props) => {
                           <FormItem className="">
                             <FormControl>
                               <RadioGroup
-                                onValueChange={field.onChange}
+                                onValueChange={(value)=>{console.log(value);field.onChange(value)}}
                                 defaultValue={field.value}
                                 className="flex flex-col "
                               >
                                 <FormItem className="grid grid-cols-1 md:grid-cols-2 gap-3 space-y-0">
                                   {fieldElement.options.map((option, i) => (
                                     <div
-                                      key={`option-radio-${i}`}
+                                      key={`option-radio-${fieldElement.label}-${i}`}
                                       className="flex items-center gap-1  bg-white p-3 rounded-md border w-full h-16"
                                     >
                                       <FormControl>
                                         <RadioGroupItem
-                                          id={`option-radio-${i}`}
+                                          id={`option-radio-${fieldElement.label}-${i}`}
                                           value={String(option)}
                                         />
                                       </FormControl>
                                       <FormLabel
-                                        htmlFor={`option-radio-${i}`}
+                                        htmlFor={`option-radio-${fieldElement.label}-${i}`}
                                         className="font-normal cursor-pointer"
                                       >
                                         {option}
@@ -222,7 +222,7 @@ const FormPreview = ({ form }: Props) => {
               <FormField
                 control={formPreview.control}
                 key={element.id}
-                name={serviceElement.name}
+                name={`${serviceElement.name}-service`}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="capitalize flex items-center gap-1">
@@ -281,7 +281,7 @@ const ServiceCheckBoxView = ({
   >,
   field: ControllerRenderProps<{
     [x: string]: any;
-}, string>;
+}, `${string}-service`>;
 }) => {
   return (
     <FormItem>
@@ -315,28 +315,34 @@ const ServiceCheckBoxView = ({
               <div className="flex items-center justify-between">
                 <p className="">${option.price}</p>
                 {!!option.enableQuantity &&
-                (fieldValue || []).some((el: any) => el.id === option.id) ? (
+                (formPreview.watch(
+                    `${serviceElement.name}-service`
+                  ) || []).some((el: any) => el.id === option.id) ? (
                   <div className="flex border items-center h-8 bg-white text-black rounded-lg overflow-hidden">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-
+                        //get all options
                         const serviceOptions = formPreview.watch(
-                          serviceElement.name
+                          `${serviceElement.name}-service`
                         ) as {
                           id: string;
                           price: number;
                           quantity: number;
                         }[];
+                         //get current option
+                        const currentOption = serviceOptions.find((el)=>el.id === option.id);
+                        //get its index
+                        const currentOptionIndex = serviceOptions.findIndex((el)=>el.id === option.id)
 
-                        const currentOption = serviceOptions[i];
-                        console.log("currentOption", currentOption);
-                        serviceOptions[i] = {
-                          ...currentOption,
-                          quantity: currentOption.quantity + 1,
+                      
+                        //change the quntity at the current index
+                        serviceOptions[currentOptionIndex] = {
+                          ...currentOption!,
+                          quantity: currentOption!.quantity + 1,
                         };
                         formPreview.setValue(
-                          serviceElement.name,
+                            `${serviceElement.name}-service`,
                           serviceOptions
                         );
                       }}
@@ -345,28 +351,37 @@ const ServiceCheckBoxView = ({
                     >
                       +
                     </button>
-                    <p className="px-3 py-1">{fieldValue[i]?.quantity || 0}</p>
+                    <p className="px-3 py-1">{(formPreview.watch(
+                          `${serviceElement.name}-service`
+                        )as {
+                            id: string;
+                            price: number;
+                            quantity: number;
+                          }[]).find((el)=>el.id === option.id)?.quantity}</p>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (fieldValue[i]?.quantity === 1) return;
-
-                        const serviceOptions = formPreview.watch(
-                          serviceElement.name
-                        ) as {
-                          id: string;
-                          price: number;
-                          quantity: number;
-                        }[];
-
-                        const currentOption = serviceOptions[i];
-                        console.log("currentOption", currentOption);
-                        serviceOptions[i] = {
-                          ...currentOption,
-                          quantity: currentOption.quantity - 1,
+                          //get all options
+                          const serviceOptions = formPreview.watch(
+                            `${serviceElement.name}-service`
+                          ) as {
+                            id: string;
+                            price: number;
+                            quantity: number;
+                          }[];
+                          //get current option
+                          const currentOption = serviceOptions.find((el)=>el.id === option.id);
+                          //get its index
+                          const currentOptionIndex = serviceOptions.findIndex((el)=>el.id === option.id)
+                        if (currentOption!.quantity === 1) return;
+                
+                        //change the quntity at the current index
+                        serviceOptions[currentOptionIndex] = {
+                          ...currentOption!,
+                          quantity: currentOption!.quantity - 1,
                         };
                         formPreview.setValue(
-                          serviceElement.name,
+                            `${serviceElement.name}-service`,
                           serviceOptions
                         );
                       }}
@@ -425,8 +440,8 @@ const ServiceRadioView = ({
       undefined
     >,
     field: ControllerRenderProps<{
-      [x: string]: any;
-  }, string>;
+        [x: string]: any;
+    }, `${string}-service`>;
   })=>{
     return  <FormItem className="space-y-0">
     <FormLabel className="flex flex-row items-center gap-1 space-y-0">
@@ -468,7 +483,7 @@ const ServiceRadioView = ({
                         console.log(field.value);
                         let serviceOption =
                           formPreview.watch(
-                            serviceElement.name
+                            `${serviceElement.name}-service`
                           ) as {
                             id: string;
                             price: number;
@@ -487,7 +502,7 @@ const ServiceRadioView = ({
                             currentOption.quantity + 1,
                         };
                         formPreview.setValue(
-                          serviceElement.name,
+                          `${serviceElement.name}-service`,
                           serviceOption
                         );
                       }}
@@ -507,7 +522,7 @@ const ServiceRadioView = ({
                         console.log(field.value);
                         let serviceOption =
                           formPreview.watch(
-                            serviceElement.name
+                            `${serviceElement.name}-service`
                           ) as {
                             id: string;
                             price: number;
@@ -526,7 +541,7 @@ const ServiceRadioView = ({
                             currentOption.quantity - 1,
                         };
                         formPreview.setValue(
-                          serviceElement.name,
+                          `${serviceElement.name}-service`,
                           serviceOption
                         );
                       }}
@@ -584,8 +599,8 @@ const ServiceDropDownView = ({
       undefined
     >,
     field: ControllerRenderProps<{
-      [x: string]: any;
-  }, string>;
+        [x: string]: any;
+    }, `${string}-service`>;
   })=>{
     return <div>
     <Select
@@ -672,7 +687,7 @@ const ServiceDropDownView = ({
 
                     let serviceOptions =
                       formPreview.watch(
-                        serviceElement.name
+                        `${serviceElement.name}-service`
                       ) as {
                         id: string;
                         price: number;
@@ -690,7 +705,7 @@ const ServiceDropDownView = ({
                         currentOption.quantity + 1,
                     };
                     formPreview.setValue(
-                      serviceElement.name,
+                      `${serviceElement.name}-service`,
                       serviceOptions
                     );
                   }}
@@ -710,7 +725,7 @@ const ServiceDropDownView = ({
 
                     let serviceOptions =
                       formPreview.watch(
-                        serviceElement.name
+                        `${serviceElement.name}-service`
                       ) as {
                         id: string;
                         price: number;
@@ -728,7 +743,7 @@ const ServiceDropDownView = ({
                         currentOption.quantity - 1,
                     };
                     formPreview.setValue(
-                      serviceElement.name,
+                      `${serviceElement.name}-service`,
                       serviceOptions
                     );
                   }}
@@ -788,8 +803,8 @@ const ServiceSinglepriceView = ({
       undefined
     >,
     field: ControllerRenderProps<{
-      [x: string]: any;
-  }, string>;
+        [x: string]: any;
+    }, `${string}-service`>;
   })=>{
     return  <FormItem
     className={cn(
@@ -827,7 +842,7 @@ const ServiceSinglepriceView = ({
                 e.stopPropagation();
 
                 let serviceOptions = formPreview.watch(
-                  serviceElement.name
+                  `${serviceElement.name}-service`
                 ) as {
                   id: string;
                   price: number;
@@ -844,7 +859,7 @@ const ServiceSinglepriceView = ({
                   quantity: currentOption.quantity + 1,
                 };
                 formPreview.setValue(
-                  serviceElement.name,
+                  `${serviceElement.name}-service`,
                   serviceOptions
                 );
               }}
@@ -862,7 +877,7 @@ const ServiceSinglepriceView = ({
                 if (field.value?.quantity === 1) return;
 
                 let serviceOptions = formPreview.watch(
-                  serviceElement.name
+                  `${serviceElement.name}-service`
                 ) as {
                   id: string;
                   price: number;
@@ -879,7 +894,7 @@ const ServiceSinglepriceView = ({
                   quantity: currentOption.quantity - 1,
                 };
                 formPreview.setValue(
-                  serviceElement.name,
+                  `${serviceElement.name}-service`,
                   serviceOptions
                 );
               }}
