@@ -55,7 +55,7 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
             value: "",
             field: "",
             operator: "NOT_EMPTY",
-            logicalOperator: "OR",
+           
           },
         ],
         then: { field: "", action: "SHOW" },
@@ -75,7 +75,7 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
           value: "",
           field: "",
           operator: "NOT_EMPTY",
-          logicalOperator: "OR",
+        
         },
       ],
     });

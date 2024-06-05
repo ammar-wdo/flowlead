@@ -7,7 +7,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import * as clerkClient from "@clerk/clerk-sdk-node";
 import { describe } from "node:test";
-import { z } from "zod";
+import { object, z } from "zod";
 import { ComparisonOperator, Element, Rule } from "@prisma/client";
 
 export function cn(...inputs: ClassValue[]) {
@@ -256,25 +256,26 @@ const evaluateCondition = (
   operator: ComparisonOperator,
   value: any
 ): boolean => {
+
   switch (operator) {
     case "CONTAINS":
       return fieldValue.includes(value);
-      case 'EMPTY':
-        return !fieldValue || fieldValue.length === 0;
-      case 'NOT_EMPTY':
-        return !!fieldValue && fieldValue.length > 0;
+    case 'EMPTY':
+      return !fieldValue || fieldValue.length === 0;
+    case 'NOT_EMPTY':
+      return !!fieldValue && fieldValue.length > 0;
     case "IS":
       return fieldValue === value;
     case "IS_NOT":
       return fieldValue !== value;
     case "EQ":
-      return fieldValue === value;
+      return fieldValue === +value;
     case "NEQ":
-      return fieldValue !== value;
+      return fieldValue !== +value;
     case "GT":
-      return fieldValue > value;
+      return fieldValue > +value;
     case "LT":
-      return fieldValue < value;
+      return fieldValue < +value;
     case "BEFORE":
       return new Date(fieldValue) < new Date(value);
     case "AFTER":
@@ -284,50 +285,227 @@ const evaluateCondition = (
   }
 };
 
+
+// export const isFieldVisible = (
+//   elementId: string,
+//   rules: Rule[],
+//   elements: Element[],
+//   formValues: { [key: string]: any }
+// ) => {
+//   let visible = true;
+
+//   for (const rule of rules) {
+//     const thenElementId = rule.then.field; // Assuming this is the element ID
+//     const action = rule.then.action;
+
+//     let conditionsMet = true;
+
+//     if (rule.conditions.length === 1) {
+//       console.log('1 condition')
+     
+//       const condition = rule.conditions[0];
+//       const conditionElement = elements.find(
+//         (element) => element.id === condition.field // Assuming this is the element ID
+//       );
+//       if (!conditionElement) continue;
+
+//       const fieldKey = conditionElement.field
+//         ? `${conditionElement.field.label}-field`
+//         : conditionElement.service
+//         ? `${conditionElement.service.name}-service`
+//         : "";
+
+//       const fieldValue = formValues[fieldKey] ?? ""; // Use default value if undefined
+//       console.log("Field Value",fieldValue)
+//       console.log("operator",condition.operator)
+//       console.log("value",condition.value)
+//       conditionsMet = evaluateCondition(fieldValue, condition.operator, condition.value);
+//       console.log('Conditions Met',conditionsMet)
+//     } else {
+//       for (const condition of rule.conditions) {
+//         const conditionElement = elements.find(
+//           (element) => element.id === condition.field // Assuming this is the element ID
+//         );
+//         if (!conditionElement) continue;
+
+//         const fieldKey = conditionElement.field
+//           ? `${conditionElement.field.label}-field`
+//           : conditionElement.service
+//           ? `${conditionElement.service.name}-service`
+//           : "";
+
+//         const fieldValue = formValues[fieldKey] ?? ""; // Use default value if undefined
+//         console.log("Field Value",fieldValue)
+//         console.log("operator",condition.operator)
+//         console.log("value",condition.value)
+//         const conditionMet = evaluateCondition(fieldValue, condition.operator, condition.value);
+//         console.log('Condition Met',conditionMet)
+
+//         if (condition.logicalOperator && condition.logicalOperator === "AND") {
+//           console.log("AND")
+//           console.log("operation",conditionsMet && conditionMet)
+//           conditionsMet = conditionsMet && conditionMet;
+       
+//         } else if (condition.logicalOperator &&condition.logicalOperator === "OR") {
+//           console.log("OR")
+//           conditionsMet = conditionsMet || conditionMet;
+          
+//         }
+//         console.log('conditions met',conditionsMet)
+//       }
+//     }
+
+//     if (thenElementId === elementId) {
+//       console.log("Ids are equal")
+//       if (action === "SHOW" && !conditionsMet) {
+//         console.log(action)
+//         visible = false;
+//       } else if (action === "HIDE" && conditionsMet) {
+//         visible = false;
+//         console.log(action)
+//       }
+//     }
+//   }
+//   console.log("visible",visible)
+// console.log("##########################")
+//   return visible;
+// };
+
+
 export const isFieldVisible = (
-  fieldId: string,
+  elementId: string,
   rules: Rule[],
   elements: Element[],
   formValues: { [key: string]: any }
 ) => {
+  let visible = true;
+
   for (const rule of rules) {
-    const thenField = rule.then.field;
+    const thenElementId = rule.then.field;
     const action = rule.then.action;
 
-    let conditionsMet = true;
+    let conditionsMet = rule.conditions.length > 0 ? true : false;
 
-    for (const condition of rule.conditions) {
-      const conditionField = elements.find(
+    if (rule.conditions.length === 1) {
+      console.log('1 condition');
+
+      const condition = rule.conditions[0];
+      const conditionElement = elements.find(
         (element) => element.id === condition.field
       );
-      if (!conditionField) continue;
+      if (!conditionElement) continue;
 
-      const fieldValue =
-        formValues[
-          conditionField.field?.label || conditionField.service?.name || ""
-        ];
-      const conditionMet = evaluateCondition(
-        fieldValue,
-        condition.operator,
-        condition.value
-      );
+      const fieldKey = conditionElement.field
+        ? `${conditionElement.field.label}-field`
+        : conditionElement.service
+        ? `${conditionElement.service.name}-service`
+        : "";
 
-      if (condition.logicalOperator === "AND") {
-        conditionsMet = conditionsMet && conditionMet;
-      } else if (condition.logicalOperator === "OR") {
-        conditionsMet = conditionsMet || conditionMet;
-      } else {
-        conditionsMet = conditionMet;
+      const fieldValue = formValues[fieldKey] ?? "";
+      console.log("Field Value", fieldValue);
+      console.log("operator", condition.operator);
+      console.log("value", condition.value);
+//if entered value is array of objects mean it is a service so we take th id or check if enterd value is an array of only the chosen value with no other value then true, or if not an array then enter the value
+let enteredValue;
+
+if (Array.isArray(fieldValue)) {
+  if (fieldValue.length === 1) {
+    if (typeof fieldValue[0] === 'string') {
+      enteredValue = fieldValue[0];
+    } else if (typeof fieldValue[0] === 'object' && fieldValue[0] !== null) {
+      enteredValue = fieldValue[0].id;
+    } else {
+      enteredValue = undefined;
+    }
+  } else {
+    enteredValue = undefined;
+  }
+} else {
+  // Handle the case when fieldValue is not an array
+  enteredValue = fieldValue;
+}
+  
+      
+      conditionsMet = evaluateCondition(enteredValue, condition.operator, condition.value);
+      console.log('Conditions Met', conditionsMet);
+    } else {
+      for (let i = 0; i < rule.conditions.length; i++) {
+        const condition = rule.conditions[i];
+        const conditionElement = elements.find(
+          (element) => element.id === condition.field
+        );
+        if (!conditionElement) continue;
+
+        const fieldKey = conditionElement.field
+          ? `${conditionElement.field.label}-field`
+          : conditionElement.service
+          ? `${conditionElement.service.name}-service`
+          : "";
+
+        const fieldValue = formValues[fieldKey] ?? "";
+        console.log("Field Value", fieldValue);
+        console.log("operator", condition.operator);
+        console.log("value", condition.value);
+//if entered value is array of objects mean it is a service so we take th id or check if enterd value is an array of only the chosen value with no other value then true, or if not an array then enter the value
+let enteredValue;
+
+if (Array.isArray(fieldValue)) {
+  if (fieldValue.length === 1) {
+    if (typeof fieldValue[0] === 'string') {
+      enteredValue = fieldValue[0];
+    } else if (typeof fieldValue[0] === 'object' && fieldValue[0] !== null) {
+      enteredValue = fieldValue[0].id;
+    } else {
+      enteredValue = undefined;
+    }
+  } else {
+    enteredValue = undefined;
+  }
+} else {
+  // Handle the case when fieldValue is not an array
+  enteredValue = fieldValue;
+}
+
+        const conditionMet = evaluateCondition(enteredValue, condition.operator, condition.value);
+        console.log('Condition Met', conditionMet);
+
+        if (i === 0) {
+          conditionsMet = conditionMet;
+        } else {
+          const previousCondition = rule.conditions[i - 1];
+          if (previousCondition.logicalOperator === "AND") {
+            console.log("AND");
+            console.log("operation", conditionsMet && conditionMet);
+            conditionsMet = conditionsMet && conditionMet;
+          } else if (previousCondition.logicalOperator === "OR") {
+            console.log("OR");
+            console.log("operation", conditionsMet || conditionMet);
+            conditionsMet = conditionsMet || conditionMet;
+          }
+        }
+        console.log('conditions met', conditionsMet);
       }
     }
 
-    if (thenField === fieldId && conditionsMet) {
-      return action !== "HIDE";
+    if (thenElementId === elementId) {
+      console.log("Ids are equal");
+      if (action === "SHOW" && !conditionsMet) {
+        console.log(action);
+        visible = false;
+      } else if (action === "HIDE" && conditionsMet) {
+        visible = false;
+        console.log(action);
+      }
     }
   }
-
-  return true;
+  console.log("visible", visible);
+  console.log("##########################");
+  return visible;
 };
+
+
+
+
 
 export const generateZodSchema = (
   elements: Element[],
@@ -336,11 +514,15 @@ export const generateZodSchema = (
 ) => {
   const zodSchema: { [key: string]: z.ZodTypeAny } = {};
 
+
   elements.forEach((element) => {
     const field = element.field;
     const isFieldRequired =
       !!field?.validations?.required &&
-      isFieldVisible(field.id, rules, elements, formValues);
+      isFieldVisible(element.id, rules, elements, formValues)
+      // console.log("form values",JSON.stringify(formValues,null,2));
+      // console.log(`is field ${field?.label} visible`,isFieldVisible(element.id, rules, elements, formValues))
+      // console.log(`is field ${field?.label} required :` ,isFieldRequired)
     const fieldSchema = generateSingleFieldSchema(field, !!isFieldRequired);
 
     if (field && fieldSchema) {
@@ -350,7 +532,7 @@ export const generateZodSchema = (
     const service = element.service;
     const isServiceRequired =
       service?.isRequired &&
-      isFieldVisible(service.id, rules, elements, formValues);
+      isFieldVisible(element.id, rules, elements, formValues);
     const serviceSchema = generateSingleServiceSchema(
       service,
       !!isServiceRequired
