@@ -38,7 +38,7 @@ const FormPreview = ({ form }: Props) => {
   const { formPreview, onSubmit } = useFormPreview(form);
   const formValues = formPreview.watch();
 
-  const renderElement = useCallback(
+  const renderElement = 
     (element:Element) => {
       const fieldElement = element.field;
       const serviceElement = element.service;
@@ -242,9 +242,8 @@ const FormPreview = ({ form }: Props) => {
       }
 
       return null;
-    },
-    [form.elements, form.rules, formValues, formPreview.control]
-  );
+    }
+   
 
   return (
     <FormComponent {...formPreview}>
@@ -257,7 +256,7 @@ const FormPreview = ({ form }: Props) => {
   );
 };
 
-export default memo(FormPreview);
+export default FormPreview;
 
 
 const ServiceCheckBoxView = ({

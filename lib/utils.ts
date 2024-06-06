@@ -546,9 +546,7 @@ export const generateZodSchema = (
     const isFieldRequired =
       !!field?.validations?.required &&
       isFieldVisible(element.id, rules, elements, formValues);
-    // console.log("form values",JSON.stringify(formValues,null,2));
-    // console.log(`is field ${field?.label} visible`,isFieldVisible(element.id, rules, elements, formValues))
-    // console.log(`is field ${field?.label} required :` ,isFieldRequired)
+   
     const fieldSchema = generateSingleFieldSchema(field, !!isFieldRequired);
 
     if (field && fieldSchema) {
