@@ -147,34 +147,42 @@ export const generateSingleFieldSchema = (
     case "number":
     case "phone":
       fieldSchema = z
-      .string()
-      .refine(val => !val || !isNaN(Number(val)), { message: "Please enter a valid number" })
-      .transform(val => (val ? Number(val) : undefined));
-    
-    if (field.validations) {
-      const { min, max } = field.validations;
+        .string()
+        .refine((val) => !val || !isNaN(Number(val)), {
+          message: "Please enter a valid number",
+        })
+        .transform((val) => (val ? Number(val) : undefined));
 
-      if (!!min) {
-        fieldSchema = fieldSchema.refine(val => val === undefined || val >= min, {
-          message: `Value should be greater than or equal to ${min}`,
-        });
+      if (field.validations) {
+        const { min, max } = field.validations;
+
+        if (!!min) {
+          fieldSchema = fieldSchema.refine(
+            (val) => val === undefined || val >= min,
+            {
+              message: `Value should be greater than or equal to ${min}`,
+            }
+          );
+        }
+
+        if (!!max) {
+          fieldSchema = fieldSchema.refine(
+            (val) => val === undefined || val <= max,
+            {
+              message: `Value should be less than or equal to ${max}`,
+            }
+          );
+        }
       }
 
-      if (!!max) {
-        fieldSchema = fieldSchema.refine(val => val === undefined || val <= max, {
-          message: `Value should be less than or equal to ${max}`,
+      if (!isRequired) {
+        fieldSchema = fieldSchema.optional();
+      } else {
+        fieldSchema = fieldSchema.refine((val) => val !== undefined, {
+          message: "Required",
         });
       }
-    }
-
-    if (!isRequired) {
-      fieldSchema = fieldSchema.optional();
-    } else {
-      fieldSchema = fieldSchema.refine(val => val !== undefined, {
-        message: "Required",
-      });
-    }
-    break;
+      break;
 
     case "text":
     case "radio":
@@ -184,8 +192,10 @@ export const generateSingleFieldSchema = (
       if (field.validations) {
         const { minLength, maxLength, pattern } = field.validations;
         if (pattern) fieldSchema = fieldSchema.regex(new RegExp(pattern));
-        if (minLength !== undefined && minLength !== null) fieldSchema = fieldSchema.min(minLength);
-        if (maxLength !== undefined  && maxLength !== null) fieldSchema = fieldSchema.max(maxLength);
+        if (minLength !== undefined && minLength !== null)
+          fieldSchema = fieldSchema.min(minLength);
+        if (maxLength !== undefined && maxLength !== null)
+          fieldSchema = fieldSchema.max(maxLength);
       }
       if (isRequired) {
         fieldSchema = fieldSchema.min(1, "Required");
@@ -223,11 +233,11 @@ export const generateSingleServiceSchema = (
   isRequired: boolean
 ) => {
   let serviceSchema: z.ZodTypeAny = z.string(); // Default value
-const optionSchema = z.object({
-  id:z.string().min(1),
-  price:z.coerce.number(),
-  quantity:z.coerce.number()
-})
+  const optionSchema = z.object({
+    id: z.string().min(1),
+    price: z.coerce.number(),
+    quantity: z.coerce.number(),
+  });
   switch (service?.pricingType) {
     case "CHECKBOX_GROUP":
       serviceSchema = isRequired
@@ -238,9 +248,7 @@ const optionSchema = z.object({
     case "DROPDOWN_GROUP":
     case "RADIO_GROUP":
     case "SINGLE_PRICE":
-      serviceSchema = isRequired
-        ? optionSchema
-        : optionSchema.optional();
+      serviceSchema = isRequired ? optionSchema : optionSchema.optional();
       break;
 
     default:
@@ -256,13 +264,12 @@ const evaluateCondition = (
   operator: ComparisonOperator,
   value: any
 ): boolean => {
-
   switch (operator) {
     case "CONTAINS":
       return fieldValue.includes(value);
-    case 'EMPTY':
+    case "EMPTY":
       return !fieldValue || fieldValue.length === 0;
-    case 'NOT_EMPTY':
+    case "NOT_EMPTY":
       return !!fieldValue && fieldValue.length > 0;
     case "IS":
       return fieldValue === value;
@@ -285,7 +292,6 @@ const evaluateCondition = (
   }
 };
 
-
 // export const isFieldVisible = (
 //   elementId: string,
 //   rules: Rule[],
@@ -302,7 +308,7 @@ const evaluateCondition = (
 
 //     if (rule.conditions.length === 1) {
 //       console.log('1 condition')
-     
+
 //       const condition = rule.conditions[0];
 //       const conditionElement = elements.find(
 //         (element) => element.id === condition.field // Assuming this is the element ID
@@ -345,11 +351,11 @@ const evaluateCondition = (
 //           console.log("AND")
 //           console.log("operation",conditionsMet && conditionMet)
 //           conditionsMet = conditionsMet && conditionMet;
-       
+
 //         } else if (condition.logicalOperator &&condition.logicalOperator === "OR") {
 //           console.log("OR")
 //           conditionsMet = conditionsMet || conditionMet;
-          
+
 //         }
 //         console.log('conditions met',conditionsMet)
 //       }
@@ -371,12 +377,12 @@ const evaluateCondition = (
 //   return visible;
 // };
 
-
 export const isFieldVisible = (
   elementId: string,
   rules: Rule[],
   elements: Element[],
-  formValues: { [key: string]: any }
+  formValues: { [key: string]: any },
+ 
 ) => {
   let visible = true;
 
@@ -387,7 +393,7 @@ export const isFieldVisible = (
     let conditionsMet = rule.conditions.length > 0 ? true : false;
 
     if (rule.conditions.length === 1) {
-      console.log('1 condition');
+      console.log("1 condition");
 
       const condition = rule.conditions[0];
       const conditionElement = elements.find(
@@ -405,29 +411,40 @@ export const isFieldVisible = (
       console.log("Field Value", fieldValue);
       console.log("operator", condition.operator);
       console.log("value", condition.value);
-//if entered value is array of objects mean it is a service so we take th id or check if enterd value is an array of only the chosen value with no other value then true, or if not an array then enter the value
-let enteredValue;
+      //if entered value is array of objects mean it is a service so we take th id or check if enterd value is an array of only the chosen value with no other value then true, or if not an array then enter the value
+      let enteredValue;
 
-if (Array.isArray(fieldValue)) {
-  if (fieldValue.length === 1) {
-    if (typeof fieldValue[0] === 'string') {
-      enteredValue = fieldValue[0];
-    } else if (typeof fieldValue[0] === 'object' && fieldValue[0] !== null) {
-      enteredValue = fieldValue[0].id;
-    } else {
-      enteredValue = undefined;
-    }
-  } else {
-    enteredValue = undefined;
-  }
-} else {
-  // Handle the case when fieldValue is not an array
-  enteredValue = fieldValue;
-}
-  
-      
-      conditionsMet = evaluateCondition(enteredValue, condition.operator, condition.value);
-      console.log('Conditions Met', conditionsMet);
+      if (Array.isArray(fieldValue)) {
+        if (fieldValue.length === 1) {
+          if (typeof fieldValue[0] === "string") {
+            enteredValue = fieldValue[0];
+          } else if (
+            typeof fieldValue[0] === "object" &&
+            fieldValue[0] !== null
+          ) {
+            enteredValue = fieldValue[0].id;
+          } else {
+            enteredValue = undefined;
+          }
+        } else {
+          if (condition.operator === "NOT_EMPTY") {
+            enteredValue = fieldValue;
+          } else {
+            enteredValue = undefined;
+          }
+        }
+      } else {
+        // Handle the case when fieldValue is not an array
+        enteredValue = fieldValue;
+      }
+      console.log("entered value", enteredValue);
+
+      conditionsMet = evaluateCondition(
+        enteredValue,
+        condition.operator,
+        condition.value
+      );
+      console.log("Conditions Met", conditionsMet);
     } else {
       for (let i = 0; i < rule.conditions.length; i++) {
         const condition = rule.conditions[i];
@@ -446,28 +463,39 @@ if (Array.isArray(fieldValue)) {
         console.log("Field Value", fieldValue);
         console.log("operator", condition.operator);
         console.log("value", condition.value);
-//if entered value is array of objects mean it is a service so we take th id or check if enterd value is an array of only the chosen value with no other value then true, or if not an array then enter the value
-let enteredValue;
+        //if entered value is array of objects mean it is a service so we take th id or check if enterd value is an array of only the chosen value with no other value then true, or if not an array then enter the value
+        let enteredValue;
 
-if (Array.isArray(fieldValue)) {
-  if (fieldValue.length === 1) {
-    if (typeof fieldValue[0] === 'string') {
-      enteredValue = fieldValue[0];
-    } else if (typeof fieldValue[0] === 'object' && fieldValue[0] !== null) {
-      enteredValue = fieldValue[0].id;
-    } else {
-      enteredValue = undefined;
-    }
-  } else {
-    enteredValue = undefined;
-  }
-} else {
-  // Handle the case when fieldValue is not an array
-  enteredValue = fieldValue;
-}
-
-        const conditionMet = evaluateCondition(enteredValue, condition.operator, condition.value);
-        console.log('Condition Met', conditionMet);
+        if (Array.isArray(fieldValue)) {
+          if (fieldValue.length === 1) {
+            if (typeof fieldValue[0] === "string") {
+              enteredValue = fieldValue[0];
+            } else if (
+              typeof fieldValue[0] === "object" &&
+              fieldValue[0] !== null
+            ) {
+              enteredValue = fieldValue[0].id;
+            } else {
+              enteredValue = undefined;
+            }
+          } else {
+            if (condition.operator === "NOT_EMPTY") {
+              enteredValue = fieldValue;
+            } else {
+              enteredValue = undefined;
+            }
+          }
+        } else {
+          // Handle the case when fieldValue is not an array
+          enteredValue = fieldValue;
+        }
+        console.log("entered value", enteredValue);
+        const conditionMet = evaluateCondition(
+          enteredValue,
+          condition.operator,
+          condition.value
+        );
+        console.log("Condition Met", conditionMet);
 
         if (i === 0) {
           conditionsMet = conditionMet;
@@ -483,7 +511,7 @@ if (Array.isArray(fieldValue)) {
             conditionsMet = conditionsMet || conditionMet;
           }
         }
-        console.log('conditions met', conditionsMet);
+        console.log("conditions met", conditionsMet);
       }
     }
 
@@ -496,6 +524,8 @@ if (Array.isArray(fieldValue)) {
         visible = false;
         console.log(action);
       }
+   
+      
     }
   }
   console.log("visible", visible);
@@ -503,26 +533,22 @@ if (Array.isArray(fieldValue)) {
   return visible;
 };
 
-
-
-
-
 export const generateZodSchema = (
   elements: Element[],
   rules: Rule[],
-  formValues: { [key: string]: any }
+  formValues: { [key: string]: any },
+
 ) => {
   const zodSchema: { [key: string]: z.ZodTypeAny } = {};
-
 
   elements.forEach((element) => {
     const field = element.field;
     const isFieldRequired =
       !!field?.validations?.required &&
-      isFieldVisible(element.id, rules, elements, formValues)
-      // console.log("form values",JSON.stringify(formValues,null,2));
-      // console.log(`is field ${field?.label} visible`,isFieldVisible(element.id, rules, elements, formValues))
-      // console.log(`is field ${field?.label} required :` ,isFieldRequired)
+      isFieldVisible(element.id, rules, elements, formValues);
+    // console.log("form values",JSON.stringify(formValues,null,2));
+    // console.log(`is field ${field?.label} visible`,isFieldVisible(element.id, rules, elements, formValues))
+    // console.log(`is field ${field?.label} required :` ,isFieldRequired)
     const fieldSchema = generateSingleFieldSchema(field, !!isFieldRequired);
 
     if (field && fieldSchema) {
