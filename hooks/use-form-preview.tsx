@@ -24,41 +24,38 @@ export const useFormPreview = (form: Form) => {
   const hiddenFieldsRef = useRef<string[]>([]);
 
   useEffect(() => {
+    
+    const newHiddenFields: string[] = [];
 
-    startTransition(()=>{
-      const newHiddenFields: string[] = [];
-
-      // Determine which fields are hidden based on the current form values
-      form.elements.forEach((element) => {
-        const isVisible = isFieldVisible(element.id, form.rules, form.elements, formValues);
-        if (!isVisible) {
-          const fieldKey = element.field
-            ? `${element.field.label}-field`
-            : element.service
-            ? `${element.service.name}-service`
-            : "";
-          newHiddenFields.push(fieldKey);
-        }
-      });
-  
-      // Check if the hidden fields have changed
-      const hiddenFieldsChanged = JSON.stringify(hiddenFieldsRef.current) !== JSON.stringify(newHiddenFields);
-  
-      if (hiddenFieldsChanged) {
-        // Update the ref with the new hidden fields
-        hiddenFieldsRef.current = newHiddenFields;
-  
-        // Set hidden field values to undefined
-        newHiddenFields.forEach((fieldKey) => {
-          formPreview.setValue(fieldKey, undefined, { shouldDirty: true });
-        });
-  
-        // Generate a new schema based on the updated form values
-        const updatedSchema = generateZodSchema(form.elements, form.rules, formValues);
-        setSchema(updatedSchema); // Update the schema state
+    // Determine which fields are hidden based on the current form values
+    form.elements.forEach((element) => {
+      const isVisible = isFieldVisible(element.id, form.rules, form.elements, formValues);
+      if (!isVisible) {
+        const fieldKey = element.field
+          ? `${element.field.label}-field`
+          : element.service
+          ? `${element.service.name}-service`
+          : "";
+        newHiddenFields.push(fieldKey);
       }
-    })
-  
+    });
+
+    // Check if the hidden fields have changed
+    const hiddenFieldsChanged = JSON.stringify(hiddenFieldsRef.current) !== JSON.stringify(newHiddenFields);
+
+    if (hiddenFieldsChanged) {
+      // Update the ref with the new hidden fields
+      hiddenFieldsRef.current = newHiddenFields;
+
+      // Set hidden field values to undefined
+      newHiddenFields.forEach((fieldKey) => {
+        formPreview.setValue(fieldKey, undefined, { shouldDirty: true });
+      });
+
+      // Generate a new schema based on the updated form values
+      const updatedSchema = generateZodSchema(form.elements, form.rules, formValues);
+      setSchema(updatedSchema); // Update the schema state
+    }
   }, [formValues, form.elements, form.rules, formPreview]);
 
   // Handle form submission
