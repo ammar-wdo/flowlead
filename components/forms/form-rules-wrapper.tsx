@@ -33,13 +33,13 @@ const FormRuleWrapper = ({ fetchedForm ,services}: Props) => {
       <div className='flex items-center justify-between'>
       <div className='flex items-center'>
         <Button onClick={() => setActiveComponent('fields')} className={cn('hover:bg-transparent rounded-none border-b-2 text-muted-foreground text-sm   border-transparent', activeComponent === "fields" && ' border-black ')} variant={'ghost'}>Fields</Button>
-        <Button onClick={() => setActiveComponent('rules')} className={cn('hover:bg-transparent rounded-none border-b-2  text-muted-foreground text-sm  border-transparent', activeComponent === "rules" && ' border-black ')} variant={'ghost'}>Rules</Button>
+        {params.companySlug !=="new" &&<Button onClick={() => setActiveComponent('rules')} className={cn('hover:bg-transparent rounded-none border-b-2  text-muted-foreground text-sm  border-transparent', activeComponent === "rules" && ' border-black ')} variant={'ghost'}>Rules</Button>}
       </div>
-<Button
+{params.companySlug !=="new" &&<Button
 onClick={()=>startTransition(()=>router.push(`/dashboard/${params.companySlug}/preview/${params.formSlug}`))}
 disabled={pending}
  variant={'ghost'}
-  className='bg-white text-second  border-second border rounded-md hover:bg-white h-[34px] hover:text-second '>View Form {pending && <Loader className='ml-3 animate-spin w-3 h-3' />}</Button>
+  className='bg-white text-second  border-second border rounded-md hover:bg-white h-[34px] hover:text-second '>View Form {pending && <Loader className='ml-3 animate-spin w-3 h-3' />}</Button>}
       </div>
     
       {/* form rules components */}
