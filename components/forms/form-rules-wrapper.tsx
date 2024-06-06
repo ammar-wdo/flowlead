@@ -33,9 +33,9 @@ const FormRuleWrapper = ({ fetchedForm ,services}: Props) => {
       <div className='flex items-center justify-between'>
       <div className='flex items-center'>
         <Button onClick={() => setActiveComponent('fields')} className={cn('hover:bg-transparent rounded-none border-b-2 text-muted-foreground text-sm   border-transparent', activeComponent === "fields" && ' border-black ')} variant={'ghost'}>Fields</Button>
-        {params.companySlug !=="new" &&<Button onClick={() => setActiveComponent('rules')} className={cn('hover:bg-transparent rounded-none border-b-2  text-muted-foreground text-sm  border-transparent', activeComponent === "rules" && ' border-black ')} variant={'ghost'}>Rules</Button>}
+        {params.formSlug !=="new" &&<Button onClick={() => setActiveComponent('rules')} className={cn('hover:bg-transparent rounded-none border-b-2  text-muted-foreground text-sm  border-transparent', activeComponent === "rules" && ' border-black ')} variant={'ghost'}>Rules</Button>}
       </div>
-{params.companySlug !=="new" &&<Button
+{params.formSlug !=="new" &&<Button
 onClick={()=>startTransition(()=>router.push(`/dashboard/${params.companySlug}/preview/${params.formSlug}`))}
 disabled={pending}
  variant={'ghost'}

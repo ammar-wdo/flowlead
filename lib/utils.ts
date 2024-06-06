@@ -212,6 +212,19 @@ export const generateSingleFieldSchema = (
         fieldSchema = fieldSchema.optional();
       }
       break;
+      case "address":
+        fieldSchema = z.object({
+          address: field.address?.addressShow && isRequired ? z.string().min(1, "Required") : z.string().optional(),
+          houseNumber: field.address?.houseNumberShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
+          postalCode: field.address?.postalCodeShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
+          city: field.address?.cityShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
+          stateRegion: field.address?.stateRegionShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
+          country: field.address?.countryShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
+        });
+      
+        break;
+       
+  
 
     default:
       fieldSchema = z.string();

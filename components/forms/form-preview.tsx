@@ -35,7 +35,7 @@ type Props = {
 };
 
 const FormPreview = ({ form }: Props) => {
-  const { formPreview, onSubmit } = useFormPreview(form);
+  const { formPreview, onSubmit, handleBlur } = useFormPreview(form);
   const formValues = formPreview.watch();
 
   const renderElement = 
@@ -68,8 +68,10 @@ const FormPreview = ({ form }: Props) => {
                     {fieldElement.type === "text" && (
                       <Input
                         {...field}
+                     
                         value={field.value || ""}
                         placeholder={fieldElement.placeholder || ""}
+                        
                       />
                     )}
                     {fieldElement.type === "longText" && (
@@ -78,6 +80,7 @@ const FormPreview = ({ form }: Props) => {
                         placeholder={fieldElement.placeholder || ""}
                         {...field}
                         value={field.value || ""}
+                        
                       />
                     )}
                     {fieldElement.type === "number" && (
@@ -86,6 +89,7 @@ const FormPreview = ({ form }: Props) => {
                         {...field}
                         placeholder={fieldElement.placeholder || ""}
                         value={field.value || ""}
+                        
                       />
                     )}
                     {fieldElement.type === "phone" && (
@@ -93,8 +97,10 @@ const FormPreview = ({ form }: Props) => {
                         type="number"
                         {...field}
                         placeholder={fieldElement.placeholder || ""}
+                        
                       />
                     )}
+                   
                     {fieldElement.type === "checkbox" && (
                       <FormItem>
                         <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -173,10 +179,20 @@ const FormPreview = ({ form }: Props) => {
                         </FormControl>
                       </FormItem>
                     )}
+                     {fieldElement.type === "address" && (
+                   <> <AddressField  
+                    field={field}
+                    fieldValue={field.value}
+                    formPreview={formPreview}
+                    fieldElement={fieldElement} />
+                  
+                     </>
+                    )}
                   </div>
                 </FormControl>
                 {fieldElement.hint && <FormDescription>{fieldElement.hint}</FormDescription>}
-                <FormMessage />
+                {fieldElement.type!=='address' && <FormMessage />}
+                {!!formPreview.formState.errors[`${fieldElement.label}-field`] && <p className="text-red-500 text-sm ">Address fields are required</p>}
               </FormItem>
             )}
           />
@@ -257,6 +273,111 @@ const FormPreview = ({ form }: Props) => {
 };
 
 export default FormPreview;
+
+
+type AddressFieldProps = {
+  field: ControllerRenderProps<{
+    [x: string]: any;
+}, `${string}-field`>;
+  fieldValue: any;
+  formPreview: UseFormReturn<any>;
+  fieldElement: any; // Adjust this type based on your field element type
+};
+
+const AddressField: React.FC<AddressFieldProps> = ({ field, fieldValue, formPreview, fieldElement }) => {
+  return (
+    <div className="">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5">
+      {fieldElement.address?.addressShow && (
+        <FormItem className=" col-span-1 md:col-span-3">
+          <FormLabel>{fieldElement.address?.addressLabel || "Address"}</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              value={fieldValue?.address || ""}
+              placeholder={fieldElement.address?.addressLabel || "Enter address"}
+              onChange={(e) => field.onChange({ ...fieldValue, address: e.target.value })}
+            />
+          </FormControl>
+       
+        </FormItem>
+      )}
+      {fieldElement.address?.houseNumberShow && (
+        <FormItem className="col-span-1 md:col-span-2">
+          <FormLabel>{fieldElement.address?.houseNumberLabel || "House Number"}</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              value={fieldValue?.houseNumber || ""}
+              placeholder={fieldElement.address?.houseNumberLabel || "Enter house number"}
+              onChange={(e) => field.onChange({ ...fieldValue, houseNumber: e.target.value })}
+            />
+          </FormControl>
+       
+        </FormItem>
+      )}
+    
+    
+      {fieldElement.address?.postalCodeShow && (
+      <FormItem className=" col-span-1 md:col-span-3">
+          <FormLabel>{fieldElement.address?.postalCodeLabel || "Postal Code"}</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              value={fieldValue?.postalCode || ""}
+              placeholder={fieldElement.address?.postalCodeLabel || "Enter postal code"}
+              onChange={(e) => field.onChange({ ...fieldValue, postalCode: e.target.value })}
+            />
+          </FormControl>
+          
+        </FormItem>
+      )}
+      {fieldElement.address?.cityShow && (
+     <FormItem className=" col-span-1 md:col-span-2">
+          <FormLabel>{fieldElement.address?.cityLabel || "City"}</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              value={fieldValue?.city || ""}
+              placeholder={fieldElement.address?.cityLabel || "Enter city"}
+              onChange={(e) => field.onChange({ ...fieldValue, city: e.target.value })}
+            />
+          </FormControl>
+       
+        </FormItem>
+      )}
+      {fieldElement.address?.stateRegionShow && (
+     <FormItem className=" col-span-1 md:col-span-3">
+          <FormLabel>{fieldElement.address?.stateRegionLabel || "State/Region"}</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              value={fieldValue?.stateRegion || ""}
+              placeholder={fieldElement.address?.stateRegionLabel || "Enter state/region"}
+              onChange={(e) => field.onChange({ ...fieldValue, stateRegion: e.target.value })}
+            />
+          </FormControl>
+       
+        </FormItem>
+      )}
+      {fieldElement.address?.countryShow && (
+      <FormItem className=" col-span-1 md:col-span-2">
+          <FormLabel>{fieldElement.address?.countryLabel || "Country"}</FormLabel>
+          <FormControl>
+            <Input
+              {...field}
+              value={fieldValue?.country || ""}
+              placeholder={fieldElement.address?.countryLabel || "Enter country"}
+              onChange={(e) => field.onChange({ ...fieldValue, country: e.target.value })}
+            />
+          </FormControl>
+       
+        </FormItem>
+      )}
+   </div>
+    </div>
+  );
+};
 
 
 const ServiceCheckBoxView = ({
