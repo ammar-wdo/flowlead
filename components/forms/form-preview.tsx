@@ -192,7 +192,7 @@ const FormPreview = ({ form }: Props) => {
                 </FormControl>
                 {fieldElement.hint && <FormDescription>{fieldElement.hint}</FormDescription>}
                 {fieldElement.type!=='address' && <FormMessage />}
-                {!!formPreview.formState.errors[`${fieldElement.label}-field`] && <p className="text-red-500 text-sm ">Address fields are required</p>}
+                {(!!formPreview.formState.errors[`${fieldElement.label}-field`] && fieldElement.type==='address') && <p className="text-red-500 text-sm ">Address fields are required</p>}
               </FormItem>
             )}
           />

@@ -108,7 +108,7 @@ export const addForm = async (values: z.infer<typeof formSchema>, companySlug: s
       
 
 
-        return { success: true, message: "Form Created Successfully" }
+        return { success: true, message: "Form Created Successfully" ,formSlug:newForm.slug}
     } catch (error) {
         console.log(error)
         let message = 'Internal server error'

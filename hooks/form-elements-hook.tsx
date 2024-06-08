@@ -38,17 +38,27 @@ const params = useParams<{companySlug:string}>()
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     let res
+ 
     try {
       if(!fetchedForm)
-       {res = await addForm(values,params.companySlug)}
+       {res = await addForm(values,params.companySlug) 
+        if (!res.success) return toast.error(res.error)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL!}/dashboard/${params.companySlug}/forms/${res.formSlug}`)
+        toast.success(res.message)
+        router.refresh()
+       }
       else {
+      
         res = await editForm(values,params.companySlug,fetchedForm.id)
+        if (!res.success) return toast.error(res.error)
+        toast.success(res.message)
+        router.refresh()
       }
 
-      if (!res.success) return toast.error(res.error)
-      toast.success(res.message)
-  
-    router.refresh()
+    
+
+ 
+
  
 
    

@@ -22,7 +22,7 @@ const FormRuleWrapper = ({ fetchedForm ,services}: Props) => {
 
   const [activeComponent, setActiveComponent] = useState<'fields' | 'rules'>('fields')
   const { form, onSubmit } = useFormElements(fetchedForm)
-  const {setSelectedElementNull} = useSelectedElement()
+  
   const router = useRouter()
   const params = useParams<{companySlug:string,formSlug:string}>()
   const [pending, startTransition] = useTransition()

@@ -109,7 +109,7 @@ export const getServices = async (companySlug: string, userId: string) => {
   return refactoredServices;
 };
 
-//getch forms
+//fetch forms
 
 export const getForms = async (companySlug: string, userId: string) => {
   const forms = await prisma.form.findMany({
