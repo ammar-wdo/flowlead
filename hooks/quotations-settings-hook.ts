@@ -10,7 +10,7 @@ import { useModal } from "./modal-hook"
 import { Company } from "@prisma/client"
 
 
-export const useQuotationsSettings = ({quotationsSettingsData}:{quotationsSettingsData:z.infer<typeof quotationsSettings> | null}) => {
+export const useQuotationsSettings = ({quotationsSettingsData}:{quotationsSettingsData:z.infer<typeof quotationsSettings> | undefined | null}) => {
 
 
   const form = useForm<z.infer<typeof quotationsSettings>>({
@@ -30,7 +30,6 @@ export const useQuotationsSettings = ({quotationsSettingsData}:{quotationsSettin
   })
 
 
-  const { ImagePlaceholder, file, setFile, uploadImage } = useLogo({ form })
 
   const router = useRouter()
   const { setClose } = useModal()
@@ -59,6 +58,6 @@ export const useQuotationsSettings = ({quotationsSettingsData}:{quotationsSettin
   }
 
 
-  return { form, onSubmit, file, setFile, uploadImage, ImagePlaceholder }
+  return { form, onSubmit  }
 
 }
