@@ -22,7 +22,7 @@ type Props = {}
 
 const CompanyForm = (props: Props) => {
 
-  const { form, onSubmit, file, setFile, uploadImage, ImagePlaceholder } = useComapany()
+  const { form, onSubmit, file, setFile, uploadImage, ImagePlaceholder } = useComapany({company:null})
   const isLoading = form.formState.isSubmitting
   return (
     <Form {...form}>

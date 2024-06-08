@@ -53,7 +53,9 @@ model Company {
   IBAN          String
   termsUrl      String?
 
-  qoutationSettings QoutesSettings
+    quotesSettings   QoutesSettings? @relation(fields: [quotesSettingsId], references: [id])
+  quotesSettingsId String?         @unique @db.ObjectId
+
   invoiceSettings   InvoiceSettings
 
   forms    Form[]
@@ -61,6 +63,23 @@ model Company {
 
   accountId String  @db.ObjectId
   account   Account @relation(fields: [accountId], references: [id])
+}
+
+
+model  QoutesSettings {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  dueDays     Int     @default(14)
+  prefix      String?
+  nextNumber  Int     @default(0)
+  senderName  String  
+  senderEmail String  
+  bcc         String?
+  attatchments String?
+  footNote     String?
+  subject      String  
+  body         String  
+  
+   company     Company? @relation()
 }
 
 model Form {
@@ -77,12 +96,11 @@ model Form {
   isWidjet    Boolean @default(false)
 
   elements Element[]
-rules       Rule[]
+  rules    Rule[]
 
-  views    Viewd[]
+  views Viewd[]
 
-
-  services String[]  @db.ObjectId
+  services String[] @db.ObjectId
 
   accountId String  @db.ObjectId
   account   Account @relation(fields: [accountId], references: [id])
@@ -198,13 +216,13 @@ enum PhoneComparisonOperator {
 }
 
 type Rule {
-  id  String
-  conditions  Condition[]
-  then        Then
+  id         String
+  conditions Condition[]
+  then       Then
 }
 
 type Condition {
-   id  String
+  id              String
   field           String
   operator        ComparisonOperator
   value           String?
@@ -275,13 +293,7 @@ type ServiceElement {
   addToQoutation Boolean     @default(false)
 }
 
-type QoutesSettings {
-  dueDays               Int    @default(14)
-  qouteNumberPrefix     String @default("")
-  latestQoutationNumber Int    @default(0)
-  subject               String @default("")
-  body                  String @default("")
-}
+
 
 type InvoiceSettings {
   dueDays               Int    @default(14)

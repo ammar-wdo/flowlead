@@ -20,6 +20,19 @@ const phoneReg = requiredString.refine((value) => {
 }, "Invalid phone number");
 
 // COMPANY SCHEMA
+export const quotationsSettings = z.object({
+  dueDays: z.number().positive().default(14),
+  prefix: optionalString.nullable(),
+  nextNumber: z.number().nonnegative().default(0),
+  senderName: requiredString, 
+  senderEmail: requiredString.email(),
+  bcc: z.string().email().optional().nullable(),
+  attachments: optionalString.nullable(), 
+  footNote: optionalString.nullable(),
+  subject: optionalString,
+  body: optionalString
+});
+
 export const companySchema = z.object({
   name: requiredString,
   address: requiredString,
@@ -47,6 +60,7 @@ export const companySchema = z.object({
   contactPerson: requiredString,
   IBAN: requiredString,
   termsUrl: optionalString,
+
 });
 
 //SERVICE SCHEMA
