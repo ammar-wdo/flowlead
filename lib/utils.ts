@@ -582,3 +582,29 @@ export const generateZodSchema = (
 
   return z.object(zodSchema);
 };
+
+
+export const insertAtCaret = (input: HTMLInputElement | null, text: string) => {
+  if (input) {
+    const startPos = input.selectionStart || 0;
+    const endPos = input.selectionEnd || 0;
+
+    const newValue =
+      input.value.substring(0, startPos) +
+      text +
+      input.value.substring(endPos, input.value.length);
+    input.value = newValue;
+
+    // Move caret to the end of the inserted text
+    input.setSelectionRange(startPos + text.length, startPos + text.length);
+    input.focus();
+  }
+};
+
+export const replacePlaceholders = (text: string | undefined | null): string => {
+  if(!text) return ""
+  const currentYear = new Date().getFullYear();
+  const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1 and pad with leading zero if necessary.
+
+  return text.replace(/{year}/g, currentYear.toString()).replace(/{month}/g, currentMonth);
+};
