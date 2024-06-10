@@ -53,8 +53,8 @@ model Company {
   IBAN          String
   termsUrl      String?
 
-    quotesSettings   QoutesSettings? @relation(fields: [quotesSettingsId], references: [id])
-  quotesSettingsId String?         @unique @db.ObjectId
+    quotesSettings   QoutesSettings?
+
 
   invoiceSettings   InvoiceSettings
 
@@ -79,7 +79,8 @@ model  QoutesSettings {
   subject      String?
   body         String?  
   
-   company     Company? @relation()
+ company     Company?  @relation(fields: [companyId], references: [id])
+  companyId   String?  @unique  @db.ObjectId
 }
 
 model Form {

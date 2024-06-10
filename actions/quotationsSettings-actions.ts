@@ -32,13 +32,13 @@ export const saveQuotations = async (values: z.infer<typeof quotationsSettings>,
                 slug: companySlug
             },
             select: {
-                id: true,   quotesSettingsId: true
+                id: true,   quotesSettings:true
             }
         })
         if (!company) throw new CustomError("Company Id not found,check provided slug")
 
 
-        if(!company.quotesSettingsId){
+        if(!company.quotesSettings){
             await prisma.qoutesSettings.create({
                 data:{
                     ...validData.data,
@@ -52,7 +52,7 @@ export const saveQuotations = async (values: z.infer<typeof quotationsSettings>,
         }else {
             await prisma.qoutesSettings.update({
                 where:{
-                    id:company.quotesSettingsId
+                    id:company.quotesSettings.id
                 },
                 data:{
                     ...validData.data
