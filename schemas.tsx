@@ -33,7 +33,7 @@ export const quotationsSettings = z.object({
   senderName: requiredString,
   senderEmail: requiredString.email(),
   bcc: z.string().email().optional().nullable().or(z.literal(undefined)),
-  attatchments: optionalString.nullable(),
+  attatchments: z.array(z.string()),
   footNote: optionalString.nullable(),
   subject: optionalString.nullable(),
   body: optionalString.nullable(),

@@ -28,6 +28,7 @@ import QuillEditor from "../quill-editor";
 import { File, Loader, Upload, XIcon } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import LoadingButton from "../loading-button";
+import { MultiFileDropzone } from "../MultiFileDropzone";
 
 type Props = {
   quotationsSettings: z.infer<typeof quotationsSettings> | undefined | null;
@@ -41,13 +42,14 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
     handleSubjectInsertText,
     setCaretSubjectPosition,
     quillRef,
-    setFile,
-    deleteFile,
+   fileStates,
+   setFileStates,
+   updateFileProgress,
+
     handleBodyInsertText,
     setCaretBodyPosition,
-    file,
-    deleting,
-    uploadFile,
+   
+ edgestore,
     progressing,
     handleFootnoteInputChange,
     handleFootnoteInsertText,
@@ -142,7 +144,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                   </p>
                 </div>
               </div>
-              <p className="text-sm mt-2">
+              <p className="text-xs mt-2">
                 Set a default number template here. Available variables:{" "}
                 {VARIABLES.quotationNumber.map((variable) => (
                   <span
@@ -153,7 +155,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                         `${form.getValues("prefix")}${variable}`
                       )
                     }
-                    className="text-indigo-600 cursor-pointer mr-1 text-xs text-nowrap"
+                    className="text-indigo-600 cursor-pointer mr-1  text-nowrap"
                   >
                     {variable}
                   </span>
@@ -242,13 +244,13 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                         value={field.value || ""}
                       />
                     </FormControl>
-                    <p className="text-sm mt-1">
+                    <p className="text-xs mt-1">
                       Set a default subject here. Available Variables:
                       {VARIABLES.subject.map((variable) => (
                         <span
                           key={variable}
                           onClick={() => handleSubjectInsertText(variable)}
-                          className="text-indigo-600 cursor-pointer mr-1 text-xs text-nowrap"
+                          className="text-indigo-600 cursor-pointer mr-1  text-nowrap"
                         >
                           {variable}
                         </span>
@@ -278,14 +280,14 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                         ref={quillRef}
                       />
                     </FormControl>
-                    <p className="text-sm mt-1">
+                    <p className="text-xs mt-2">
                       Set a default message for the quotation emails here.
                       Available variables:
                       {VARIABLES.body.map((variable) => (
                         <span
                           key={`${variable}-Body`}
                           onClick={() => handleBodyInsertText(field, variable)}
-                          className="text-indigo-600 cursor-pointer mr-1 text-xs text-nowrap"
+                          className="text-indigo-600 cursor-pointer mr-1  text-nowrap"
                         >
                           {variable}
                         </span>
@@ -311,91 +313,43 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                       Add your attachments here
                     </span>
                   </div>
-                  {!form.watch("attatchments") ? (
-                    <div>
-                      {!file ? (
-                        <div className="w-fill">
-                          <Label
-                            htmlFor="file-upload"
-                            className="flex items-center justify-center w-full p-4 border-dashed border cursor-pointer  gap-1"
-                          >
-                            <span className="text-indigo-500">Browse</span>
-                            <span>and choose a file</span>{" "}
-                            <Upload size={20} className="ml-3 " />
-                          </Label>
-                          <FormControl>
-                            <Input
-                              id="file-upload"
-                              className="hidden"
-                              type="file"
-                              onChange={(e) => {
-                                setFile(e.target.files?.[0]);
-                              }}
-                            />
-                          </FormControl>
-                        </div>
-                      ) : (
-                        <div className="space-y-1">
-                          <Button
-                            onClick={async () => await uploadFile()}
-                            disabled={progressing}
-                            className="bg-second hover:bg-second/80 w-full"
-                          >
-                            Upload{" "}
-                            {progressing && (
-                              <Loader size={20} className="ml-3 animate-spin" />
-                            )}
-                          </Button>
-                          <div className="border p-3 rounded-lg flex items-center gap-3 relative">
-                            <button
-                              type="button"
-                              onClick={() => setFile(undefined)}
-                              className="absolute top-1 right-1 cursor-pointer"
-                            >
-                              <XIcon />
-                            </button>
-                            <File size={24} className="text-muted-foreground" />
-                            <div className="flex flex-col">
-                              <span className="text-muted-foreground text-xs">
-                                {file.name}
-                              </span>
-                              <span className="text-muted-foreground text-xs">
-                                {formatFileSize(file.size)}
-                              </span>
-                              <span className="text-muted-foreground text-xs">
-                                {file.type}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="border rounded-lg gap-1 w-full items-center justify-center relative flex flex-col p-3">
-                      {deleting ? (
-                        <Loader className="animate-spin" />
-                      ) : (
-                        <div className=" gap-1 w-full items-center justify-center relative flex flex-col p-3">
-                          <XIcon
-                            onClick={() =>
-                              deleteFile(form.watch("attatchments") as string)
-                            }
-                            className="top-1 right-1 absolute cursor-pointer"
-                          />
-                          <File size={24} className="text-muted-foreground" />
-                          <a
-                            className="text-indigo-500 cursor-pointer hover:underline"
-                            href={form.watch("attatchments") as string}
-                            download
-                          >
-                            Download
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                
                 </SettingsFormWrapper>
 
+<div>
+      <MultiFileDropzone
+        value={fileStates}
+        onChange={(files) => {
+          setFileStates(files);
+        }}
+        onFilesAdded={async (addedFiles) => {
+          setFileStates([...fileStates, ...addedFiles]);
+          await Promise.all(
+            addedFiles.map(async (addedFileState) => {
+              try {
+                const res = await edgestore.publicFiles.upload({
+                  file: addedFileState.file,
+                  onProgressChange: async (progress) => {
+                    updateFileProgress(addedFileState.key, progress);
+                    if (progress === 100) {
+                      // wait 1 second to set it to complete
+                      // so that the user can see the progress bar at 100%
+                      await new Promise((resolve) => setTimeout(resolve, 1000));
+                      updateFileProgress(addedFileState.key, 'COMPLETE');
+                    }
+                  },
+                });
+                console.log(res);
+                form.setValue('attatchments',[...form.watch('attatchments'),res.url])
+              } catch (err) {
+                updateFileProgress(addedFileState.key, 'ERROR');
+              }
+            }),
+          );
+        }}
+      />
+
+</div>
                 <FormMessage />
               </FormItem>
             )}
@@ -428,14 +382,14 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                         value={field.value || ""}
                       />
                     </FormControl>
-                    <p className="mt-1 text-sm">
+                    <p className="text-xs mt-2">
                       Here you set a default footnote for the quote. available
                       variables:
                       {VARIABLES.footnote.map((variable) => (
                         <span
                           key={`${variable}-footnote`}
                           onClick={() => handleFootnoteInsertText(variable)}
-                          className="text-indigo-600 cursor-pointer mr-1 text-xs"
+                          className="text-indigo-600 cursor-pointer mr-1 "
                         >
                           {variable}
                         </span>

@@ -74,7 +74,7 @@ model  QoutesSettings {
   senderName  String  
   senderEmail String  
   bcc         String?
-  attatchments String?
+  attatchments String[]
   footNote     String?
   subject      String?
   body         String?  

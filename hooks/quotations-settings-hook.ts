@@ -12,6 +12,7 @@ import React, { useRef, useState } from "react";
 import Quill from "quill";
 import { useEdgeStore } from "@/lib/edgestore";
 import { saveQuotations } from "@/actions/quotationsSettings-actions";
+import { FileState } from "@/components/MultiFileDropzone";
 
 export const useQuotationsSettings = ({
   quotationsSettingsData,
@@ -21,7 +22,7 @@ export const useQuotationsSettings = ({
   const form = useForm<z.infer<typeof quotationsSettings>>({
     resolver: zodResolver(quotationsSettings),
     defaultValues: {
-      attatchments: quotationsSettingsData?.attatchments || "",
+      attatchments: quotationsSettingsData?.attatchments || [],
       bcc: quotationsSettingsData?.bcc || "",
       body: quotationsSettingsData?.body || "",
       dueDays: quotationsSettingsData?.dueDays || 14,
@@ -119,6 +120,24 @@ export const useQuotationsSettings = ({
   const [deleting, setDeleting] = useState(false);
   const { edgestore } = useEdgeStore();
 
+
+
+  const [fileStates, setFileStates] = useState<FileState[]>([]);
+
+  function updateFileProgress(key: string, progress: FileState['progress']) {
+    setFileStates((fileStates) => {
+      const newFileStates = structuredClone(fileStates);
+      const fileState = newFileStates.find(
+        (fileState) => fileState.key === key,
+      );
+      if (fileState) {
+        fileState.progress = progress;
+      }
+      return newFileStates;
+    });
+  }
+
+
   const deleteFile = async (url: string) => {
     try {
       setDeleting(true);
@@ -130,28 +149,12 @@ export const useQuotationsSettings = ({
       toast.error("Something went wrong");
     } finally {
       setFile(undefined);
-      form.setValue("attatchments", undefined);
+      form.setValue("attatchments", []);
       setDeleting(false);
     }
   };
 
-  const uploadFile = async () => {
-    if (file) {
-      const res = await edgestore.publicFiles.upload({
-        file,
-        onProgressChange: (progress) => {
-          // you can use this to show a progress bar
-          setProgressing(true);
-          console.log(progress);
-        },
-      });
-      setProgressing(false);
-      // you can run some server action or api here
-      // to add the necessary data to your database
-      console.log(res);
-      form.setValue("attatchments", res.url);
-    }
-  };
+
 
   const router = useRouter();
   const params = useParams<{companySlug:string}>()
@@ -184,7 +187,10 @@ export const useQuotationsSettings = ({
     setFile,
     file,
     progressing,
-    uploadFile,
+   fileStates,
+   setFileStates,
+   updateFileProgress,
+   edgestore,
     deleting,
     deleteFile,
     handleFootnoteInputChange,
