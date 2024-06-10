@@ -53,5 +53,5 @@ const QuillEditor = forwardRef<Quill | null, QuillEditorProps>(({ value, onChang
     </div>
   );
 });
-
+QuillEditor.displayName = 'QuillEditor'; // Add this line
 export default QuillEditor;

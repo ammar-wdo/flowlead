@@ -76,8 +76,8 @@ model  QoutesSettings {
   bcc         String?
   attatchments String?
   footNote     String?
-  subject      String  
-  body         String  
+  subject      String?
+  body         String?  
   
    company     Company? @relation()
 }

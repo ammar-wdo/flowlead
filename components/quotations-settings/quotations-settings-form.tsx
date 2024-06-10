@@ -27,6 +27,7 @@ import {
 import QuillEditor from "../quill-editor";
 import { File, Loader, Upload, XIcon } from "lucide-react";
 import { Textarea } from "../ui/textarea";
+import LoadingButton from "../loading-button";
 
 type Props = {
   quotationsSettings: z.infer<typeof quotationsSettings> | undefined | null;
@@ -59,7 +60,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-[1200px] mt-8"
+        className="max-w-[1200px] mt-8 space-y-4"
       >
         <div className="space-y-8  p-4  bg-white py-12">
           <FormField
@@ -137,7 +138,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                   <Label>Next Issue</Label>
                   <p className="mt-4 text-muted-foreground text-sm ">
                     {replacePlaceholders(form.watch("prefix"))}
-                    {form.watch("nextNumber")}
+                    {formatWithLeadingZeros(form.watch("nextNumber"),4)}
                   </p>
                 </div>
               </div>
@@ -300,7 +301,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
           <div className="mt-4 h-px w-full bg-gray-200 " />
           <FormField
             control={form.control}
-            name="attachments"
+            name="attatchments"
             render={({ field }) => (
               <FormItem className="flex-[2]">
                 <SettingsFormWrapper>
@@ -310,7 +311,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                       Add your attachments here
                     </span>
                   </div>
-                  {!form.watch("attachments") ? (
+                  {!form.watch("attatchments") ? (
                     <div>
                       {!file ? (
                         <div className="w-fill">
@@ -377,14 +378,14 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                         <div className=" gap-1 w-full items-center justify-center relative flex flex-col p-3">
                           <XIcon
                             onClick={() =>
-                              deleteFile(form.watch("attachments") as string)
+                              deleteFile(form.watch("attatchments") as string)
                             }
                             className="top-1 right-1 absolute cursor-pointer"
                           />
                           <File size={24} className="text-muted-foreground" />
                           <a
                             className="text-indigo-500 cursor-pointer hover:underline"
-                            href={form.watch("attachments") as string}
+                            href={form.watch("attatchments") as string}
                             download
                           >
                             Download
@@ -449,7 +450,8 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
           />
         </div>
 
-        <Button type="submit">Submit</Button>
+        <LoadingButton className='ml-auto  flex bg-second hover:bg-second/90 py-2 px-6 h-fit' title={"Save"} isLoading={form.formState.isSubmitting} />
+        {JSON.stringify(form.formState.errors)}
       </form>
     </Form>
   );

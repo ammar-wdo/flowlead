@@ -5,12 +5,13 @@ import { z } from "zod";
 import { useLogo } from "./logo-hook";
 import { addCompany, editCompany } from "@/actions/company-actions";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useModal } from "./modal-hook";
 import { Company } from "@prisma/client";
 import React, { useRef, useState } from "react";
 import Quill from "quill";
 import { useEdgeStore } from "@/lib/edgestore";
+import { saveQuotations } from "@/actions/quotationsSettings-actions";
 
 export const useQuotationsSettings = ({
   quotationsSettingsData,
@@ -20,7 +21,7 @@ export const useQuotationsSettings = ({
   const form = useForm<z.infer<typeof quotationsSettings>>({
     resolver: zodResolver(quotationsSettings),
     defaultValues: {
-      attachments: quotationsSettingsData?.attachments || "",
+      attatchments: quotationsSettingsData?.attatchments || "",
       bcc: quotationsSettingsData?.bcc || "",
       body: quotationsSettingsData?.body || "",
       dueDays: quotationsSettingsData?.dueDays || 14,
@@ -129,7 +130,7 @@ export const useQuotationsSettings = ({
       toast.error("Something went wrong");
     } finally {
       setFile(undefined);
-      form.setValue("attachments", undefined);
+      form.setValue("attatchments", undefined);
       setDeleting(false);
     }
   };
@@ -148,25 +149,23 @@ export const useQuotationsSettings = ({
       // you can run some server action or api here
       // to add the necessary data to your database
       console.log(res);
-      form.setValue("attachments", res.url);
+      form.setValue("attatchments", res.url);
     }
   };
 
   const router = useRouter();
+  const params = useParams<{companySlug:string}>()
   const { setClose } = useModal();
   async function onSubmit(values: z.infer<typeof quotationsSettings>) {
     try {
-      //   let res
-      //   if(quotationsSettingsData){
-      //     res = await editCompany(values,company.slug)
-      //   }
-      //   else{
-      //     res = await addCompany(values)
-      //   }
-      //   if (!res.success) return toast.error(res.error)
-      //   toast.success(res.message)
-      // router.refresh()
-      // setClose()
+       
+  
+       const  res = await saveQuotations(values,params.companySlug)
+    
+        if (!res.success) return toast.error(res.error)
+        toast.success(res.message)
+      router.refresh()
+    
     } catch (error) {
       toast.error("Something went wrong");
     }
