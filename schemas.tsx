@@ -35,8 +35,8 @@ export const quotationsSettings = z.object({
   bcc: z.string().email().optional().nullable().or(z.literal(undefined)),
   attatchments: optionalString.nullable(),
   footNote: optionalString.nullable(),
-  subject: optionalString,
-  body: optionalString,
+  subject: optionalString.nullable(),
+  body: optionalString.nullable(),
 });
 
 export const companySchema = z.object({
