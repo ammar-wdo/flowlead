@@ -1,4 +1,10 @@
-import { Action, ComparisonOperator, ElementType, FieldType, LogicalOperator } from "@prisma/client";
+import {
+  Action,
+  ComparisonOperator,
+  ElementType,
+  FieldType,
+  LogicalOperator,
+} from "@prisma/client";
 import { ReactNode } from "react";
 import * as z from "zod";
 import { IoIosAddCircle } from "react-icons/io";
@@ -24,13 +30,13 @@ export const quotationsSettings = z.object({
   dueDays: z.number().positive().default(14),
   prefix: optionalString.nullable(),
   nextNumber: z.number().nonnegative().default(0),
-  senderName: requiredString, 
+  senderName: requiredString,
   senderEmail: requiredString.email(),
   bcc: z.string().email().optional().nullable(),
-  attachments: optionalString.nullable(), 
+  attachments: optionalString.nullable(),
   footNote: optionalString.nullable(),
   subject: optionalString,
-  body: optionalString
+  body: optionalString,
 });
 
 export const companySchema = z.object({
@@ -60,7 +66,6 @@ export const companySchema = z.object({
   contactPerson: requiredString,
   IBAN: requiredString,
   termsUrl: optionalString,
-
 });
 
 //SERVICE SCHEMA
@@ -149,7 +154,7 @@ export const fieldTypeEnum = [
 
 export const logicOperatorArray = ["AND", "OR", "NOT"];
 export const logicOperatorEnum = ["AND", "OR", "NOT"] as const;
-export type  LogicalOperatorType = typeof logicOperatorArray[number]
+export type LogicalOperatorType = (typeof logicOperatorArray)[number];
 
 export const comparisonOperatorArray = [
   "CONTAINS",
@@ -165,10 +170,6 @@ export const comparisonOperatorArray = [
   "AFTER",
 ];
 
-
-
-
-
 export const comparisonOperatorEnum = [
   "CONTAINS",
   "EMPTY",
@@ -182,14 +183,14 @@ export const comparisonOperatorEnum = [
   "BEFORE",
   "AFTER",
 ] as const;
-export type ComparisonOperatorType = typeof comparisonOperatorEnum[number]
+export type ComparisonOperatorType = (typeof comparisonOperatorEnum)[number];
 
 export const textComparisonOperatorArray = [
   "CONTAINS",
   "EMPTY",
   "NOT_EMPTY",
   "IS",
-] as const ;
+] as const;
 
 export const numberComparisonOperator = [
   "EQ",
@@ -211,9 +212,7 @@ export const dateComparisonOperator = ["BEFORE", "AFTER"] as const;
 
 export const phoneComparisonOperator = ["EMPTY", "NOT_EMPTY"] as const;
 
-export const rulesActionArray = ["SHOW","HIDE"]
-
-
+export const rulesActionArray = ["SHOW", "HIDE"];
 
 const validationOptionsSchema = z.object({
   required: z.boolean().nullable().optional(),
@@ -268,13 +267,19 @@ export const elementSchema = z.object({
     .optional(),
 });
 
-export const conditionSchema = z.object({
-  id:requiredString,
-  field:requiredString,
-  operator: z.nativeEnum(ComparisonOperator),
-  value:optionalString, // Using z.union to accommodate various types of values
-  logicalOperator: z.nativeEnum(LogicalOperator).nullable().optional(),
-}).refine(data=>((data.operator==='NOT_EMPTY' || data.operator==='EMPTY') ) || data.value,{message:"Required",path:['value']});
+export const conditionSchema = z
+  .object({
+    id: requiredString,
+    field: requiredString,
+    operator: z.nativeEnum(ComparisonOperator),
+    value: optionalString, // Using z.union to accommodate various types of values
+    logicalOperator: z.nativeEnum(LogicalOperator).nullable().optional(),
+  })
+  .refine(
+    (data) =>
+      data.operator === "NOT_EMPTY" || data.operator === "EMPTY" || data.value,
+    { message: "Required", path: ["value"] }
+  );
 
 const thenSchema = z.object({
   field: requiredString,
@@ -282,7 +287,7 @@ const thenSchema = z.object({
 });
 
 export const ruleSchema = z.object({
-  id:requiredString,
+  id: requiredString,
   conditions: z.array(conditionSchema),
   then: thenSchema,
 });
@@ -294,7 +299,7 @@ export const formSchema = z
     isPublished: z.boolean().default(false),
     isWidjet: z.boolean().default(false),
     elements: z.array(elementSchema).min(1, "At least one field or service"),
-    rules: z.array(ruleSchema).optional()
+    rules: z.array(ruleSchema).optional(),
   })
   .refine(
     (data) => {
@@ -582,3 +587,27 @@ export const controllerElements = [
     elements: [emptyBreakerElement, emptySectionBreakerElement],
   },
 ];
+
+export const VARIABLES = {
+  quotationNumber: ["{month}", "{year}"],
+  subject: [
+    "{costumer name}",
+    "{quotation date}",
+    "{company name}",
+    "{quotation number}",
+  ],
+  body: [
+    "{customer name}",
+    "{quotation date}",
+    "{expiration date}",
+    "{contact person}",
+    "{company name}",
+    "{company address}",
+    "{company phone}",
+    "{IBAN}",
+    "{quotation number}",
+    "{website url}",
+    "{chamber of commerce}",
+    "{terms and conditions url}",
+  ],
+} as const;

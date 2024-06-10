@@ -8,6 +8,9 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useModal } from "./modal-hook"
 import { Company } from "@prisma/client"
+import { useRef, useState } from "react"
+import Quill from "quill"
+
 
 
 export const useQuotationsSettings = ({quotationsSettingsData}:{quotationsSettingsData:z.infer<typeof quotationsSettings> | undefined | null}) => {
@@ -28,6 +31,46 @@ export const useQuotationsSettings = ({quotationsSettingsData}:{quotationsSettin
       subject:quotationsSettingsData?.subject ||"",
     },
   })
+
+  const [caretSubjectPosition, setCaretSubjectPosition] = useState(0);
+  const handleSubjectInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+    setCaretSubjectPosition(e.target.selectionStart || 0);
+    field.onChange(e.target.value);
+  };
+
+  const handleSubjectInsertText = (text: string) => {
+    const currentValue = form.getValues('subject') || "";
+    const newValue = insertTextAtPosition(currentValue, text, caretSubjectPosition);
+    form.setValue('subject', newValue);
+  };
+
+  const insertTextAtPosition = (input: string, text: string, position: number) => {
+    return input.slice(0, position) + text + input.slice(position);
+  };
+  const [caretBodyPosition, setCaretBodyPosition] = useState<{ index: number; length: number } | null>(null);
+  const handleBodyInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+    setCaretBodyPosition({ index: e.target.selectionStart || 0, length: e.target.selectionEnd || 0 });
+    field.onChange(e.target.value);
+  };
+
+  const quillRef = useRef<Quill | null>(null);
+
+  const handleBodyInsertText = (field: any, text: string) => {
+  
+    const quill = quillRef.current;
+    if (quill) {
+      quill.focus();
+      const range = quill.getSelection();
+      
+      if (range) {
+        quill.insertText(range.index, text);
+        quill.setSelection(range.index + text.length);
+        field.onChange(quill.root.innerHTML); // Update the form value
+      }
+    }
+  }
+
+
 
 
 
@@ -58,6 +101,6 @@ export const useQuotationsSettings = ({quotationsSettingsData}:{quotationsSettin
   }
 
 
-  return { form, onSubmit  }
+  return { form, onSubmit,handleSubjectInputChange,handleSubjectInsertText ,setCaretSubjectPosition,setCaretBodyPosition,handleBodyInputChange,handleBodyInsertText ,quillRef}
 
 }

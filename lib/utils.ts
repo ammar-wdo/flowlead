@@ -608,3 +608,8 @@ export const replacePlaceholders = (text: string | undefined | null): string => 
 
   return text.replace(/{year}/g, currentYear.toString()).replace(/{month}/g, currentMonth);
 };
+
+// zero paddding function
+export const formatWithLeadingZeros = (number: number, length: number): string => {
+  return number.toString().padStart(length, '0');
+};
