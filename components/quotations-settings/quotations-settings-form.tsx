@@ -19,8 +19,14 @@ import {
 import { Input } from "@/components/ui/input";
 import SettingsFormWrapper from "../settings/settings-form-wrapper";
 import { Label } from "../ui/label";
-import { formatWithLeadingZeros, replacePlaceholders } from "@/lib/utils";
+import {
+  formatFileSize,
+  formatWithLeadingZeros,
+  replacePlaceholders,
+} from "@/lib/utils";
 import QuillEditor from "../quill-editor";
+import { File, Loader, Upload, XIcon } from "lucide-react";
+import { Textarea } from "../ui/textarea";
 
 type Props = {
   quotationsSettings: z.infer<typeof quotationsSettings> | undefined | null;
@@ -34,8 +40,17 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
     handleSubjectInsertText,
     setCaretSubjectPosition,
     quillRef,
+    setFile,
+    deleteFile,
     handleBodyInsertText,
     setCaretBodyPosition,
+    file,
+    deleting,
+    uploadFile,
+    progressing,
+    handleFootnoteInputChange,
+    handleFootnoteInsertText,
+    setCaretFootnotePosition
   } = useQuotationsSettings({
     quotationsSettingsData: quotationsSettings,
   });
@@ -46,7 +61,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-[1200px] mt-8"
       >
-        <div className="space-y-8  p-4 py-8 bg-white py-12">
+        <div className="space-y-8  p-4  bg-white py-12">
           <FormField
             control={form.control}
             name="dueDays"
@@ -137,7 +152,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                         `${form.getValues("prefix")}${variable}`
                       )
                     }
-                    className="text-indigo-600 cursor-pointer mr-1"
+                    className="text-indigo-600 cursor-pointer mr-1 text-xs text-nowrap"
                   >
                     {variable}
                   </span>
@@ -232,7 +247,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                         <span
                           key={variable}
                           onClick={() => handleSubjectInsertText(variable)}
-                          className="text-indigo-600 cursor-pointer mr-1"
+                          className="text-indigo-600 cursor-pointer mr-1 text-xs text-nowrap"
                         >
                           {variable}
                         </span>
@@ -260,19 +275,171 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                         onChange={field.onChange}
                         onFocus={(range) => setCaretBodyPosition(range)}
                         ref={quillRef}
-
-                        
                       />
                     </FormControl>
-                    <p className="text-sm mt-1">Set a default message for the quotation emails here. Available variables:{VARIABLES.body.map(variable=>
-                         <span
-                         key={`${variable}-Body`}
-                         onClick={() => handleBodyInsertText(field, variable)}
-                         className="text-indigo-600 cursor-pointer mr-1"
-                       >
-                         {variable}
-                       </span>
-                    )} </p>
+                    <p className="text-sm mt-1">
+                      Set a default message for the quotation emails here.
+                      Available variables:
+                      {VARIABLES.body.map((variable) => (
+                        <span
+                          key={`${variable}-Body`}
+                          onClick={() => handleBodyInsertText(field, variable)}
+                          className="text-indigo-600 cursor-pointer mr-1 text-xs text-nowrap"
+                        >
+                          {variable}
+                        </span>
+                      ))}{" "}
+                    </p>
+                  </div>
+                </SettingsFormWrapper>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="mt-4 h-px w-full bg-gray-200 " />
+          <FormField
+            control={form.control}
+            name="attachments"
+            render={({ field }) => (
+              <FormItem className="flex-[2]">
+                <SettingsFormWrapper>
+                  <div className="flex flex-col gap-1">
+                    <FormLabel>Attachments</FormLabel>
+                    <span className="text-sm text-muted-foreground">
+                      Add your attachments here
+                    </span>
+                  </div>
+                  {!form.watch("attachments") ? (
+                    <div>
+                      {!file ? (
+                        <div className="w-fill">
+                          <Label
+                            htmlFor="file-upload"
+                            className="flex items-center justify-center w-full p-4 border-dashed border cursor-pointer  gap-1"
+                          >
+                            <span className="text-indigo-500">Browse</span>
+                            <span>and choose a file</span>{" "}
+                            <Upload size={20} className="ml-3 " />
+                          </Label>
+                          <FormControl>
+                            <Input
+                              id="file-upload"
+                              className="hidden"
+                              type="file"
+                              onChange={(e) => {
+                                setFile(e.target.files?.[0]);
+                              }}
+                            />
+                          </FormControl>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          <Button
+                            onClick={async () => await uploadFile()}
+                            disabled={progressing}
+                            className="bg-second hover:bg-second/80 w-full"
+                          >
+                            Upload{" "}
+                            {progressing && (
+                              <Loader size={20} className="ml-3 animate-spin" />
+                            )}
+                          </Button>
+                          <div className="border p-3 rounded-lg flex items-center gap-3 relative">
+                            <button
+                              type="button"
+                              onClick={() => setFile(undefined)}
+                              className="absolute top-1 right-1 cursor-pointer"
+                            >
+                              <XIcon />
+                            </button>
+                            <File size={24} className="text-muted-foreground" />
+                            <div className="flex flex-col">
+                              <span className="text-muted-foreground text-xs">
+                                {file.name}
+                              </span>
+                              <span className="text-muted-foreground text-xs">
+                                {formatFileSize(file.size)}
+                              </span>
+                              <span className="text-muted-foreground text-xs">
+                                {file.type}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="border rounded-lg gap-1 w-full items-center justify-center relative flex flex-col p-3">
+                      {deleting ? (
+                        <Loader className="animate-spin" />
+                      ) : (
+                        <div className=" gap-1 w-full items-center justify-center relative flex flex-col p-3">
+                          <XIcon
+                            onClick={() =>
+                              deleteFile(form.watch("attachments") as string)
+                            }
+                            className="top-1 right-1 absolute cursor-pointer"
+                          />
+                          <File size={24} className="text-muted-foreground" />
+                          <a
+                            className="text-indigo-500 cursor-pointer hover:underline"
+                            href={form.watch("attachments") as string}
+                            download
+                          >
+                            Download
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </SettingsFormWrapper>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="mt-4 h-px w-full bg-gray-200 " />
+          <FormField
+            control={form.control}
+            name="footNote"
+            render={({ field }) => (
+              <FormItem className="flex-[2]">
+                <SettingsFormWrapper>
+                  <FormLabel>Footnote</FormLabel>
+                  <div className="md:col-span-2">
+                    <FormControl>
+                      <Textarea
+                        className="resize-none w-full min-h-[200px]"
+                        placeholder="Footnote"
+                        {...field}
+                        onChange={(e) => handleFootnoteInputChange(e, field)}
+                        onClick={(e) =>
+                          setCaretFootnotePosition(
+                            (e.target as HTMLInputElement).selectionStart || 0
+                          )
+                        }
+                        onKeyUp={(e) =>
+                          setCaretFootnotePosition(
+                            (e.target as HTMLInputElement).selectionStart || 0
+                          )
+                        }
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <p className="mt-1 text-sm">
+                      Here you set a default footnote for the quote. available
+                      variables:
+                      {VARIABLES.footnote.map((variable) => (
+                        <span
+                          key={`${variable}-footnote`}
+                          onClick={() => handleFootnoteInsertText(variable)}
+                          className="text-indigo-600 cursor-pointer mr-1 text-xs"
+                        >
+                          {variable}
+                        </span>
+                      ))}
+                    </p>
                   </div>
                 </SettingsFormWrapper>
 

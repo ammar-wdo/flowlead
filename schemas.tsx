@@ -610,4 +610,5 @@ export const VARIABLES = {
     "{chamber of commerce}",
     "{terms and conditions url}",
   ],
+  footnote: ["{expiration date}", "{quotation date}"],
 } as const;
