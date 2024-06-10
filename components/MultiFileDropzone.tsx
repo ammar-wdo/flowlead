@@ -3,9 +3,11 @@
 import {
   CheckCircleIcon,
   FileIcon,
+  Loader,
   LucideFileWarning,
   Trash2Icon,
   UploadCloudIcon,
+  XIcon,
 } from 'lucide-react';
 import * as React from 'react';
 import { useDropzone, type DropzoneOptions } from 'react-dropzone';
@@ -23,6 +25,7 @@ const variants = {
 export type FileState = {
   file: File;
   key: string; // used to identify the file in the progress callback
+  url?:string
   progress: 'PENDING' | 'COMPLETE' | 'ERROR' | number;
 };
 
@@ -30,6 +33,8 @@ type InputProps = {
   className?: string;
   value?: FileState[];
   onChange?: (files: FileState[]) => void | Promise<void>;
+  setDeleting:(url:string)=>void
+  deleting:string
   onFilesAdded?: (addedFiles: FileState[]) => void | Promise<void>;
   disabled?: boolean;
   dropzoneOptions?: Omit<DropzoneOptions, 'disabled'>;
@@ -52,7 +57,7 @@ const ERROR_MESSAGES = {
 
 const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { dropzoneOptions, value, className, disabled, onFilesAdded, onChange },
+    { dropzoneOptions, value, className, disabled, onFilesAdded, onChange ,setDeleting,deleting},
     ref,
   ) => {
     const [customError, setCustomError] = React.useState<string>();
@@ -129,7 +134,8 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       }
       return undefined;
     }, [fileRejections, dropzoneOptions]);
-
+   
+    
     return (
       <div>
         <div className="flex flex-col gap-2">
@@ -156,11 +162,13 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           </div>
 
           {/* Selected Files */}
-          {value?.map(({ file, progress }, i) => (
+          {value?.map(({ file, progress,url }, i) => (
             <div
               key={i}
-              className="flex h-16 w-96 max-w-[100vw] flex-col justify-center rounded border border-gray-300 px-4 py-2"
+              className="flex  w-96 max-w-[100vw] flex-col justify-center rounded border border-gray-300 px-4 py-4 relative overflow-hidden"
             >
+                 {(!!deleting && deleting === url ) && <div className=' gap-1 text-xs  w-full h-full absolute top-0 left-0 bg-black/80 text-white z-10 flex items-center justify-center'>Deleteing... <Loader size={9} className='animate-spin' /></div>}
+                {!deleting &&  <XIcon onClick={()=> setDeleting(url || "")} className='absolute top-0.5 right-0.5 cursor-pointer ' size={14}/>}
               <div className="flex items-center gap-2 text-gray-500 dark:text-white">
                 <FileIcon size="30" className="shrink-0" />
                 <div className="min-w-0 text-sm">
@@ -189,7 +197,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                   ) : progress !== 'COMPLETE' ? (
                     <div>{Math.round(progress)}%</div>
                   ) : (
-                    <CheckCircleIcon className="shrink-0 text-green-600 dark:text-gray-400" />
+                    <CheckCircleIcon className="shrink-0 text-second dark:text-gray-400" />
                   )}
                 </div>
               </div>
@@ -198,7 +206,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                 <div className="relative h-0">
                   <div className="absolute top-1 h-1 w-full overflow-clip rounded-full bg-gray-200 dark:bg-gray-700">
                     <div
-                      className="h-full bg-gray-400 transition-all duration-300 ease-in-out dark:bg-white"
+                      className="h-full bg-second transition-all duration-300 ease-in-out dark:bg-white"
                       style={{
                         width: progress ? `${progress}%` : '0%',
                       }}
@@ -206,6 +214,8 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                   </div>
                 </div>
               )}
+
+             
             </div>
           ))}
         </div>

@@ -117,14 +117,14 @@ export const useQuotationsSettings = ({
   //file upload
   const [file, setFile] = React.useState<File>();
   const [progressing, setProgressing] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const [deleting, setDeleting] = useState("");
   const { edgestore } = useEdgeStore();
 
 
 
   const [fileStates, setFileStates] = useState<FileState[]>([]);
 
-  function updateFileProgress(key: string, progress: FileState['progress']) {
+  function updateFileProgress(key: string, progress: FileState['progress'],url:string) {
     setFileStates((fileStates) => {
       const newFileStates = structuredClone(fileStates);
       const fileState = newFileStates.find(
@@ -132,6 +132,7 @@ export const useQuotationsSettings = ({
       );
       if (fileState) {
         fileState.progress = progress;
+        fileState.url =url
       }
       return newFileStates;
     });
@@ -140,19 +141,35 @@ export const useQuotationsSettings = ({
 
   const deleteFile = async (url: string) => {
     try {
-      setDeleting(true);
+      setDeleting(url);
       await edgestore.publicFiles.delete({
         url,
       });
+      setFileStates(prev=>prev.filter(el=>el.url !==url))
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
     } finally {
       setFile(undefined);
       form.setValue("attatchments", []);
-      setDeleting(false);
+      setDeleting("");
     }
   };
+  // const deleteFile = async (url: string) => {
+  //   try {
+  //     setDeleting(url);
+  //     await edgestore.publicFiles.delete({
+  //       url,
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Something went wrong");
+  //   } finally {
+  //     setFile(undefined);
+  //     form.setValue("attatchments", []);
+  //     setDeleting("");
+  //   }
+  // };
 
 
 
@@ -186,6 +203,7 @@ export const useQuotationsSettings = ({
     quillRef,
     setFile,
     file,
+    setDeleting,
     progressing,
    fileStates,
    setFileStates,

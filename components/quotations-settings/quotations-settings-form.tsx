@@ -42,18 +42,20 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
     handleSubjectInsertText,
     setCaretSubjectPosition,
     quillRef,
-   fileStates,
-   setFileStates,
-   updateFileProgress,
+    fileStates,
+    setFileStates,
+    updateFileProgress,
 
     handleBodyInsertText,
     setCaretBodyPosition,
-   
- edgestore,
+deleting,
+deleteFile,
+setDeleting,
+    edgestore,
     progressing,
     handleFootnoteInputChange,
     handleFootnoteInsertText,
-    setCaretFootnotePosition
+    setCaretFootnotePosition,
   } = useQuotationsSettings({
     quotationsSettingsData: quotationsSettings,
   });
@@ -140,7 +142,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                   <Label>Next Issue</Label>
                   <p className="mt-4 text-muted-foreground text-sm ">
                     {replacePlaceholders(form.watch("prefix"))}
-                    {formatWithLeadingZeros(form.watch("nextNumber"),4)}
+                    {formatWithLeadingZeros(form.watch("nextNumber"), 4)}
                   </p>
                 </div>
               </div>
@@ -313,43 +315,58 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                       Add your attachments here
                     </span>
                   </div>
-                
+
+                  <div>
+                    <MultiFileDropzone
+                    deleting={deleting}
+                    setDeleting={async(url:string)=>{
+                    await  deleteFile(url)
+                    }}
+                      value={fileStates}
+                      onChange={(files) => {
+                        setFileStates(files);
+                      }}
+                      onFilesAdded={async (addedFiles) => {
+                        setFileStates([...fileStates, ...addedFiles]);
+                        await Promise.all(
+                          addedFiles.map(async (addedFileState) => {
+                            try {
+                              const res = await edgestore.publicFiles.upload({
+                                file: addedFileState.file,
+                                
+                                onProgressChange: async (progress) => {
+                                  updateFileProgress(
+                                    addedFileState.key,
+                                    progress,""
+                                  );
+                                  if (progress === 100) {
+                                    // wait 1 second to set it to complete
+                                    // so that the user can see the progress bar at 100%
+                                    await new Promise((resolve) =>
+                                      setTimeout(resolve, 1000)
+                                    );
+                                    updateFileProgress(
+                                      addedFileState.key,
+                                      "COMPLETE",res.url
+                                    );
+                                  }
+                                },
+                              });
+                              console.log(res);
+                              form.setValue("attatchments", [
+                                ...form.watch("attatchments"),
+                                res.url,
+                              ]);
+                            } catch (err) {
+                              updateFileProgress(addedFileState.key, "ERROR","");
+                            }
+                          })
+                        );
+                      }}
+                    />
+                  </div>
                 </SettingsFormWrapper>
 
-<div>
-      <MultiFileDropzone
-        value={fileStates}
-        onChange={(files) => {
-          setFileStates(files);
-        }}
-        onFilesAdded={async (addedFiles) => {
-          setFileStates([...fileStates, ...addedFiles]);
-          await Promise.all(
-            addedFiles.map(async (addedFileState) => {
-              try {
-                const res = await edgestore.publicFiles.upload({
-                  file: addedFileState.file,
-                  onProgressChange: async (progress) => {
-                    updateFileProgress(addedFileState.key, progress);
-                    if (progress === 100) {
-                      // wait 1 second to set it to complete
-                      // so that the user can see the progress bar at 100%
-                      await new Promise((resolve) => setTimeout(resolve, 1000));
-                      updateFileProgress(addedFileState.key, 'COMPLETE');
-                    }
-                  },
-                });
-                console.log(res);
-                form.setValue('attatchments',[...form.watch('attatchments'),res.url])
-              } catch (err) {
-                updateFileProgress(addedFileState.key, 'ERROR');
-              }
-            }),
-          );
-        }}
-      />
-
-</div>
                 <FormMessage />
               </FormItem>
             )}
@@ -404,7 +421,11 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
           />
         </div>
 
-        <LoadingButton className='ml-auto  flex bg-second hover:bg-second/90 py-2 px-6 h-fit' title={"Save"} isLoading={form.formState.isSubmitting} />
+        <LoadingButton
+          className="ml-auto  flex bg-second hover:bg-second/90 py-2 px-6 h-fit"
+          title={"Save"}
+          isLoading={form.formState.isSubmitting}
+        />
         {JSON.stringify(form.formState.errors)}
       </form>
     </Form>
