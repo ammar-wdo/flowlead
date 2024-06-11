@@ -24,7 +24,9 @@ export const inputsLabelsMap : {[key in FieldTypeMapper]:string} ={
     address:"Address",
     sectionBreaker:"Section Break",
     longText:"Long Text",
-    phone:"Phone"
+    phone:"Phone",
+    name:"Naam",
+    email:"Email Adres"
 }
 
 
@@ -39,7 +41,9 @@ export const operatorTypeMapp :{[key in FieldTypeMapper]: ComparisonOperatorType
     checkbox:serviceAndMultipleComparisonOperator as unknown as ComparisonOperatorType[],
     phone:phoneComparisonOperator as unknown as ComparisonOperatorType[],
     radio:serviceAndMultipleComparisonOperator as unknown as ComparisonOperatorType[],
-    select:serviceAndMultipleComparisonOperator as unknown as ComparisonOperatorType[]
+    select:serviceAndMultipleComparisonOperator as unknown as ComparisonOperatorType[],
+    name:textComparisonOperatorArray as unknown as ComparisonOperatorType[],
+    email:textComparisonOperatorArray as unknown as ComparisonOperatorType[],
  
 
 
