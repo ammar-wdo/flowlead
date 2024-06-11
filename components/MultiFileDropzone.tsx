@@ -15,7 +15,7 @@ import { useDropzone, type DropzoneOptions } from 'react-dropzone';
 import { twMerge } from 'tailwind-merge';
 
 const variants = {
-  base: 'relative rounded-md p-4 w-96 max-w-[calc(100vw-1rem)] flex justify-center items-center flex-col cursor-pointer border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out',
+  base: 'relative rounded-md p-4 w-full max-w-[calc(100vw-1rem)] flex justify-center items-center flex-col cursor-pointer border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out',
   active: 'border-2',
   disabled:
     'bg-gray-200 border-gray-300 cursor-default pointer-events-none bg-opacity-30 dark:bg-gray-700 dark:border-gray-600',
@@ -138,8 +138,8 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
    
     
     return (
-      <div>
-        <div className="flex flex-col gap-2">
+      <div className='w-full'>
+        <div className="flex flex-col gap-2 w-full">
           <div>
             {/* Main File Input */}
             <div
@@ -172,7 +172,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                      }
                 return <div
               key={i}
-              className={cn("flex  w-96 max-w-[100vw] flex-col justify-center rounded border border-gray-300 px-4 py-4 relative overflow-hidden" )}
+              className={cn("flex  w-full max-w-[100vw] flex-col justify-center rounded border border-gray-300 px-4 py-4 relative overflow-hidden" )}
             >
                  {(!!deleting && deleting === url ) && <div className=' gap-1 text-xs  w-full h-full absolute top-0 left-0 bg-black/80 text-white z-10 flex items-center justify-center'>Deleteing... <Loader size={16} className='animate-spin ml-2' /></div>}
                 {!deleting &&  <XIcon onClick={()=> setDeleting(url || "")} className='absolute top-0.5 right-0.5 cursor-pointer ' size={14}/>}
@@ -212,7 +212,7 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
               </div>
               {/* Progress Bar */}
               {typeof progress === 'number' && (
-                <div className="relative h-0">
+                <div className="relative h-0 my-3">
                   <div className="absolute top-1 h-1 w-full overflow-clip rounded-full bg-gray-200 dark:bg-gray-700">
                     <div
                       className="h-full bg-second transition-all duration-300 ease-in-out dark:bg-white"

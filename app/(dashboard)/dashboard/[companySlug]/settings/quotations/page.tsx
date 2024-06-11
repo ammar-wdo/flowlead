@@ -22,10 +22,12 @@ const company = await prisma.company.findUnique({
       quotesSettings:true
   }
 })
+
+if(!company) throw new CustomError("Company was not found")
   return (
     <div>
         <Heading title='Quotations Settings'/>
-        <QuotationsSettingsForm   quotationsSettings={company?.quotesSettings}/>
+        <QuotationsSettingsForm  companyEmail={company?.companyEmail} companyName={company?.name} quotationsSettings={company?.quotesSettings}/>
     </div>
   )
 }

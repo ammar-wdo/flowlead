@@ -33,9 +33,11 @@ import { v4 as uuidv4 } from "uuid";
 
 type Props = {
   quotationsSettings: z.infer<typeof quotationsSettings> | undefined | null;
+  companyEmail:string,
+  companyName:string
 };
 
-const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
+const QuotationsSettingsForm = ({ quotationsSettings,companyEmail,companyName}: Props) => {
   const {
     form,
     onSubmit,
@@ -58,7 +60,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
     handleFootnoteInsertText,
     setCaretFootnotePosition,
   } = useQuotationsSettings({
-    quotationsSettingsData: quotationsSettings,
+    quotationsSettingsData: quotationsSettings,companyEmail,companyName
   });
 
   const [pending, startTransition] = useTransition();
@@ -78,6 +80,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                   <FormLabel>Valid Period of quotation (days)</FormLabel>
                   <FormControl>
                     <Input
+                    className="md:col-span-2 max-w-[550px]"
                       type="number"
                       placeholder="Enter  number of days"
                       {...field}
@@ -93,7 +96,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
           <SettingsFormWrapper>
             <Label>Quotation Number Template</Label>
             <div className="sm:col-span-2 gap-1">
-              <div className=" flex items-center gap-4 flex-col md:flex-row w-full">
+              <div className=" flex items-center gap-4 flex-col md:flex-row md:col-span-2 max-w-[550px]">
                 <FormField
                   control={form.control}
                   name="prefix"
@@ -176,7 +179,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                 <SettingsFormWrapper>
                   <FormLabel>Sender Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Sender Name" {...field} />
+                    <Input className="md:col-span-2 max-w-[550px]" placeholder="Sender Name" {...field} />
                   </FormControl>
                 </SettingsFormWrapper>
 
@@ -193,7 +196,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                 <SettingsFormWrapper>
                   <FormLabel>Sender E-mail Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="Sender E-mail Address" {...field} />
+                    <Input className="md:col-span-2 max-w-[550px]" placeholder="Sender E-mail Address" {...field} />
                   </FormControl>
                 </SettingsFormWrapper>
 
@@ -210,6 +213,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                   <FormLabel>BCC</FormLabel>
                   <FormControl>
                     <Input
+                    className="md:col-span-2 max-w-[550px]"
                       placeholder="BCC"
                       {...field}
                       value={field.value || ""}
@@ -229,9 +233,10 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
               <FormItem className="flex-[2]">
                 <SettingsFormWrapper>
                   <FormLabel>Subject</FormLabel>
-                  <div>
+                  <div className="md:col-span-2 max-w-[550px]">
                     <FormControl>
                       <Input
+                      className=""
                         placeholder="Subject"
                         {...field}
                         onChange={(e) => handleSubjectInputChange(e, field)}
@@ -275,7 +280,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
               <FormItem className="flex-[2]">
                 <SettingsFormWrapper>
                   <FormLabel>Email Content</FormLabel>
-                  <div className="md:col-span-2">
+                  <div className="md:col-span-2 max-w-[550px]">
                     <FormControl>
                       <QuillEditor
                         value={field.value || ""}
@@ -311,14 +316,14 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
             render={({ field }) => (
               <FormItem className="flex-[2]">
                 <SettingsFormWrapper>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 ">
                     <FormLabel>Attachments</FormLabel>
                     <span className="text-sm text-muted-foreground">
                       Add your attachments here
                     </span>
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2 max-w-[550px]">
                     {!!form.watch("attatchments")?.length && (
                       <div className="space-y-3 mb-4">
                         {form.watch("attatchments")?.map((file) => {
@@ -435,7 +440,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
               <FormItem className="flex-[2]">
                 <SettingsFormWrapper>
                   <FormLabel>Footnote</FormLabel>
-                  <div className="md:col-span-2">
+                  <div className="md:col-span-2 max-w-[550px]">
                     <FormControl>
                       <Textarea
                         className="resize-none w-full min-h-[200px]"
@@ -455,7 +460,7 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
                         value={field.value || ""}
                       />
                     </FormControl>
-                    <p className="text-xs mt-2">
+                    <p className="text-xs mt-2 text-nowrap">
                       Here you set a default footnote for the quote. available
                       variables:
                       {VARIABLES.footnote.map((variable) => (

@@ -15,9 +15,11 @@ import {  saveQuotationsSettings } from "@/actions/quotationsSettings-actions";
 import { FileState } from "@/components/MultiFileDropzone";
 
 export const useQuotationsSettings = ({
-  quotationsSettingsData,
+  quotationsSettingsData,companyEmail,companyName
+  
 }: {
-  quotationsSettingsData: z.infer<typeof quotationsSettings> | undefined | null;
+  quotationsSettingsData: z.infer<typeof quotationsSettings> | undefined | null;  companyEmail:string,
+  companyName:string
 }) => {
   const form = useForm<z.infer<typeof quotationsSettings>>({
     resolver: zodResolver(quotationsSettings),
@@ -29,8 +31,8 @@ export const useQuotationsSettings = ({
       footNote: quotationsSettingsData?.footNote || "",
       nextNumber: quotationsSettingsData?.nextNumber || 1,
       prefix: quotationsSettingsData?.prefix || "",
-      senderEmail: quotationsSettingsData?.senderEmail || "",
-      senderName: quotationsSettingsData?.senderName || "",
+      senderEmail: quotationsSettingsData?.senderEmail || companyEmail,
+      senderName: quotationsSettingsData?.senderName ||companyName,
       subject: quotationsSettingsData?.subject || "",
     },
   });

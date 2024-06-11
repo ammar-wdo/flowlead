@@ -645,3 +645,28 @@ export const VARIABLES = {
   ],
   footnote: ["{expiration date}", "{quotation date}"],
 } as const;
+
+export const VARIABLES_INVOICES = {
+  quotationNumber: ["{month}", "{year}"],
+  subject: [
+    "{costumer name}",
+    "{invoice date}",
+    "{company name}",
+    "{invoice number}",
+  ],
+  body: [
+    "{customer name}",
+    "{invoice date}",
+    "{expiration date}",
+    "{contact person}",
+    "{company name}",
+    "{company address}",
+    "{company phone}",
+    "{IBAN}",
+    "{invoice number}",
+    "{website url}",
+    "{chamber of commerce}",
+    "{terms and conditions url}",
+  ],
+  footnote: ["{expiration date}", "{invoice date}"],
+} as const;

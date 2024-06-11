@@ -3,7 +3,12 @@
 import React, { useRef, useState, useTransition } from "react";
 
 import { z } from "zod";
-import { VARIABLES, invoicesSettings, quotationsSettings } from "@/schemas";
+import {
+  VARIABLES,
+  VARIABLES_INVOICES,
+  invoicesSettings,
+  quotationsSettings,
+} from "@/schemas";
 import { useQuotationsSettings } from "@/hooks/quotations-settings-hook";
 
 import { Button } from "@/components/ui/button";
@@ -34,9 +39,15 @@ import { useInvoicesSettings } from "@/hooks/invoces-settings-hook";
 
 type Props = {
   invoicesSettings: z.infer<typeof invoicesSettings> | undefined | null;
+  companyEmail: string;
+  companyName: string;
 };
 
-const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
+const InvoicesSettingsForm = ({
+  invoicesSettings,
+  companyEmail,
+  companyName,
+}: Props) => {
   const {
     form,
     onSubmit,
@@ -60,9 +71,10 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
     setCaretFootnotePosition,
   } = useInvoicesSettings({
     invoicesSettingsData: invoicesSettings,
+    companyEmail,
+    companyName,
   });
 
-  const [pending, startTransition] = useTransition();
   return (
     <Form {...form}>
       <form
@@ -76,9 +88,10 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
             render={({ field }) => (
               <FormItem>
                 <SettingsFormWrapper>
-                  <FormLabel>Valid Period of quotation (days)</FormLabel>
+                  <FormLabel>Valid Period of invoice (days)</FormLabel>
                   <FormControl>
                     <Input
+                      className="md:col-span-2 max-w-[550px]"
                       type="number"
                       placeholder="Enter  number of days"
                       {...field}
@@ -92,9 +105,9 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
           />
           <div className="mt-4 h-px w-full bg-gray-200 " />
           <SettingsFormWrapper>
-            <Label>Quotation Number Template</Label>
+            <Label>Invoice Number Template</Label>
             <div className="sm:col-span-2 gap-1">
-              <div className=" flex items-center gap-4 flex-col md:flex-row w-full">
+              <div className=" flex items-center gap-4 flex-col md:flex-row  md:col-span-2 max-w-[550px]">
                 <FormField
                   control={form.control}
                   name="prefix"
@@ -151,7 +164,7 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
               </div>
               <p className="text-xs mt-2">
                 Set a default number template here. Available variables:{" "}
-                {VARIABLES.quotationNumber.map((variable) => (
+                {VARIABLES_INVOICES.quotationNumber.map((variable) => (
                   <span
                     key={variable}
                     onClick={() =>
@@ -177,7 +190,11 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
                 <SettingsFormWrapper>
                   <FormLabel>Sender Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Sender Name" {...field} />
+                    <Input
+                      placeholder="Sender Name"
+                      className="md:col-span-2 max-w-[550px]"
+                      {...field}
+                    />
                   </FormControl>
                 </SettingsFormWrapper>
 
@@ -194,7 +211,11 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
                 <SettingsFormWrapper>
                   <FormLabel>Sender E-mail Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="Sender E-mail Address" {...field} />
+                    <Input
+                      placeholder="Sender E-mail Address"
+                      className="md:col-span-2 max-w-[550px]"
+                      {...field}
+                    />
                   </FormControl>
                 </SettingsFormWrapper>
 
@@ -211,6 +232,7 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
                   <FormLabel>BCC</FormLabel>
                   <FormControl>
                     <Input
+                    className="md:col-span-2 max-w-[550px]"
                       placeholder="BCC"
                       {...field}
                       value={field.value || ""}
@@ -230,9 +252,10 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
               <FormItem className="flex-[2]">
                 <SettingsFormWrapper>
                   <FormLabel>Subject</FormLabel>
-                  <div>
+                  <div    className="md:col-span-2 max-w-[550px]">
                     <FormControl>
                       <Input
+                   
                         placeholder="Subject"
                         {...field}
                         onChange={(e) => handleSubjectInputChange(e, field)}
@@ -251,7 +274,7 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
                     </FormControl>
                     <p className="text-xs mt-1">
                       Set a default subject here. Available Variables:
-                      {VARIABLES.subject.map((variable) => (
+                      {VARIABLES_INVOICES.subject.map((variable) => (
                         <span
                           key={variable}
                           onClick={() => handleSubjectInsertText(variable)}
@@ -276,7 +299,7 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
               <FormItem className="flex-[2]">
                 <SettingsFormWrapper>
                   <FormLabel>Email Content</FormLabel>
-                  <div className="md:col-span-2">
+                  <div className="md:col-span-2 max-w-[550px]">
                     <FormControl>
                       <QuillEditor
                         value={field.value || ""}
@@ -288,7 +311,7 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
                     <p className="text-xs mt-2">
                       Set a default message for the quotation emails here.
                       Available variables:
-                      {VARIABLES.body.map((variable) => (
+                      {VARIABLES_INVOICES.body.map((variable) => (
                         <span
                           key={`${variable}-Body`}
                           onClick={() => handleBodyInsertText(field, variable)}
@@ -312,19 +335,17 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
             render={({ field }) => (
               <FormItem className="flex-[2]">
                 <SettingsFormWrapper>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 ">
                     <FormLabel>Attachments</FormLabel>
                     <span className="text-sm text-muted-foreground">
                       Add your attachments here
                     </span>
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2 max-w-[550px]">
                     {!!form.watch("attatchments")?.length && (
                       <div className="space-y-3 mb-4">
                         {form.watch("attatchments")?.map((file) => {
-                        
-
                           return (
                             <article
                               key={uuidv4()}
@@ -349,13 +370,22 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
                                 />
                               )}
                               <span className="w-12 h-12 flex items-center justify-center bg-second/10 rounded-full shrink-0">
-                                <FileIcon className="text-second"/>
+                                <FileIcon className="text-second" />
                               </span>
                               <div className="text-xs text-muted-foreground">
                                 <p>{file?.name}</p>
                                 <p>{file?.type}</p>
                                 <p>{file?.size}</p>
-                             {file?.url && <a href={file?.url} target="_blank" download className="text-indigo-500 hover:underline">Download</a>}
+                                {file?.url && (
+                                  <a
+                                    href={file?.url}
+                                    target="_blank"
+                                    download
+                                    className="text-indigo-500 hover:underline"
+                                  >
+                                    Download
+                                  </a>
+                                )}
                               </div>
                             </article>
                           );
@@ -436,10 +466,10 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
               <FormItem className="flex-[2]">
                 <SettingsFormWrapper>
                   <FormLabel>Footnote</FormLabel>
-                  <div className="md:col-span-2">
+                  <div className="-2 md:col-span-2 max-w-[550px]">
                     <FormControl>
                       <Textarea
-                        className="resize-none w-full min-h-[200px]"
+                        className="resize-none w-full min-h-[200px] "
                         placeholder="Footnote"
                         {...field}
                         onChange={(e) => handleFootnoteInputChange(e, field)}
@@ -456,10 +486,10 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
                         value={field.value || ""}
                       />
                     </FormControl>
-                    <p className="text-xs mt-2">
+                    <p className="text-xs mt-2 text-nowrap">
                       Here you set a default footnote for the quote. available
                       variables:
-                      {VARIABLES.footnote.map((variable) => (
+                      {VARIABLES_INVOICES.footnote.map((variable) => (
                         <span
                           key={`${variable}-footnote`}
                           onClick={() => handleFootnoteInsertText(variable)}
@@ -489,4 +519,4 @@ const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
   );
 };
 
-export default InvocesSettingsForm;
+export default InvoicesSettingsForm;

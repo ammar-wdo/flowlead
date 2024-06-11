@@ -63,7 +63,7 @@ const AsideLinks = (props: Props) => {
                     title: 'Settings',
                     icon: '/settings.png',
                     href: `/dashboard/${params.companySlug}/settings`,
-                    active: pathname === `/dashboard/${params.companySlug}/settings`
+                    active: pathname.split('/')[3] === 'settings'
                 },
                 {
                     title: 'Upgrade',

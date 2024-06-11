@@ -16,9 +16,11 @@ import { FileState } from "@/components/MultiFileDropzone";
 import { saveInvoicesSettings } from "@/actions/invoicesSettings-actions";
 
 export const useInvoicesSettings = ({
-  invoicesSettingsData,
+  invoicesSettingsData,companyEmail,companyName
 }: {
   invoicesSettingsData: z.infer<typeof invoicesSettings> | undefined | null;
+  companyEmail:string,
+  companyName:string
 }) => {
   const form = useForm<z.infer<typeof invoicesSettings>>({
     resolver: zodResolver(invoicesSettings),
@@ -30,8 +32,8 @@ export const useInvoicesSettings = ({
       footNote: invoicesSettingsData?.footNote || "",
       nextNumber: invoicesSettingsData?.nextNumber || 1,
       prefix: invoicesSettingsData?.prefix || "",
-      senderEmail: invoicesSettingsData?.senderEmail || "",
-      senderName: invoicesSettingsData?.senderName || "",
+      senderEmail: invoicesSettingsData?.senderEmail || companyEmail,
+      senderName: invoicesSettingsData?.senderName || companyName,
       subject: invoicesSettingsData?.subject || "",
     },
   });

@@ -77,7 +77,7 @@ export const saveInvoicesSettings = async (values: z.infer<typeof quotationsSett
       
 
 
-        return { success: true, message: "Quotations Settings Saved Successfully" }
+        return { success: true, message: "Invoices Settings Saved Successfully" }
     } catch (error) {
         console.log(error)
         let message = 'Internal server error'
