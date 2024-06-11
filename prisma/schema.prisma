@@ -53,51 +53,119 @@ model Company {
   IBAN          String
   termsUrl      String?
 
-    quotesSettings   QoutesSettings?
+  quotesSettings QoutesSettings?
 
+  invoiceSettings InvoiceSettings?
 
-  invoiceSettings   InvoiceSettings?
-
-  forms    Form[]
-  services Service[]
+  forms       Form[]
+  services    Service[]
+  submissions Submission[]
+  contacts    Contact[]
+  quotations  Quotation[]
 
   accountId String  @db.ObjectId
   account   Account @relation(fields: [accountId], references: [id])
 }
 
-
-model  QoutesSettings {
+model Quotation {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  dueDays     Int     @default(14)
-  prefix      String?
-  nextNumber  Int     @default(0)
-  senderName  String  
-  senderEmail String  
-  bcc         String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contactId String  @unique @db.ObjectId
+  contact   Contact @relation(fields: [contactId], references: [id])
+  companyId String  @unique @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
+}
+
+model Submission {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  content FormType
+
+  contactId String  @unique @db.ObjectId
+  contact   Contact @relation(fields: [contactId], references: [id])
+
+  companyId String  @unique @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
+}
+
+model ContactPerson {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contactName  String
+  emailAddress String
+
+  contactId String @unique @db.ObjectId
+  contact Contact @relation(fields: [contactId],references: [id])
+}
+
+model Contact {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contactType     ContactType     @default(INDIVIDUAL)
+  contactCategory ContactCategory @default(LEAD)
+  contactName     String
+  emailAddress    String
+  companyName     String?
+  phoneNumber     String?
+
+  address String?
+  country String?
+  city    String?
+  zipcode String?
+
+  cocNumber String?
+
+  vatNumber String?
+  IBAN      String?
+
+  submission Submission?
+  quotations Quotation[]
+  contactPersons ContactPerson[]
+
+  companyId String  @unique @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
+}
+
+model QoutesSettings {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  dueDays      Int           @default(14)
+  prefix       String?
+  nextNumber   Int           @default(0)
+  senderName   String
+  senderEmail  String
+  bcc          String?
   attatchments attatchment[]
   footNote     String?
   subject      String?
-  body         String?  
-  
- company     Company?  @relation(fields: [companyId], references: [id])
-  companyId   String?  @unique  @db.ObjectId
+  body         String?
+
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?  @unique @db.ObjectId
 }
 
 model InvoiceSettings {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  dueDays     Int     @default(14)
-  prefix      String?
-  nextNumber  Int     @default(0)
-  senderName  String  
-  senderEmail String  
-  bcc         String?
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  dueDays      Int           @default(14)
+  prefix       String?
+  nextNumber   Int           @default(0)
+  senderName   String
+  senderEmail  String
+  bcc          String?
   attatchments attatchment[]
   footNote     String?
   subject      String?
-  body         String?  
-  
- company     Company?  @relation(fields: [companyId], references: [id])
-  companyId   String?  @unique  @db.ObjectId
+  body         String?
+
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?  @unique @db.ObjectId
 }
 
 model Form {
@@ -313,10 +381,6 @@ type ServiceElement {
   addToQoutation Boolean     @default(false)
 }
 
-
-
-
-
 enum PricingType {
   SINGLE_PRICE
   CHECKBOX_GROUP
@@ -333,9 +397,36 @@ type Option {
   price          Int
 }
 
+type FormType {
+  id        String
+  createdAt DateTime
+  updatedAt DateTime
+  userId    String
+
+  name        String
+  description String?
+  slug        String
+
+  elements Element[]
+
+  services String[] @db.ObjectId
+
+  companyId String @db.ObjectId
+}
+
 type attatchment {
   name String?
   type String?
   size String?
-  url String?
+  url  String?
+}
+
+enum ContactType {
+  INDIVIDUAL
+  BUSINESS
+}
+
+enum ContactCategory {
+  CONTACT
+  LEAD
 }
