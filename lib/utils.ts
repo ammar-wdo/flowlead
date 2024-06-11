@@ -212,19 +212,65 @@ export const generateSingleFieldSchema = (
         fieldSchema = fieldSchema.optional();
       }
       break;
-      case "address":
-        fieldSchema = z.object({
-          address: field.address?.addressShow && isRequired ? z.string().min(1, "Required") : z.string().optional(),
-          houseNumber: field.address?.houseNumberShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
-          postalCode: field.address?.postalCodeShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
-          city: field.address?.cityShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
-          stateRegion: field.address?.stateRegionShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
-          country: field.address?.countryShow &&  isRequired ? z.string().min(1, "Required") : z.string().optional(),
-        });
-      
-        break;
-       
-  
+    case "address":
+      fieldSchema = isRequired
+        ? z.object({
+            address:
+              field.address?.addressShow && isRequired
+                ? z.string().min(1, "Required")
+                : z.string().optional(),
+            houseNumber:
+              field.address?.houseNumberShow && isRequired
+                ? z.string().min(1, "Required")
+                : z.string().optional(),
+            postalCode:
+              field.address?.postalCodeShow && isRequired
+                ? z.string().min(1, "Required")
+                : z.string().optional(),
+            city:
+              field.address?.cityShow && isRequired
+                ? z.string().min(1, "Required")
+                : z.string().optional(),
+            stateRegion:
+              field.address?.stateRegionShow && isRequired
+                ? z.string().min(1, "Required")
+                : z.string().optional(),
+            country:
+              field.address?.countryShow && isRequired
+                ? z.string().min(1, "Required")
+                : z.string().optional(),
+          })
+        : z
+            .object({
+              address:
+                field.address?.addressShow && isRequired
+                  ? z.string().min(1, "Required")
+                  : z.string().optional(),
+              houseNumber:
+                field.address?.houseNumberShow && isRequired
+                  ? z.string().min(1, "Required")
+                  : z.string().optional(),
+              postalCode:
+                field.address?.postalCodeShow && isRequired
+                  ? z.string().min(1, "Required")
+                  : z.string().optional(),
+              city:
+                field.address?.cityShow && isRequired
+                  ? z.string().min(1, "Required")
+                  : z.string().optional(),
+              stateRegion:
+                field.address?.stateRegionShow && isRequired
+                  ? z.string().min(1, "Required")
+                  : z.string().optional(),
+              country:
+                field.address?.countryShow && isRequired
+                  ? z.string().min(1, "Required")
+                  : z.string().optional(),
+            })
+            .optional().default({})
+            ;
+
+      break;
 
     default:
       fieldSchema = z.string();
@@ -394,8 +440,7 @@ export const isFieldVisible = (
   elementId: string,
   rules: Rule[],
   elements: Element[],
-  formValues: { [key: string]: any },
- 
+  formValues: { [key: string]: any }
 ) => {
   let visible = true;
 
@@ -537,8 +582,6 @@ export const isFieldVisible = (
         visible = false;
         console.log(action);
       }
-   
-      
     }
   }
   console.log("visible", visible);
@@ -549,8 +592,7 @@ export const isFieldVisible = (
 export const generateZodSchema = (
   elements: Element[],
   rules: Rule[],
-  formValues: { [key: string]: any },
-
+  formValues: { [key: string]: any }
 ) => {
   const zodSchema: { [key: string]: z.ZodTypeAny } = {};
 
@@ -559,7 +601,7 @@ export const generateZodSchema = (
     const isFieldRequired =
       !!field?.validations?.required &&
       isFieldVisible(element.id, rules, elements, formValues);
-   
+
     const fieldSchema = generateSingleFieldSchema(field, !!isFieldRequired);
 
     if (field && fieldSchema) {
@@ -583,7 +625,6 @@ export const generateZodSchema = (
   return z.object(zodSchema);
 };
 
-
 export const insertAtCaret = (input: HTMLInputElement | null, text: string) => {
   if (input) {
     const startPos = input.selectionStart || 0;
@@ -601,30 +642,37 @@ export const insertAtCaret = (input: HTMLInputElement | null, text: string) => {
   }
 };
 
-export const replacePlaceholders = (text: string | undefined | null): string => {
-  if(!text) return ""
+export const replacePlaceholders = (
+  text: string | undefined | null
+): string => {
+  if (!text) return "";
   const currentYear = new Date().getFullYear();
-  const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1 and pad with leading zero if necessary.
+  const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based, so add 1 and pad with leading zero if necessary.
 
-  return text.replace(/{year}/g, currentYear.toString()).replace(/{month}/g, currentMonth);
+  return text
+    .replace(/{year}/g, currentYear.toString())
+    .replace(/{month}/g, currentMonth);
 };
 
 // zero paddding function
-export const formatWithLeadingZeros = (number: number, length: number): string => {
-  return number.toString().padStart(length, '0');
+export const formatWithLeadingZeros = (
+  number: number,
+  length: number
+): string => {
+  return number.toString().padStart(length, "0");
 };
 
 export function formatFileSize(bytes?: number) {
   if (!bytes) {
-    return '0 Bytes';
+    return "0 Bytes";
   }
   bytes = Number(bytes);
   if (bytes === 0) {
-    return '0 Bytes';
+    return "0 Bytes";
   }
   const k = 1024;
   const dm = 2;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
