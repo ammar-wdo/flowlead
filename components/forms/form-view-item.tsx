@@ -136,7 +136,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
         style={style}
         onClick={handleSelectedElementClick}
       >
-        <Button
+       {element.field?.type !=='name' && element.field?.type !=='email' && <Button
           onClick={(e) => handleDelete(element.id, e)}
           type="button"
           variant={"ghost"}
@@ -146,7 +146,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
              text-gray-300 hover:shadow-lg flex items-center justify-center w-8 h-8  p-0.5"
         >
           <XIcon />
-        </Button>
+        </Button>}
 
         <Button
           {...attributes}
@@ -166,6 +166,12 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
               {!!(
                 element.type === "FIELD" && element.field?.type === "text"
               ) && <TextInputViewItem form={form} index={i} />}
+              {!!(
+                element.type === "FIELD" && element.field?.type === "name"
+              ) && <NameInputViewItem form={form} index={i} />}
+              {!!(
+                element.type === "FIELD" && element.field?.type === "email"
+              ) && <EmailInputViewItem form={form} index={i} />}
               {!!(
                 element.type === "FIELD" && element.field?.type === "number"
               ) && <NumberInputViewItem form={form} index={i} />}
@@ -204,6 +210,83 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
 export default FormViewItem;
 
 const TextInputViewItem = ({ index, form }: { index: number; form: Form }) => {
+  return (
+    <FormControl>
+      <FormField
+        control={form.control}
+        name={`elements.${index}.field.label`}
+        render={({ field }) => (
+          <FormItem>
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.label}
+                {form.watch("elements")[index].field?.validations?.required ? (
+                  "*"
+                ) : (
+                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                )}
+              </Label>
+              {form.watch("elements")[index].field?.hint && (
+                <Label className="text-sm text-muted-foreground font-light ">
+                  {form.watch("elements")[index].field?.hint}
+                </Label>
+              )}
+              <Input
+                placeholder={
+                  form.watch("elements")[index].field?.placeholder || ""
+                }
+                readOnly
+                className="pointer-events-none"
+              />
+            </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormControl>
+  );
+};
+
+const EmailInputViewItem = ({ index, form }: { index: number; form: Form }) => {
+  return (
+    <FormControl>
+      <FormField
+        control={form.control}
+        name={`elements.${index}.field.label`}
+        render={({ field }) => (
+          <FormItem>
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.label}
+                {form.watch("elements")[index].field?.validations?.required ? (
+                  "*"
+                ) : (
+                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                )}
+              </Label>
+              {form.watch("elements")[index].field?.hint && (
+                <Label className="text-sm text-muted-foreground font-light ">
+                  {form.watch("elements")[index].field?.hint}
+                </Label>
+              )}
+              <Input
+                placeholder={
+                  form.watch("elements")[index].field?.placeholder || ""
+                }
+                readOnly
+                className="pointer-events-none"
+              />
+            </div>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormControl>
+  );
+};
+const NameInputViewItem = ({ index, form }: { index: number; form: Form }) => {
   return (
     <FormControl>
       <FormField

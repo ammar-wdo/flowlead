@@ -55,9 +55,10 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
             value: "",
             field: "",
             operator: "NOT_EMPTY",
-           
+           logicalOperator:'AND'
           },
         ],
+       
         then: { field: "", action: "SHOW" },
       },
     ]);
@@ -75,6 +76,8 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
           value: "",
           field: "",
           operator: "NOT_EMPTY",
+          logicalOperator:'AND'
+
         
         },
       ],
@@ -180,7 +183,9 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
                                             element.field?.type ===
                                               "sectionBreaker" ||
                                             element.field?.type === "breaker" ||
-                                            element.field?.type === "address"
+                                            element.field?.type === "address" ||
+                                            element.field?.type === "email" || 
+                                            element.field?.type === "name"
                                           )
                                             return;
                                           return (
@@ -425,7 +430,9 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
                                         element.field?.type ===
                                           "sectionBreaker" ||
                                         element.field?.type === "breaker" ||
-                                        element.field?.type === "address"
+                                        element.field?.type === "address" ||
+                                        element.field?.type === "name" || 
+                                        element.field?.type === "email"
                                       )
                                         return;
                                       return (

@@ -147,6 +147,8 @@ export const serviceSchema = z.object({
 //FORM SCHEMA
 
 export const fieldTypeArray = [
+  "email",
+  "name",
   "text",
   "longText",
   "number",
@@ -160,6 +162,8 @@ export const fieldTypeArray = [
 ];
 
 export type FieldTypeMapper = [
+  "email",
+  "name",
   "text",
   "longText",
   "number",
@@ -173,6 +177,8 @@ export type FieldTypeMapper = [
 ][number];
 
 export const fieldTypeEnum = [
+  "email",
+  "name",
   "text",
   "longText",
   "number",

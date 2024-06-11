@@ -144,6 +144,10 @@ export const generateSingleFieldSchema = (
   let fieldSchema;
 
   switch (field.type) {
+    case "name" : fieldSchema=z.string().min(1,"Required")
+    break;
+    case "email":fieldSchema=z.string().email()
+    break;
     case "number":
     case "phone":
       fieldSchema = z

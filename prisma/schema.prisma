@@ -163,6 +163,8 @@ model Viewd {
 // types
 
 enum FieldType {
+  email
+  name
   text
   longText
   number

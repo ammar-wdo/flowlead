@@ -74,6 +74,26 @@ const FormPreview = ({ form }: Props) => {
                         
                       />
                     )}
+                    {fieldElement.type === "name" && (
+                      <Input
+                      
+                        {...field}
+                        
+                     onChange={(e)=>field.onChange(e.target.value.trim())}
+                        value={field.value || ""}
+                        placeholder={fieldElement.placeholder || ""}
+                        
+                      />
+                    )}
+                    {fieldElement.type === "email" && (
+                      <Input
+                        {...field}
+                     
+                        value={field.value || ""}
+                        placeholder={fieldElement.placeholder || ""}
+                        
+                      />
+                    )}
                     {fieldElement.type === "longText" && (
                       <Textarea
                         className="min-h-60 resize-none"

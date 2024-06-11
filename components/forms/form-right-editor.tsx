@@ -87,6 +87,8 @@ const FieldEditor = ({
     longText: <LongTextInputEditor form={form} />,
     address: <AddressInputEditor form={form} />,
     phone: <PhoneInputEditor form={form} />,
+    name: <NameInputEditor form={form} />,
+    email: <EmailInputEditor form={form} />,
   };
 
   return <div>{componentsEditorMapper[element?.type!]}</div>;
@@ -1196,6 +1198,108 @@ const PhoneInputEditor = ({
         />
         <Label htmlFor="required">Is Required</Label>
       </div>
+    </div>
+  );
+};
+
+
+
+const NameInputEditor = ({
+  form,
+}: {
+  form: UseFormReturn<z.infer<typeof formSchema>>;
+}) => {
+  const { selectedElement } = useSelectedElement();
+  if (!selectedElement) return;
+
+  const element = form
+    .watch("elements")
+    .find((el) => el.id === selectedElement.id);
+
+  const elementIndex = form
+    .watch("elements")
+    .findIndex((el) => el.id === selectedElement.id);
+
+  const handlePlaceholderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value);
+  };
+  const handleHintChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.hint`, e.target.value);
+  };
+
+ 
+
+
+  return (
+    <div className="space-y-3">
+   
+      <div>
+        <Label>Placeholder:</Label>
+        <Input
+          value={element?.field?.placeholder || ""}
+          onChange={(e) => handlePlaceholderChange(e)}
+        />
+      </div>
+      <div>
+        <Label>Hint:</Label>
+        <Input
+          value={element?.field?.hint || ""}
+          onChange={(e) => handleHintChange(e)}
+        />
+      </div>
+   
+     
+    </div>
+  );
+};
+
+
+
+const EmailInputEditor = ({
+  form,
+}: {
+  form: UseFormReturn<z.infer<typeof formSchema>>;
+}) => {
+  const { selectedElement } = useSelectedElement();
+  if (!selectedElement) return;
+
+  const element = form
+    .watch("elements")
+    .find((el) => el.id === selectedElement.id);
+
+  const elementIndex = form
+    .watch("elements")
+    .findIndex((el) => el.id === selectedElement.id);
+
+  const handlePlaceholderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value);
+  };
+  const handleHintChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.hint`, e.target.value);
+  };
+
+ 
+
+
+  return (
+    <div className="space-y-3">
+   
+      <div>
+        <Label>Placeholder:</Label>
+        <Input
+          value={element?.field?.placeholder || ""}
+          onChange={(e) => handlePlaceholderChange(e)}
+        />
+      </div>
+      <div>
+        <Label>Hint:</Label>
+        <Input
+          value={element?.field?.hint || ""}
+          onChange={(e) => handleHintChange(e)}
+        />
+      </div>
+   
+     
     </div>
   );
 };
