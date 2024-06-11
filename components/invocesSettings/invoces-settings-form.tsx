@@ -3,7 +3,7 @@
 import React, { useRef, useState, useTransition } from "react";
 
 import { z } from "zod";
-import { VARIABLES, quotationsSettings } from "@/schemas";
+import { VARIABLES, invoicesSettings, quotationsSettings } from "@/schemas";
 import { useQuotationsSettings } from "@/hooks/quotations-settings-hook";
 
 import { Button } from "@/components/ui/button";
@@ -30,12 +30,13 @@ import { Textarea } from "../ui/textarea";
 import LoadingButton from "../loading-button";
 import { MultiFileDropzone } from "../MultiFileDropzone";
 import { v4 as uuidv4 } from "uuid";
+import { useInvoicesSettings } from "@/hooks/invoces-settings-hook";
 
 type Props = {
-  quotationsSettings: z.infer<typeof quotationsSettings> | undefined | null;
+  invoicesSettings: z.infer<typeof invoicesSettings> | undefined | null;
 };
 
-const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
+const InvocesSettingsForm = ({ invoicesSettings }: Props) => {
   const {
     form,
     onSubmit,
@@ -57,8 +58,8 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
     handleFootnoteInputChange,
     handleFootnoteInsertText,
     setCaretFootnotePosition,
-  } = useQuotationsSettings({
-    quotationsSettingsData: quotationsSettings,
+  } = useInvoicesSettings({
+    invoicesSettingsData: invoicesSettings,
   });
 
   const [pending, startTransition] = useTransition();
@@ -488,4 +489,4 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
   );
 };
 
-export default QuotationsSettingsForm;
+export default InvocesSettingsForm;

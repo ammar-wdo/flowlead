@@ -1,4 +1,4 @@
-import { companySchema, quotationsSettings } from "@/schemas";
+import { companySchema, invoicesSettings, quotationsSettings } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -11,27 +11,28 @@ import { Company } from "@prisma/client";
 import React, { useRef, useState } from "react";
 import Quill from "quill";
 import { useEdgeStore } from "@/lib/edgestore";
-import {  saveQuotationsSettings } from "@/actions/quotationsSettings-actions";
-import { FileState } from "@/components/MultiFileDropzone";
 
-export const useQuotationsSettings = ({
-  quotationsSettingsData,
+import { FileState } from "@/components/MultiFileDropzone";
+import { saveInvoicesSettings } from "@/actions/invoicesSettings-actions";
+
+export const useInvoicesSettings = ({
+  invoicesSettingsData,
 }: {
-  quotationsSettingsData: z.infer<typeof quotationsSettings> | undefined | null;
+  invoicesSettingsData: z.infer<typeof invoicesSettings> | undefined | null;
 }) => {
-  const form = useForm<z.infer<typeof quotationsSettings>>({
-    resolver: zodResolver(quotationsSettings),
+  const form = useForm<z.infer<typeof invoicesSettings>>({
+    resolver: zodResolver(invoicesSettings),
     defaultValues: {
-      attatchments: quotationsSettingsData?.attatchments || [],
-      bcc: quotationsSettingsData?.bcc || "",
-      body: quotationsSettingsData?.body || "",
-      dueDays: quotationsSettingsData?.dueDays || 14,
-      footNote: quotationsSettingsData?.footNote || "",
-      nextNumber: quotationsSettingsData?.nextNumber || 1,
-      prefix: quotationsSettingsData?.prefix || "",
-      senderEmail: quotationsSettingsData?.senderEmail || "",
-      senderName: quotationsSettingsData?.senderName || "",
-      subject: quotationsSettingsData?.subject || "",
+      attatchments: invoicesSettingsData?.attatchments || [],
+      bcc: invoicesSettingsData?.bcc || "",
+      body: invoicesSettingsData?.body || "",
+      dueDays: invoicesSettingsData?.dueDays || 14,
+      footNote: invoicesSettingsData?.footNote || "",
+      nextNumber: invoicesSettingsData?.nextNumber || 1,
+      prefix: invoicesSettingsData?.prefix || "",
+      senderEmail: invoicesSettingsData?.senderEmail || "",
+      senderName: invoicesSettingsData?.senderName || "",
+      subject: invoicesSettingsData?.subject || "",
     },
   });
   //subject variables
@@ -177,11 +178,11 @@ export const useQuotationsSettings = ({
   const router = useRouter();
   const params = useParams<{companySlug:string}>()
   const { setClose } = useModal();
-  async function onSubmit(values: z.infer<typeof quotationsSettings>) {
+  async function onSubmit(values: z.infer<typeof invoicesSettings>) {
     try {
        
   
-       const  res = await saveQuotationsSettings(values,params.companySlug)
+       const  res = await saveInvoicesSettings(values,params.companySlug)
     
         if (!res.success) return toast.error(res.error)
         toast.success(res.message)

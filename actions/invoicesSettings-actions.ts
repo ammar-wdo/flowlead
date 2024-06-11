@@ -7,7 +7,7 @@ import { auth } from "@clerk/nextjs/server"
 import { z } from "zod"
 
 
-export const saveQuotationsSettings = async (values: z.infer<typeof quotationsSettings>, companySlug: string) => {
+export const saveInvoicesSettings = async (values: z.infer<typeof quotationsSettings>, companySlug: string) => {
 
 
     try {
@@ -32,14 +32,14 @@ export const saveQuotationsSettings = async (values: z.infer<typeof quotationsSe
                 slug: companySlug
             },
             select: {
-                id: true,   quotesSettings:true
+                id: true,   invoiceSettings:true
             }
         })
         if (!company) throw new CustomError("Company Id not found,check provided slug")
 
 
-        if(!company.quotesSettings){
-            await prisma.qoutesSettings.create({
+        if(!company.invoiceSettings){
+            await prisma.invoiceSettings.create({
                 data:{
                     ...validData.data,
                     attatchments: validData.data.attatchments?.map(att => ({
@@ -56,9 +56,9 @@ export const saveQuotationsSettings = async (values: z.infer<typeof quotationsSe
                 }
             })
         }else {
-            await prisma.qoutesSettings.update({
+            await prisma.invoiceSettings.update({
                 where:{
-                    id:company.quotesSettings.id
+                    id:company.invoiceSettings.id
                 },
                 data:{
                     ...validData.data,

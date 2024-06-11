@@ -56,7 +56,7 @@ model Company {
     quotesSettings   QoutesSettings?
 
 
-  invoiceSettings   InvoiceSettings
+  invoiceSettings   InvoiceSettings?
 
   forms    Form[]
   services Service[]
@@ -67,6 +67,23 @@ model Company {
 
 
 model  QoutesSettings {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  dueDays     Int     @default(14)
+  prefix      String?
+  nextNumber  Int     @default(0)
+  senderName  String  
+  senderEmail String  
+  bcc         String?
+  attatchments attatchment[]
+  footNote     String?
+  subject      String?
+  body         String?  
+  
+ company     Company?  @relation(fields: [companyId], references: [id])
+  companyId   String?  @unique  @db.ObjectId
+}
+
+model InvoiceSettings {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   dueDays     Int     @default(14)
   prefix      String?
@@ -296,13 +313,7 @@ type ServiceElement {
 
 
 
-type InvoiceSettings {
-  dueDays               Int    @default(14)
-  qouteNumberPrefix     String @default("")
-  latestQoutationNumber Int    @default(0)
-  subject               String @default("")
-  body                  String @default("")
-}
+
 
 enum PricingType {
   SINGLE_PRICE

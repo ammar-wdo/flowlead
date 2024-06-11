@@ -26,7 +26,29 @@ const phoneReg = requiredString.refine((value) => {
 }, "Invalid phone number");
 
 // COMPANY SCHEMA
+
+const attatchmentSchema = z.object({
+  name: optionalString.nullable(),
+  type: optionalString.nullable(),
+  size: optionalString.nullable(),
+  url: optionalString.nullable(),
+}).nullable();
 export const quotationsSettings = z.object({
+  dueDays: z.number().positive().default(14),
+  prefix: optionalString.nullable(),
+  nextNumber: z.number().nonnegative().default(0),
+  senderName: requiredString,
+  senderEmail: requiredString.email(),
+  bcc: z.string().email().optional().nullable().or(z.literal(undefined)),
+  attatchments: z
+    .array(attatchmentSchema)
+    .optional(),
+  footNote: optionalString.nullable(),
+  subject: optionalString.nullable(),
+  body: optionalString.nullable(),
+});
+
+export const invoicesSettings = z.object({
   dueDays: z.number().positive().default(14),
   prefix: optionalString.nullable(),
   nextNumber: z.number().nonnegative().default(0),
@@ -48,7 +70,7 @@ export const quotationsSettings = z.object({
   footNote: optionalString.nullable(),
   subject: optionalString.nullable(),
   body: optionalString.nullable(),
-});
+})
 
 export const companySchema = z.object({
   name: requiredString,
