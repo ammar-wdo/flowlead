@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useTransition } from "react";
 
 import { z } from "zod";
 import { VARIABLES, quotationsSettings } from "@/schemas";
@@ -25,10 +25,11 @@ import {
   replacePlaceholders,
 } from "@/lib/utils";
 import QuillEditor from "../quill-editor";
-import { File, Loader, Upload, XIcon } from "lucide-react";
+import { File, FileIcon, Loader, Upload, XIcon } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import LoadingButton from "../loading-button";
 import { MultiFileDropzone } from "../MultiFileDropzone";
+import { v4 as uuidv4 } from "uuid";
 
 type Props = {
   quotationsSettings: z.infer<typeof quotationsSettings> | undefined | null;
@@ -48,9 +49,9 @@ const QuotationsSettingsForm = ({ quotationsSettings }: Props) => {
 
     handleBodyInsertText,
     setCaretBodyPosition,
-deleting,
-deleteFile,
-setDeleting,
+    deleting,
+    deleteFile,
+    setDeleting,
     edgestore,
     progressing,
     handleFootnoteInputChange,
@@ -60,6 +61,7 @@ setDeleting,
     quotationsSettingsData: quotationsSettings,
   });
 
+  const [pending, startTransition] = useTransition();
   return (
     <Form {...form}>
       <form
@@ -317,11 +319,59 @@ setDeleting,
                   </div>
 
                   <div>
+                    {!!form.watch("attatchments")?.length && (
+                      <div className="space-y-3 mb-4">
+                        {form.watch("attatchments")?.map((file) => {
+                          const fileExist = fileStates.find(
+                            (fileUploaded) => fileUploaded.url === file?.url
+                          );
+
+                          return (
+                            <article
+                              key={uuidv4()}
+                              className="border p-3 rounded-lg flex items-start gap-3 relative"
+                            >
+                              {!!deleting && deleting === file?.url && (
+                                <div className=" gap-1 text-xs  w-full h-full absolute top-0 left-0 bg-black/80 text-white z-10 flex items-center justify-center">
+                                  Deleteing...{" "}
+                                  <Loader
+                                    size={16}
+                                    className="animate-spin ml-2"
+                                  />
+                                </div>
+                              )}
+                              {!deleting && (
+                                <XIcon
+                                  onClick={async () =>
+                                    await deleteFile(file?.url)
+                                  }
+                                  className="absolute top-0.5 right-0.5 cursor-pointer "
+                                  size={14}
+                                />
+                              )}
+                              <span>
+                                <FileIcon />
+                              </span>
+                              <div className="text-xs text-muted-foreground">
+                                <p>{file?.name}</p>
+                                <p>{file?.type}</p>
+                                <p>{file?.size}</p>
+                                {fileExist && (
+                                  <p className="text-sm text-second">
+                                    Just Uploaded
+                                  </p>
+                                )}
+                              </div>
+                            </article>
+                          );
+                        })}
+                      </div>
+                    )}
                     <MultiFileDropzone
-                    deleting={deleting}
-                    setDeleting={async(url:string)=>{
-                    await  deleteFile(url)
-                    }}
+                      deleting={deleting}
+                      setDeleting={async (url: string) => {
+                        await deleteFile(url);
+                      }}
                       value={fileStates}
                       onChange={(files) => {
                         setFileStates(files);
@@ -333,11 +383,12 @@ setDeleting,
                             try {
                               const res = await edgestore.publicFiles.upload({
                                 file: addedFileState.file,
-                                
+
                                 onProgressChange: async (progress) => {
                                   updateFileProgress(
                                     addedFileState.key,
-                                    progress,""
+                                    progress,
+                                    ""
                                   );
                                   if (progress === 100) {
                                     // wait 1 second to set it to complete
@@ -347,18 +398,29 @@ setDeleting,
                                     );
                                     updateFileProgress(
                                       addedFileState.key,
-                                      "COMPLETE",res.url
+                                      "COMPLETE",
+                                      res.url
                                     );
                                   }
                                 },
                               });
                               console.log(res);
+
                               form.setValue("attatchments", [
-                                ...form.watch("attatchments"),
-                                res.url,
+                                ...(form.watch("attatchments") || []),
+                                {
+                                  size: formatFileSize(res.size),
+                                  url: res.url,
+                                  name: addedFileState.file.name,
+                                  type: addedFileState.file.type,
+                                },
                               ]);
                             } catch (err) {
-                              updateFileProgress(addedFileState.key, "ERROR","");
+                              updateFileProgress(
+                                addedFileState.key,
+                                "ERROR",
+                                ""
+                              );
                             }
                           })
                         );

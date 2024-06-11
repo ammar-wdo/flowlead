@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import {
   CheckCircleIcon,
   FileIcon,
@@ -165,9 +166,9 @@ const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           {value?.map(({ file, progress,url }, i) => (
             <div
               key={i}
-              className="flex  w-96 max-w-[100vw] flex-col justify-center rounded border border-gray-300 px-4 py-4 relative overflow-hidden"
+              className={cn("flex  w-96 max-w-[100vw] flex-col justify-center rounded border border-gray-300 px-4 py-4 relative overflow-hidden" )}
             >
-                 {(!!deleting && deleting === url ) && <div className=' gap-1 text-xs  w-full h-full absolute top-0 left-0 bg-black/80 text-white z-10 flex items-center justify-center'>Deleteing... <Loader size={9} className='animate-spin' /></div>}
+                 {(!!deleting && deleting === url ) && <div className=' gap-1 text-xs  w-full h-full absolute top-0 left-0 bg-black/80 text-white z-10 flex items-center justify-center'>Deleteing... <Loader size={16} className='animate-spin ml-2' /></div>}
                 {!deleting &&  <XIcon onClick={()=> setDeleting(url || "")} className='absolute top-0.5 right-0.5 cursor-pointer ' size={14}/>}
               <div className="flex items-center gap-2 text-gray-500 dark:text-white">
                 <FileIcon size="30" className="shrink-0" />

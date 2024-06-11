@@ -74,7 +74,7 @@ model  QoutesSettings {
   senderName  String  
   senderEmail String  
   bcc         String?
-  attatchments String[]
+  attatchments attatchment[]
   footNote     String?
   subject      String?
   body         String?  
@@ -318,4 +318,11 @@ type Option {
   image          String?
   enableQuantity Boolean @default(false)
   price          Int
+}
+
+type attatchment {
+  name String?
+  type String?
+  size String?
+  url String?
 }

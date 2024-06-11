@@ -139,7 +139,8 @@ export const useQuotationsSettings = ({
   }
 
 
-  const deleteFile = async (url: string) => {
+  const deleteFile = async (url: string | undefined | null) => {
+    if(!url )return
     try {
       setDeleting(url);
       await edgestore.publicFiles.delete({
@@ -151,7 +152,7 @@ export const useQuotationsSettings = ({
       toast.error("Something went wrong");
     } finally {
       setFile(undefined);
-      form.setValue("attatchments", []);
+      form.setValue("attatchments", form.watch('attatchments')?.filter(el=>el?.url !== url));
       setDeleting("");
     }
   };
