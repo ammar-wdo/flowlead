@@ -6,7 +6,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import ModalsProvider from "@/providers/modals-provider";
 import { EdgeStoreProvider } from '../lib/edgestore';
 import { Toaster } from "@/components/ui/sonner"
-import {DndContext} from '@dnd-kit/core';
+import NextTopLoader from 'nextjs-toploader';
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({ subsets: ["latin"],weight:["100","200","300","400","500","600","700","800","900"] });
@@ -29,7 +29,9 @@ export default function RootLayout({
     <html lang="en">
 
       <body className={poppins.className}>
-      <EdgeStoreProvider>{children}
+      <EdgeStoreProvider>
+      <NextTopLoader  height={12} color="#111725"/>
+        {children}
       <ModalsProvider/>
       </EdgeStoreProvider>
       <Toaster position="top-center" richColors/>
