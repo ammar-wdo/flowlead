@@ -26,6 +26,13 @@ const phoneReg = requiredString.refine((value) => {
   return phoneRegex.test(value);
 }, "Invalid phone number");
 
+const optionalPhoneReg = optionalString.refine((value) => {
+  const phoneRegex = /^(?:[0-9]){1,3}(?:[ -]*[0-9]){6,14}$/;
+
+  if(!value) return true
+  return  phoneRegex.test(value) ;
+}, "Invalid phone number");
+
 // COMPANY SCHEMA
 
 const attatchmentSchema = z.object({
@@ -684,8 +691,8 @@ export const contactSchema = z.object({
   contactName:requiredString,
   emailAddress:requiredString.email(),
   companyName:optionalString,
-  phoneNumber:phoneReg.refine(value=>value || undefined).optional(),
-  mobileNumber:phoneReg.refine(value=>value || undefined).optional(),
+  phoneNumber:optionalPhoneReg,
+  mobileNumber:optionalPhoneReg,
   address:optionalString,
   country:optionalString,
   city:optionalString,

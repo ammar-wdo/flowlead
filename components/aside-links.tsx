@@ -29,7 +29,7 @@ const AsideLinks = (props: Props) => {
                     title: 'Leads',
                     icon: '/dashboard.png',
                     href: `/dashboard/${params.companySlug}/leads`,
-                    active: pathname === `/dashboard/${params.companySlug}/leads`
+                    active: pathname.split('/')[3] === 'leads'
                 },
             ]
         },

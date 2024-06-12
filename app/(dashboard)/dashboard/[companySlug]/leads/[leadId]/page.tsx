@@ -38,7 +38,7 @@ const page = async({params:{leadId,companySlug}}: Props) => {
     <div>
 <Heading title='Edit Lead'/>
 
-<div className='mt-20 bg-white p-8 max-w-[1200px]'>
+<div className='mt-12 bg-white p-8 max-w-[1000px]'>
 <LeadForm lead={lead}/>
 </div>
     </div>
