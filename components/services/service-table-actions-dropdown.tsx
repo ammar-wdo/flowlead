@@ -44,8 +44,8 @@ setOpen({type:'delete',deleteFunction:()=>deleteService(params.companySlug as st
   <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
   <DropdownMenuSeparator />
-  <DropdownMenuItem asChild  className="p-2  font-semibold cursor-pointer"><Link className="flex items-center justify-start gap-3" href={url}><Edit /> Edit</Link></DropdownMenuItem>
-  <DropdownMenuItem onClick={handleDeleteModalOpen} className="p-2 flex items-center justify-start gap-3 font-semibold cursor-pointer text-rose-500 hover:!text-rose-500"><Delete /> Delete</DropdownMenuItem>
+  <DropdownMenuItem asChild  className="p-2   cursor-pointer"><Link className="flex items-center justify-start gap-3" href={url}><Edit /> Edit</Link></DropdownMenuItem>
+  <DropdownMenuItem onClick={handleDeleteModalOpen} className="p-2 flex items-center justify-start gap-3  cursor-pointer text-rose-500 hover:!text-rose-500"><Delete /> Delete</DropdownMenuItem>
 </DropdownMenuContent>
 </DropdownMenu>
   )

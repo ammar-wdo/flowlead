@@ -94,16 +94,22 @@ export const getServices = async (companySlug: string, userId: string) => {
     select: {
       id: true,
       name: true,
-      description: true,
-      options: true,
+      createdAt: true,
+      company:{
+        select:{
+          slug:true
+        }
+      }
+     
     },
   });
 
   const refactoredServices = services.map((service) => ({
     id: service.id,
     name: service.name,
-    description: service.description,
-    price: service.options.reduce((acc, value) => acc + value.price, 0),
+    createdAt: service.createdAt,
+    company:{slug:service.company.slug}
+   
   }));
 
   return refactoredServices;

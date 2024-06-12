@@ -6,6 +6,7 @@ import { Button } from "../ui/button"
 import Link from "next/link"
 import PushButton from "../push-button"
 import FormTableActionDropdown from "./form-table-action-dropdown"
+import { format } from "date-fns"
 
 
 // This type is used to define the shape of our data.
@@ -35,7 +36,7 @@ export const formColums: ColumnDef<PartialForm>[] = [
   {
     accessorKey: "createdAt",
     header: "Date Created",
-    cell:({row})=><p className="text-muted-foreground">{row.original.createdAt.toLocaleDateString()}</p>
+    cell:({row})=><p className="text-muted-foreground">{format(row.original.createdAt,"dd-MM-yyyy")}</p>
    
   },
   {
