@@ -7,6 +7,8 @@ import ModalsProvider from "@/providers/modals-provider";
 import { EdgeStoreProvider } from '../lib/edgestore';
 import { Toaster } from "@/components/ui/sonner"
 import NextTopLoader from 'nextjs-toploader';
+import 'quill/dist/quill.snow.css'; // Import the snow theme CSS
+
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({ subsets: ["latin"],weight:["100","200","300","400","500","600","700","800","900"] });

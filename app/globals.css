@@ -2,6 +2,7 @@
   @tailwind components;
   @tailwind utilities;
 
+  @import '~quill/dist/quill.snow.css';
 
   html, body {
    height: 100%;
@@ -106,4 +107,53 @@
     border-color: #e2e8f0 !important;
     border-radius:0 0 5px 5px;
   }
+
+
+  /* globals.css */
+
+.quill-content h1 {
+  font-size: 2.25rem; /* 4xl */
+}
+
+.quill-content h2 {
+  font-size: 1.875rem; /* 3xl */
+}
+
+.quill-content h3 {
+  font-size: 1.5rem; /* 2xl */
+}
+
+.quill-content h4 {
+  font-size: 1.25rem; /* xl */
+}
+
+.quill-content h5 {
+  font-size: 1.125rem; /* lg */
+}
+
+.quill-content h6 {
+  font-size: 1rem; /* base */
+}
+
+.quill-content p,
+.quill-content span {
+  font-size: 1rem; /* base */
+}
+
+.quill-content small {
+  font-size: 0.875rem; /* sm */
+}
+
+.quill-content .ql-size-small {
+  font-size: 0.75rem !important; /* small */
+}
+
+.quill-content .ql-size-large {
+  font-size: 1.5rem !important; /* large */
+}
+
+.quill-content .ql-size-huge {
+  font-size: 4.25rem !important; /* huge */
+}
+
 

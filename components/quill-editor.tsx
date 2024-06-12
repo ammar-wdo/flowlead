@@ -3,6 +3,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css'; // Import the snow theme CSS
 
+
 interface QuillEditorProps {
   value: string;
   onChange: (content: string) => void;

@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { memo, useCallback } from "react";
 import { useFormPreview } from "@/hooks/use-form-preview";
 import { Element, Form, ServiceElement } from "@prisma/client";
@@ -38,252 +37,282 @@ const FormPreview = ({ form }: Props) => {
   const { formPreview, onSubmit, handleBlur } = useFormPreview(form);
   const formValues = formPreview.watch();
 
-  const renderElement = 
-    (element:Element) => {
-      const fieldElement = element.field;
-      const serviceElement = element.service;
+  const renderElement = (element: Element) => {
+    const fieldElement = element.field;
+    const serviceElement = element.service;
 
-      if (fieldElement) {
-        const isVisible = isFieldVisible(element.id, form.rules, form.elements, formValues);
-        if (!isVisible) return null;
-        return (
-          <FormField
-            key={element.id}
-            control={formPreview.control}
-            name={`${fieldElement.label}-field`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-1">
-                  {fieldElement.label}
-                  {fieldElement.validations?.required ? (
-                    "*"
-                  ) : (
-                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">
-                      Optional
-                    </span>
+    if (fieldElement) {
+      const isVisible = isFieldVisible(
+        element.id,
+        form.rules,
+        form.elements,
+        formValues
+      );
+      if (!isVisible) return null;
+      return (
+        <FormField
+          key={element.id}
+          control={formPreview.control}
+          name={`${fieldElement.label}-field`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center gap-1">
+                {fieldElement.label}
+                {fieldElement.validations?.required ? (
+                  "*"
+                ) : (
+                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">
+                    Optional
+                  </span>
+                )}
+              </FormLabel>
+              <FormControl>
+                <div>
+                  {fieldElement.type === "text" && (
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      placeholder={fieldElement.placeholder || ""}
+                    />
                   )}
-                </FormLabel>
-                <FormControl>
-                  <div>
-                    {fieldElement.type === "text" && (
-                      <Input
-                        {...field}
-                     
-                        value={field.value || ""}
-                        placeholder={fieldElement.placeholder || ""}
-                        
-                      />
-                    )}
-                    {fieldElement.type === "name" && (
-                      <Input
-                      
-                        {...field}
-                        
-                     onChange={(e)=>field.onChange(e.target.value.trim())}
-                        value={field.value || ""}
-                        placeholder={fieldElement.placeholder || ""}
-                        
-                      />
-                    )}
-                    {fieldElement.type === "email" && (
-                      <Input
-                        {...field}
-                     
-                        value={field.value || ""}
-                        placeholder={fieldElement.placeholder || ""}
-                        
-                      />
-                    )}
-                    {fieldElement.type === "longText" && (
-                      <Textarea
-                        className="min-h-60 resize-none"
-                        placeholder={fieldElement.placeholder || ""}
-                        {...field}
-                        value={field.value || ""}
-                        
-                      />
-                    )}
-                    {fieldElement.type === "number" && (
-                      <Input
-                        type="number"
-                        {...field}
-                        placeholder={fieldElement.placeholder || ""}
-                        value={field.value || ""}
-                        
-                      />
-                    )}
-                    {fieldElement.type === "phone" && (
-                      <Input
-                        type="number"
-                        {...field}
-                        placeholder={fieldElement.placeholder || ""}
-                        
-                      />
-                    )}
-                   
-                    {fieldElement.type === "checkbox" && (
-                      <FormItem>
-                        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {fieldElement.options.map((option, i) => (
-                            <FormItem
-                              key={`option-checkbox-${i}`}
-                              className={cn(
-                                "flex flex-row items-center space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer",
-                                !!(field.value || []).includes(option) &&
-                                  "bg-second text-white"
-                              )}
-                              onClick={() => {
-                                !(field.value || []).includes(option)
-                                  ? field.onChange([...(field.value || []), option])
-                                  : field.onChange(field.value.filter((el: string) => el !== option));
-                              }}
-                            >
-                              <div className="h-6 ">
-                                {!!(field.value || []).includes(option) ? (
-                                  <SquareCheckBig className="h-6" />
-                                ) : (
-                                  <Square className="h-6" />
-                                )}
-                              </div>
-                              <FormLabel className="flex flex-col">
-                                <span className="capitalize ">{option}</span>
-                              </FormLabel>
-                            </FormItem>
-                          ))}{" "}
-                        </div>
-                      </FormItem>
-                    )}
-                    {fieldElement.type === "select" && (
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select an Option" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {fieldElement.options.map((option, i) => (
-                            <SelectItem className="cursor-pointer" key={`option-select-${i}`} value={String(option)}>
-                              {option}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                    {fieldElement.type === "radio" && (
-                      <FormItem className="">
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={(value) => {
-                              console.log(value);
-                              field.onChange(value);
+                  {fieldElement.type === "name" && (
+                    <Input
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.value.trim())}
+                      value={field.value || ""}
+                      placeholder={fieldElement.placeholder || ""}
+                    />
+                  )}
+                  {fieldElement.type === "email" && (
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      placeholder={fieldElement.placeholder || ""}
+                    />
+                  )}
+                  {fieldElement.type === "longText" && (
+                    <Textarea
+                      className="min-h-60 resize-none"
+                      placeholder={fieldElement.placeholder || ""}
+                      {...field}
+                      value={field.value || ""}
+                    />
+                  )}
+                  {fieldElement.type === "number" && (
+                    <Input
+                      type="number"
+                      {...field}
+                      placeholder={fieldElement.placeholder || ""}
+                      value={field.value || ""}
+                    />
+                  )}
+                  {fieldElement.type === "phone" && (
+                    <Input
+                      type="number"
+                      {...field}
+                      placeholder={fieldElement.placeholder || ""}
+                    />
+                  )}
+
+                  {fieldElement.type === "checkbox" && (
+                    <FormItem>
+                      <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {fieldElement.options.map((option, i) => (
+                          <FormItem
+                            key={`option-checkbox-${i}`}
+                            className={cn(
+                              "flex flex-row items-center space-x-3 space-y-0 p-6 border rounded-lg bg-white cursor-pointer",
+                              !!(field.value || []).includes(option) &&
+                                "bg-second text-white"
+                            )}
+                            onClick={() => {
+                              !(field.value || []).includes(option)
+                                ? field.onChange([
+                                    ...(field.value || []),
+                                    option,
+                                  ])
+                                : field.onChange(
+                                    field.value.filter(
+                                      (el: string) => el !== option
+                                    )
+                                  );
                             }}
-                            defaultValue={field.value}
-                            className="flex flex-col "
                           >
-                            <FormItem className="grid grid-cols-1 md:grid-cols-2 gap-3 space-y-0">
-                              {fieldElement.options.map((option, i) => (
-                                <div
-                                  key={`option-radio-${fieldElement.label}-${i}`}
-                                  className="flex items-center gap-1  bg-white p-3 rounded-md border w-full h-16"
+                            <div className="h-6 ">
+                              {!!(field.value || []).includes(option) ? (
+                                <SquareCheckBig className="h-6" />
+                              ) : (
+                                <Square className="h-6" />
+                              )}
+                            </div>
+                            <FormLabel className="flex flex-col">
+                              <span className="capitalize ">{option}</span>
+                            </FormLabel>
+                          </FormItem>
+                        ))}{" "}
+                      </div>
+                    </FormItem>
+                  )}
+                  {fieldElement.type === "select" && (
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select an Option" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {fieldElement.options.map((option, i) => (
+                          <SelectItem
+                            className="cursor-pointer"
+                            key={`option-select-${i}`}
+                            value={String(option)}
+                          >
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {fieldElement.type === "radio" && (
+                    <FormItem className="">
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={(value) => {
+                            console.log(value);
+                            field.onChange(value);
+                          }}
+                          defaultValue={field.value}
+                          className="flex flex-col "
+                        >
+                          <FormItem className="grid grid-cols-1 md:grid-cols-2 gap-3 space-y-0">
+                            {fieldElement.options.map((option, i) => (
+                              <div
+                                key={`option-radio-${fieldElement.label}-${i}`}
+                                className="flex items-center gap-1  bg-white p-3 rounded-md border w-full h-16"
+                              >
+                                <FormControl>
+                                  <RadioGroupItem
+                                    id={`option-radio-${fieldElement.label}-${i}`}
+                                    value={String(option)}
+                                  />
+                                </FormControl>
+                                <FormLabel
+                                  htmlFor={`option-radio-${fieldElement.label}-${i}`}
+                                  className="font-normal cursor-pointer"
                                 >
-                                  <FormControl>
-                                    <RadioGroupItem id={`option-radio-${fieldElement.label}-${i}`} value={String(option)} />
-                                  </FormControl>
-                                  <FormLabel htmlFor={`option-radio-${fieldElement.label}-${i}`} className="font-normal cursor-pointer">
-                                    {option}
-                                  </FormLabel>
-                                </div>
-                              ))}
-                            </FormItem>
-                          </RadioGroup>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                     {fieldElement.type === "address" && (
-                   <> <AddressField  
+                                  {option}
+                                </FormLabel>
+                              </div>
+                            ))}
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                  {fieldElement.type === "address" && (
+                    <>
+                      {" "}
+                      <AddressField
+                        field={field}
+                        fieldValue={field.value}
+                        formPreview={formPreview}
+                        fieldElement={fieldElement}
+                      />
+                    </>
+                  )}
+                </div>
+              </FormControl>
+              {fieldElement.hint && (
+                <FormDescription>{fieldElement.hint}</FormDescription>
+              )}
+              {fieldElement.type !== "address" && <FormMessage />}
+              {!!formPreview.formState.errors[`${fieldElement.label}-field`] &&
+                fieldElement.type === "address" && (
+                  <p className="text-red-500 text-sm ">
+                    Address fields are required
+                  </p>
+                )}
+            </FormItem>
+          )}
+        />
+      );
+    }
+
+    if (serviceElement) {
+      const isVisible = isFieldVisible(
+        element.id,
+        form.rules,
+        form.elements,
+        formValues
+      );
+      if (!isVisible) return null;
+      return (
+        <FormField
+          control={formPreview.control}
+          key={element.id}
+          name={`${serviceElement.name}-service`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="capitalize flex items-center gap-1">
+                {serviceElement.name}
+                {serviceElement.isRequired ? (
+                  "*"
+                ) : (
+                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">
+                    Optional
+                  </span>
+                )}
+              </FormLabel>
+              <FormControl>
+                {serviceElement.pricingType === "SINGLE_PRICE" ? (
+                  <ServiceSinglepriceView
+                    formPreview={formPreview}
                     field={field}
                     fieldValue={field.value}
+                    serviceElement={serviceElement}
+                  />
+                ) : serviceElement.pricingType === "DROPDOWN_GROUP" ? (
+                  <ServiceDropDownView
                     formPreview={formPreview}
-                    fieldElement={fieldElement} />
-                  
-                     </>
-                    )}
-                  </div>
-                </FormControl>
-                {fieldElement.hint && <FormDescription>{fieldElement.hint}</FormDescription>}
-                {fieldElement.type!=='address' && <FormMessage />}
-                {(!!formPreview.formState.errors[`${fieldElement.label}-field`] && fieldElement.type==='address') && <p className="text-red-500 text-sm ">Address fields are required</p>}
-              </FormItem>
-            )}
-          />
-        );
-      }
-
-      if (serviceElement) {
-        const isVisible = isFieldVisible(element.id, form.rules, form.elements, formValues);
-        if (!isVisible) return null;
-        return (
-          <FormField
-            control={formPreview.control}
-            key={element.id}
-            name={`${serviceElement.name}-service`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="capitalize flex items-center gap-1">
-                  {serviceElement.name}
-                  {serviceElement.isRequired ? (
-                    "*"
-                  ) : (
-                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">
-                      Optional
-                    </span>
-                  )}
-                </FormLabel>
-                <FormControl>
-                  {serviceElement.pricingType === "SINGLE_PRICE" ? (
-                    <ServiceSinglepriceView
-                      formPreview={formPreview}
-                      field={field}
-                      fieldValue={field.value}
-                      serviceElement={serviceElement}
-                    />
-                  ) : serviceElement.pricingType === "DROPDOWN_GROUP" ? (
-                    <ServiceDropDownView
-                      formPreview={formPreview}
-                      field={field}
-                      fieldValue={field.value}
-                      serviceElement={serviceElement}
-                    />
-                  ) : serviceElement.pricingType === "RADIO_GROUP" ? (
-                    <ServiceRadioView
-                      formPreview={formPreview}
-                      field={field}
-                      fieldValue={field.value}
-                      serviceElement={serviceElement}
-                    />
-                  ) : serviceElement.pricingType === "CHECKBOX_GROUP" ? (
-                    <ServiceCheckBoxView
-                      formPreview={formPreview}
-                      field={field}
-                      fieldValue={field.value}
-                      serviceElement={serviceElement}
-                    />
-                  ) : null}
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        );
-      }
-
-      return null;
+                    field={field}
+                    fieldValue={field.value}
+                    serviceElement={serviceElement}
+                  />
+                ) : serviceElement.pricingType === "RADIO_GROUP" ? (
+                  <ServiceRadioView
+                    formPreview={formPreview}
+                    field={field}
+                    fieldValue={field.value}
+                    serviceElement={serviceElement}
+                  />
+                ) : serviceElement.pricingType === "CHECKBOX_GROUP" ? (
+                  <ServiceCheckBoxView
+                    formPreview={formPreview}
+                    field={field}
+                    fieldValue={field.value}
+                    serviceElement={serviceElement}
+                  />
+                ) : null}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      );
     }
-   
+
+    return null;
+  };
 
   return (
     <FormComponent {...formPreview}>
-      <form onSubmit={formPreview.handleSubmit(onSubmit)} className="space-y-8 max-w-[800px]">
+      <form
+        onSubmit={formPreview.handleSubmit(onSubmit)}
+        className="space-y-8 max-w-[800px]"
+      >
         {form.elements.map((element) => renderElement(element))}
         <Button type="submit">Submit</Button>
         {JSON.stringify(formPreview.formState.errors)}
@@ -294,111 +323,142 @@ const FormPreview = ({ form }: Props) => {
 
 export default FormPreview;
 
-
 type AddressFieldProps = {
-  field: ControllerRenderProps<{
-    [x: string]: any;
-}, `${string}-field`>;
+  field: ControllerRenderProps<
+    {
+      [x: string]: any;
+    },
+    `${string}-field`
+  >;
   fieldValue: any;
   formPreview: UseFormReturn<any>;
   fieldElement: any; // Adjust this type based on your field element type
 };
 
-const AddressField: React.FC<AddressFieldProps> = ({ field, fieldValue, formPreview, fieldElement }) => {
+const AddressField: React.FC<AddressFieldProps> = ({
+  field,
+  fieldValue,
+  formPreview,
+  fieldElement,
+}) => {
   return (
     <div className="">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5">
-      {fieldElement.address?.addressShow && (
-        <FormItem className=" col-span-1 md:col-span-3">
-          <FormLabel>{fieldElement.address?.addressLabel || "Address"}</FormLabel>
-          <FormControl>
-            <Input
-              {...field}
-              value={fieldValue?.address || ""}
-              placeholder={fieldElement.address?.addressLabel || "Enter address"}
-              onChange={(e) => field.onChange({ ...fieldValue, address: e.target.value })}
-            />
-          </FormControl>
-       
-        </FormItem>
-      )}
-      {fieldElement.address?.houseNumberShow && (
-        <FormItem className="col-span-1 md:col-span-2">
-          <FormLabel>{fieldElement.address?.houseNumberLabel || "House Number"}</FormLabel>
-          <FormControl>
-            <Input
-              {...field}
-              value={fieldValue?.houseNumber || ""}
-              placeholder={fieldElement.address?.houseNumberLabel || "Enter house number"}
-              onChange={(e) => field.onChange({ ...fieldValue, houseNumber: e.target.value })}
-            />
-          </FormControl>
-       
-        </FormItem>
-      )}
-    
-    
-      {fieldElement.address?.postalCodeShow && (
-      <FormItem className=" col-span-1 md:col-span-3">
-          <FormLabel>{fieldElement.address?.postalCodeLabel || "Postal Code"}</FormLabel>
-          <FormControl>
-            <Input
-              {...field}
-              value={fieldValue?.postalCode || ""}
-              placeholder={fieldElement.address?.postalCodeLabel || "Enter postal code"}
-              onChange={(e) => field.onChange({ ...fieldValue, postalCode: e.target.value })}
-            />
-          </FormControl>
-          
-        </FormItem>
-      )}
-      {fieldElement.address?.cityShow && (
-     <FormItem className=" col-span-1 md:col-span-2">
-          <FormLabel>{fieldElement.address?.cityLabel || "City"}</FormLabel>
-          <FormControl>
-            <Input
-              {...field}
-              value={fieldValue?.city || ""}
-              placeholder={fieldElement.address?.cityLabel || "Enter city"}
-              onChange={(e) => field.onChange({ ...fieldValue, city: e.target.value })}
-            />
-          </FormControl>
-       
-        </FormItem>
-      )}
-      {fieldElement.address?.stateRegionShow && (
-     <FormItem className=" col-span-1 md:col-span-3">
-          <FormLabel>{fieldElement.address?.stateRegionLabel || "State/Region"}</FormLabel>
-          <FormControl>
-            <Input
-              {...field}
-              value={fieldValue?.stateRegion || ""}
-              placeholder={fieldElement.address?.stateRegionLabel || "Enter state/region"}
-              onChange={(e) => field.onChange({ ...fieldValue, stateRegion: e.target.value })}
-            />
-          </FormControl>
-       
-        </FormItem>
-      )}
-      {fieldElement.address?.countryShow && (
-      <FormItem className=" col-span-1 md:col-span-2">
-          <FormLabel>{fieldElement.address?.countryLabel || "Country"}</FormLabel>
-          <FormControl>
-            <Input
-              {...field}
-              value={fieldValue?.country || ""}
-              placeholder={fieldElement.address?.countryLabel || "Enter country"}
-              onChange={(e) => field.onChange({ ...fieldValue, country: e.target.value })}
-            />
-          </FormControl>
-       
-        </FormItem>
-      )}
-   </div>
+        {fieldElement.address?.addressShow && (
+          <FormItem className=" col-span-1 md:col-span-3">
+            <FormLabel>
+              {fieldElement.address?.addressLabel || "Address"}
+            </FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                value={fieldValue?.address || ""}
+                placeholder={
+                  fieldElement.address?.addressLabel || "Enter address"
+                }
+                onChange={(e) =>
+                  field.onChange({ ...fieldValue, address: e.target.value })
+                }
+              />
+            </FormControl>
+          </FormItem>
+        )}
+        {fieldElement.address?.houseNumberShow && (
+          <FormItem className="col-span-1 md:col-span-2">
+            <FormLabel>
+              {fieldElement.address?.houseNumberLabel || "House Number"}
+            </FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                value={fieldValue?.houseNumber || ""}
+                placeholder={
+                  fieldElement.address?.houseNumberLabel || "Enter house number"
+                }
+                onChange={(e) =>
+                  field.onChange({ ...fieldValue, houseNumber: e.target.value })
+                }
+              />
+            </FormControl>
+          </FormItem>
+        )}
+
+        {fieldElement.address?.postalCodeShow && (
+          <FormItem className=" col-span-1 md:col-span-3">
+            <FormLabel>
+              {fieldElement.address?.postalCodeLabel || "Postal Code"}
+            </FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                value={fieldValue?.postalCode || ""}
+                placeholder={
+                  fieldElement.address?.postalCodeLabel || "Enter postal code"
+                }
+                onChange={(e) =>
+                  field.onChange({ ...fieldValue, postalCode: e.target.value })
+                }
+              />
+            </FormControl>
+          </FormItem>
+        )}
+        {fieldElement.address?.cityShow && (
+          <FormItem className=" col-span-1 md:col-span-2">
+            <FormLabel>{fieldElement.address?.cityLabel || "City"}</FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                value={fieldValue?.city || ""}
+                placeholder={fieldElement.address?.cityLabel || "Enter city"}
+                onChange={(e) =>
+                  field.onChange({ ...fieldValue, city: e.target.value })
+                }
+              />
+            </FormControl>
+          </FormItem>
+        )}
+        {fieldElement.address?.stateRegionShow && (
+          <FormItem className=" col-span-1 md:col-span-3">
+            <FormLabel>
+              {fieldElement.address?.stateRegionLabel || "State/Region"}
+            </FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                value={fieldValue?.stateRegion || ""}
+                placeholder={
+                  fieldElement.address?.stateRegionLabel || "Enter state/region"
+                }
+                onChange={(e) =>
+                  field.onChange({ ...fieldValue, stateRegion: e.target.value })
+                }
+              />
+            </FormControl>
+          </FormItem>
+        )}
+        {fieldElement.address?.countryShow && (
+          <FormItem className=" col-span-1 md:col-span-2">
+            <FormLabel>
+              {fieldElement.address?.countryLabel || "Country"}
+            </FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                value={fieldValue?.country || ""}
+                placeholder={
+                  fieldElement.address?.countryLabel || "Enter country"
+                }
+                onChange={(e) =>
+                  field.onChange({ ...fieldValue, country: e.target.value })
+                }
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      </div>
     </div>
   );
 };
-
 
 const ServiceCheckBoxView = ({
   serviceElement,
@@ -424,6 +484,11 @@ const ServiceCheckBoxView = ({
 }) => {
   return (
     <FormItem>
+      <div   
+       id="quill-content-container"
+        className="quill-content prose"
+        dangerouslySetInnerHTML={{ __html: serviceElement.description || "" }}
+     />
       <div className="mb-4 grid grid-cols-1 md:grid-cols-2   gap-1">
         {serviceElement.options.map((option, i) => (
           <FormItem
@@ -600,7 +665,11 @@ const ServiceRadioView = ({
   return (
     <FormItem className="space-y-0">
       <FormLabel className="flex flex-row items-center gap-1 space-y-0">
-        {serviceElement.description}
+      <div   
+       id="quill-content-container"
+        className="quill-content prose"
+        dangerouslySetInnerHTML={{ __html: serviceElement.description || "" }}
+     />
       </FormLabel>
       <FormControl>
         <FormItem className="grid grid-cols-1 lg:grid-cols-2 gap-1 space-y-0 ">
@@ -743,6 +812,11 @@ const ServiceDropDownView = ({
 }) => {
   return (
     <div>
+         <div   
+       id="quill-content-container"
+        className="quill-content prose"
+        dangerouslySetInnerHTML={{ __html: serviceElement.description || "" }}
+     />
       <Select
         onValueChange={(id: string) => {
           if (id === "NONE") {
@@ -930,7 +1004,13 @@ const ServiceSinglepriceView = ({
   >;
 }) => {
   return (
-    <FormItem
+    <div>
+         <div   
+       id="quill-content-container"
+        className="quill-content prose"
+        dangerouslySetInnerHTML={{ __html: serviceElement.description || "" }}
+     />
+       <FormItem
       className={cn(
         "grid grid-cols-2 gap-3 rounded-lg border bg-white p-4 max-w-[400px]",
         !!(field.value?.id === serviceElement.options[0].id) && "border-second "
@@ -1041,5 +1121,7 @@ const ServiceSinglepriceView = ({
         </div>
       </div>
     </FormItem>
+    </div>
+  
   );
 };
