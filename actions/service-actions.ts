@@ -88,7 +88,7 @@ export const updateService = async (
     });
     if (!companyId)
       throw new CustomError("Company Id not found,check provided slug");
-    //create service
+    //update service
     const updatedService = await prisma.service.update({
       where: {
         id: serviceId,
@@ -100,6 +100,53 @@ export const updateService = async (
         ...validData.data,
       },
     });
+
+    //fetch forms that contains this service
+    const formsWithService = await prisma.form.findMany({
+      where: {
+        services: {
+          hasSome: [updatedService.id],
+        },
+      },
+    });
+
+   
+
+    //loop and update the service that mathces the updated service id
+    await Promise.all(
+      formsWithService.map(async (form) => {
+        const updatedElements = form.elements.map((element) => {
+          if (element.service && element.service.id === updatedService.id) {
+            return {
+              ...element,
+              service: {
+                id: updatedService.id,
+                taxPercentage: updatedService.taxPercentage,
+                addToQoutation: updatedService.addToQoutation,
+                description: updatedService.description,
+                name: updatedService.name,
+                isLineItem: updatedService.isLineItem,
+                isRequired: updatedService.isRequired,
+                pricingType: updatedService.pricingType,
+                options: updatedService.options,
+              },
+            };
+          }
+          return element;
+        });
+
+        await prisma.form.update({
+          where: {
+            id: form.id,
+          },
+          data: {
+            elements: {
+              set: updatedElements,
+            },
+          },
+        });
+      })
+    );
 
     return { success: true, message: "Service Updated Successfully" };
   } catch (error) {

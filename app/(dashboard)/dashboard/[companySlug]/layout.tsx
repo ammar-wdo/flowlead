@@ -6,6 +6,7 @@ import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import React, { ReactNode } from 'react'
 
+
 type Props = { children: ReactNode,params:{companySlug:string} }
 
 const layout = async({ children,params:{companySlug} }: Props) => {
