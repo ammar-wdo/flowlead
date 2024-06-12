@@ -150,7 +150,7 @@ export const updateService = async (
 
     return { success: true, message: "Service Updated Successfully" };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     let message = "Internal server error";
     if (error instanceof CustomError) message = error.message;
 

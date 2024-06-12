@@ -30,7 +30,7 @@ export const columns: ColumnDef<PartialService>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
+    header: "Date Created",
     cell:({row})=>  <p className="text-muted-foreground">{format(row.original.createdAt,"dd-MM-yyyy")}</p>
   },
 

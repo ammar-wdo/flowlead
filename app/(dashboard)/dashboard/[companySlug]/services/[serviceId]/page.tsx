@@ -35,7 +35,7 @@ const page = async ({ params: { companySlug, serviceId } }: Props) => {
     }) : null
 
 
-
+if(serviceId !=='new' && !service) return notFound()
     return (
         <div>
             <Heading title='Add Service' />

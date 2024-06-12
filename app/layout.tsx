@@ -8,6 +8,7 @@ import { EdgeStoreProvider } from '../lib/edgestore';
 import { Toaster } from "@/components/ui/sonner"
 import NextTopLoader from 'nextjs-toploader';
 import 'quill/dist/quill.snow.css'; // Import the snow theme CSS
+import { cn } from "@/lib/utils";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -30,7 +31,7 @@ export default function RootLayout({
 
     <html lang="en">
 
-      <body className={poppins.className}>
+      <body className={cn(poppins.className,"scroll")}>
       <EdgeStoreProvider>
       <NextTopLoader   height={4} color="#111725"/>
         {children}

@@ -72,9 +72,9 @@ model Quotation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  contactId String  @unique @db.ObjectId
+  contactId String   @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
-  companyId String  @unique @db.ObjectId
+  companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 }
 
@@ -83,12 +83,12 @@ model Submission {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  content FormType
+  content Json
 
   contactId String  @unique @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
 
-  companyId String  @unique @db.ObjectId
+  companyId String   @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 }
 
@@ -99,9 +99,10 @@ model ContactPerson {
 
   contactName  String
   emailAddress String
+  phoneNumber  String?
 
-  contactId String @unique @db.ObjectId
-  contact Contact @relation(fields: [contactId],references: [id])
+  contactId String  @unique @db.ObjectId
+  contact   Contact @relation(fields: [contactId], references: [id])
 }
 
 model Contact {
@@ -115,6 +116,7 @@ model Contact {
   emailAddress    String
   companyName     String?
   phoneNumber     String?
+  mobileNumber    String?
 
   address String?
   country String?
@@ -126,11 +128,11 @@ model Contact {
   vatNumber String?
   IBAN      String?
 
-  submission Submission?
-  quotations Quotation[]
+  submission     Submission?
+  quotations     Quotation[]
   contactPersons ContactPerson[]
 
-  companyId String  @unique @db.ObjectId
+  companyId String   @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 }
 

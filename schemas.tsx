@@ -1,6 +1,7 @@
 import {
   Action,
   ComparisonOperator,
+  ContactType,
   ElementType,
   FieldType,
   LogicalOperator,
@@ -676,3 +677,20 @@ export const VARIABLES_INVOICES = {
   ],
   footnote: ["{expiration date}", "{invoice date}"],
 } as const;
+
+
+export const contactSchema = z.object({
+  contactType:z.nativeEnum(ContactType),
+  contactName:requiredString,
+  emailAddress:requiredString.email(),
+  companyName:optionalString,
+  phoneNumber:phoneReg.refine(value=>value || undefined).optional(),
+  mobileNumber:phoneReg.refine(value=>value || undefined).optional(),
+  address:optionalString,
+  country:optionalString,
+  city:optionalString,
+  zipcode:optionalString,
+  cocNumber:optionalString,
+  vatNumber:optionalString,
+  IBAN:optionalString,
+}).refine(value=>value.contactType !=='BUSINESS' || !!value.companyName,{path:['companyName'],message:"Required"})

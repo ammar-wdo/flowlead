@@ -25,6 +25,12 @@ const AsideLinks = (props: Props) => {
                     href: `/dashboard/${params.companySlug}`,
                     active: pathname === `/dashboard/${params.companySlug}`
                 },
+                {
+                    title: 'Leads',
+                    icon: '/dashboard.png',
+                    href: `/dashboard/${params.companySlug}/leads`,
+                    active: pathname === `/dashboard/${params.companySlug}/leads`
+                },
             ]
         },
         {

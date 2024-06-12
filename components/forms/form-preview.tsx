@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { cn, isFieldVisible } from "@/lib/utils";
-import { Circle, Square, SquareCheckBig } from "lucide-react";
+import { Circle, Loader, Square, SquareCheckBig } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import Image from "next/image";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
@@ -35,6 +35,7 @@ type Props = {
 
 const FormPreview = ({ form }: Props) => {
   const { formPreview, onSubmit, handleBlur } = useFormPreview(form);
+  const isLoading =formPreview.formState.isSubmitting
   const formValues = formPreview.watch();
 
   const renderElement = (element: Element) => {
@@ -314,7 +315,7 @@ const FormPreview = ({ form }: Props) => {
         className="space-y-8 max-w-[800px]"
       >
         {form.elements.map((element) => renderElement(element))}
-        <Button type="submit">Submit</Button>
+        <Button className="" disabled={isLoading} type="submit">Submit {isLoading  && <Loader size={12} className="ml-3 animate-spin" />}</Button>
         {JSON.stringify(formPreview.formState.errors)}
       </form>
     </FormComponent>

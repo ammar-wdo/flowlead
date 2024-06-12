@@ -4,6 +4,8 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { generateZodSchema, isFieldVisible } from "@/lib/utils";
+import { toast } from "sonner";
+import { createSubmission } from "@/actions/submission-action";
 
 export const useFormPreview = (form: Form) => {
   const [schema, setSchema] = useState(generateZodSchema(form.elements, form.rules, {}));
@@ -51,8 +53,22 @@ export const useFormPreview = (form: Form) => {
   }, [formValues, form.elements, form.rules]);
 
   // Handle form submission
-  function onSubmit(values: z.infer<typeof schema>) {
-    alert(JSON.stringify(values, undefined, 2));
+  async function onSubmit(values: z.infer<typeof schema>) {
+  
+    try {
+      
+  const formValues = formPreview.watch();
+      const res = await createSubmission({values,companyId:form.companyId,elements:form.elements,formValues:formValues,rules:form.rules})
+if(!res.success) return toast.error(res.error)
+
+  toast.success(res.message)
+    
+
+
+    } catch (error) {
+      console.error(error)
+      toast.error("Something went wrong")
+    }
   }
 
   return { formPreview, onSubmit, handleBlur: evaluateAndUpdateSchema };
