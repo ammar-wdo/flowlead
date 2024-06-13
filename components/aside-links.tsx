@@ -66,13 +66,13 @@ const AsideLinks = (props: Props) => {
                     title: 'Invoices',
                     icon: <FaReceipt size={18} />,
                     href: `/dashboard/${params.companySlug}/invoices`,
-                    active: pathname === `/dashboard/${params.companySlug}/invoices`
+                    active:pathname.split('/')[3] === 'invoices'
                 },
                 {
                     title: 'Quotations',
                     icon: <BsExclamationSquareFill size={18} />,
                     href: `/dashboard/${params.companySlug}/quotations`,
-                    active: pathname === `/dashboard/${params.companySlug}/quotations`
+                    active: pathname.split('/')[3] === 'quotations'
                 },
             ]
         },

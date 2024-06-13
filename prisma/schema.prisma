@@ -86,12 +86,16 @@ model Quotation {
   discount       DiscountType?
   discountAmount Float?
 
+  totalAmount Float
+
   totalTax Float?
   isSeen   Boolean @default(false)
 
   signature    String?
   dateAccepted DateTime?
   acceptedBy   String?
+
+  status QuotationStatus @default(CONCEPT)
 
   quotationSettingsId String         @db.ObjectId
   quotationSettings   QoutesSettings @relation(fields: [quotationSettingsId], references: [id])
