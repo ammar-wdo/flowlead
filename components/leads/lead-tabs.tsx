@@ -85,10 +85,19 @@ const TabsComponents = ({
     const createdAt = el.createdAt
     const total = Object.entries(content).reduce((prev: number, [key, value]) => {
 
-      if (key.endsWith("-service") && typeof value === 'object' && value !== null && 'price' in value && 'quantity'  in value && !isNaN(+(value.price as number))) {
-        console.log("right condition",key,value)
-
+      if (key.endsWith("-service") ) {
+       if(!Array.isArray(value) && typeof value === 'object' && value !== null && 'price' in value && 'quantity'  in value && !isNaN(+(value.price as number))){
         prev = prev + (+(value.price as number))*(+(value.quantity as number));
+       }else if(Array.isArray(value)){
+        value.forEach(el=>{
+          if(typeof el === 'object' && el !== null && 'price' in el && 'quantity'  in el && !isNaN(+(el.price as number))){
+            prev = prev + (+(el.price as number))*(+(el.quantity as number));
+          }
+        })
+       }
+
+
+      
       }
       return prev;
     }, 0);
