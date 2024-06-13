@@ -44,7 +44,7 @@ const page = async ({ params: { leadId, companySlug } }: Props) => {
       </div>
 
       {/* lead tabs */}
-      <div className="mt-12">
+      <div className="mt-12 max-w-[1000px]">
       <Suspense fallback={"Loading"}>
         <LeadTabsWrapper
           companySlug={companySlug}
