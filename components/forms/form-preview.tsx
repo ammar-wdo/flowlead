@@ -503,7 +503,7 @@ const ServiceCheckBoxView = ({
               !(fieldValue || []).some((el: any) => el.id === option.id)
                 ? field.onChange([
                     ...(fieldValue || []),
-                    { ...option, quantity: 1 },
+                    { ...option, quantity: 1,serviceName:serviceElement.name,serviceId:serviceElement.id },
                   ])
                 : field.onChange(
                     fieldValue.filter((el: any) => el.id !== option.id)
@@ -676,7 +676,7 @@ const ServiceRadioView = ({
         <FormItem className="grid grid-cols-1 lg:grid-cols-2 gap-1 space-y-0 ">
           {serviceElement.options.map((option, i) => (
             <div
-              onClick={() => field.onChange({ ...option, quantity: 1 })}
+              onClick={() => field.onChange({ ...option, quantity: 1,serviceName:serviceElement.name,serviceId:serviceElement.id })}
               key={option.id}
               className={cn(
                 "grid grid-cols-2 gap-3 bg-white p-4 rounded-md border",
@@ -825,7 +825,7 @@ const ServiceDropDownView = ({
             return;
           }
           const theOption = serviceElement.options.find((el) => el.id === id);
-          field.onChange({ ...theOption, quantity: 1 });
+          field.onChange({ ...theOption, quantity: 1,serviceName:serviceElement.name,serviceId:serviceElement.id });
         }}
         defaultValue={field.value}
       >
@@ -1021,6 +1021,7 @@ const ServiceSinglepriceView = ({
           ? field.onChange({
               ...serviceElement.options[0],
               quantity: 1,
+              serviceName:serviceElement.name,serviceId:serviceElement.id
             })
           : field.onChange(undefined);
       }}

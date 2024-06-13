@@ -306,6 +306,11 @@ export const generateSingleServiceSchema = (
     id: z.string().min(1),
     price: z.coerce.number(),
     quantity: z.coerce.number(),
+    name:z.string().min(1,"required"),
+    description:z.string().optional(),
+    image:z.string().optional(),
+    serviceName:z.string().min(1),
+    serviceId:z.string().min(1)
   });
   switch (service?.pricingType) {
     case "CHECKBOX_GROUP":

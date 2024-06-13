@@ -228,7 +228,7 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
 
       {/* right part _controller_ */}
       <div>
-        <div className="sticky top-40  shrink-0 min-w-[250px] md:min-w-[400px]">
+        <div className="sticky top-40 shrink-0   w-[400px]">
           {!selectedElement ? (
             <div className="space-y-6">
               {controllerElements.map((element) => (

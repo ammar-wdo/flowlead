@@ -54,7 +54,7 @@ export const useFormPreview = (form: Form) => {
 
   // Handle form submission
   async function onSubmit(values: z.infer<typeof schema>) {
-  
+  // return alert(JSON.stringify(values,undefined,2))
     try {
       
   const formValues = formPreview.watch();

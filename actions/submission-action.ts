@@ -24,7 +24,10 @@ export const createSubmission = async ({
 const schema = generateZodSchema(elements,rules,formValues)
 
 const validData = schema.safeParse(values)
-if(!validData.success) throw new CustomError("Invalid Inputs")
+if(!validData.success){ 
+  console.error(JSON.stringify(validData.error,undefined,2))
+  throw new CustomError("Invalid Inputs")
+ }
 
    
 

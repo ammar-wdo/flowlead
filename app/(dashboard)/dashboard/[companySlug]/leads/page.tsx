@@ -10,6 +10,7 @@ type Props = {
   params: { companySlug: string };
 };
 
+export const revalidate = 0
 const page = async ({ params: { companySlug } }: Props) => {
 const {userId} = auth()
 if(!userId) throw new CustomError("Unauthorized")

@@ -43,7 +43,7 @@ const FormRightController = ({ services, form }: Props) => {
   if (!selectedElement) return;
 
   return (
-    <div className="bg-white w-full px-12 py-6 ">
+    <div className="bg-white  px-12 py-6 w-[400px]">
       <div className="flex items-center justify-between mb-4">
         <p className="font-semibold">
           {inputsLabelsMap[elementType!] || "Service"}
@@ -1120,9 +1120,10 @@ function AddressControlItem({
   return (
     <div className="grid grid-cols-2 items-center gap-2 mb-2">
       <div className="flex items-center gap-2">
-        <Switch id={label}   checked={showValue} onCheckedChange={(value)=>showChange(value)} /> <Label htmlFor={label}>{label}</Label>
+        <Switch id={label}   checked={showValue} onCheckedChange={(value)=>showChange(value)} /> <Label className="text-xs" htmlFor={label}>{label}</Label>
       </div>
       <Input
+      className="text-xs"
         placeholder={label}
         value={value || label}
         onChange={(e) => onChange(e.target.value)}
