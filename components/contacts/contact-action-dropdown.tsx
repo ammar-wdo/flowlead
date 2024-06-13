@@ -16,6 +16,7 @@ import Link from "next/link"
 import { useModal } from "@/hooks/modal-hook"
 import { deleteService } from "@/actions/service-actions"
 import { deleteForm } from "@/actions/form-actions"
+import { deleteContact } from "@/actions/contact-actions"
 
 type Props = {
     id:string
@@ -24,14 +25,14 @@ type Props = {
 
 
 const ContactTableActionDropdown = ({id}: Props) => {
-    const params = useParams()
+    const params = useParams<{companySlug:string}>()
 
    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/contacts/${id}`
 
    const {setOpen} = useModal()
 
 const handleDeleteModalOpen = ()=>{
-setOpen({type:'delete',deleteFunction:()=>deleteForm(params.companySlug as string,id)})
+setOpen({type:'delete',deleteFunction:()=>deleteContact({companySlug:params.companySlug,contactId:id})})
   
 }
     
