@@ -1,3 +1,5 @@
+import ContactForm from "@/components/contacts/contact-form";
+import ContactTabsWrapper from "@/components/contacts/contact-taqbs-wrapper";
 import Heading from "@/components/heading";
 import LeadForm from "@/components/leads/lead-form";
 import LeadTabsWrapper from "@/components/leads/lead-tabs-wrapper";
@@ -10,45 +12,45 @@ import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
 
 type Props = {
-  params: { leadId: string; companySlug: string };
+  params: { contactId: string; companySlug: string };
 };
 
-const page = async ({ params: { leadId, companySlug } }: Props) => {
+const page = async ({ params: { contactId, companySlug } }: Props) => {
   const { userId } = auth();
 
-  if (!isValidObjectId(leadId) && leadId !== "new") notFound();
+  if (!isValidObjectId(contactId) && contactId !== "new") notFound();
   if (!userId) throw new CustomError("Unauthorized");
 
-  let lead =
-    leadId !== "new"
+  let contact =
+    contactId !== "new"
       ? await prisma.contact.findUnique({
           where: {
-            id: leadId,
+            id: contactId,
             company: {
               slug: companySlug,
               userId,
             },
-            contactCategory: "LEAD",
+            contactCategory: "CONTACT",
           },
         })
       : null;
 
-  if (leadId !== "new" && !lead) return notFound();
+  if (contactId !== "new" && !contact) return notFound();
 
   return (
     <div>
-      <Heading title={lead ? "Edit Lead" : "Create Lead"} />
+      <Heading title={contact ? "Edit Contact" : "Create Contact"} />
 
       <div className="mt-12 bg-white p-8 max-w-[1000px]">
-        <LeadForm lead={lead} />
+        <ContactForm contact={contact} />
       </div>
 
       {/* lead tabs */}
       <div className="mt-12">
       <Suspense fallback={"Loading"}>
-        <LeadTabsWrapper
+        <ContactTabsWrapper
           companySlug={companySlug}
-          leadId={leadId}
+          contactId={contactId}
           userId={userId}
         />
       </Suspense>

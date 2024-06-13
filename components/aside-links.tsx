@@ -4,7 +4,15 @@ import React from 'react'
 import { Button } from './ui/button'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import Image from 'next/image'
+import { CgMagnet } from "react-icons/cg";
+import { MdDashboard } from "react-icons/md";
+import { GoPersonFill } from "react-icons/go";
+import { FaBoxArchive } from "react-icons/fa6";
+import { FaThList } from "react-icons/fa";
+import { FaReceipt } from "react-icons/fa6";
+import { BsExclamationSquareFill } from "react-icons/bs";
+import { RiSettings3Fill } from "react-icons/ri";
+import { FaBolt } from "react-icons/fa";
 
 type Props = {
 
@@ -21,19 +29,19 @@ const AsideLinks = (props: Props) => {
             elements: [
                 {
                     title: 'Dashboard',
-                    icon: '/dashboard.png',
+                    icon: <MdDashboard size={18} />,
                     href: `/dashboard/${params.companySlug}`,
                     active: pathname === `/dashboard/${params.companySlug}`
                 },
                 {
                     title: 'Leads',
-                    icon: '/dashboard.png',
+                    icon: <CgMagnet size={18} />,
                     href: `/dashboard/${params.companySlug}/leads`,
                     active: pathname.split('/')[3] === 'leads'
                 },
                 {
                     title: 'Contacts',
-                    icon: '/dashboard.png',
+                    icon: <GoPersonFill size={18} />,
                     href: `/dashboard/${params.companySlug}/contacts`,
                     active: pathname.split('/')[3] === 'contacts'
                 },
@@ -44,27 +52,27 @@ const AsideLinks = (props: Props) => {
             elements: [
                 {
                     title: 'Services',
-                    icon: '/services.png',
+                    icon: <FaBoxArchive size={18} />,
                     href: `/dashboard/${params.companySlug}/services`,
                     active: pathname === `/dashboard/${params.companySlug}/services`
                 },
                 {
                     title: 'Forms',
-                    icon: '/forms.png',
+                    icon: <FaThList size={18} />,
                     href: `/dashboard/${params.companySlug}/forms`,
                     active: pathname === `/dashboard/${params.companySlug}/forms`
                 },
                 {
                     title: 'Invoices',
-                    icon: '/invoices.png',
+                    icon: <FaReceipt size={18} />,
                     href: `/dashboard/${params.companySlug}/invoices`,
                     active: pathname === `/dashboard/${params.companySlug}/invoices`
                 },
                 {
-                    title: 'Qoutations',
-                    icon: '/quotations.png',
-                    href: `/dashboard/${params.companySlug}/qoutations`,
-                    active: pathname === `/dashboard/${params.companySlug}/qoutations`
+                    title: 'Quotations',
+                    icon: <BsExclamationSquareFill size={18} />,
+                    href: `/dashboard/${params.companySlug}/quotations`,
+                    active: pathname === `/dashboard/${params.companySlug}/quotations`
                 },
             ]
         },
@@ -73,13 +81,13 @@ const AsideLinks = (props: Props) => {
             elements: [
                 {
                     title: 'Settings',
-                    icon: '/settings.png',
+                    icon: <RiSettings3Fill size={18} />,
                     href: `/dashboard/${params.companySlug}/settings`,
                     active: pathname.split('/')[3] === 'settings'
                 },
                 {
                     title: 'Upgrade',
-                    icon: '/upgrade.png',
+                    icon: <FaBolt size={18} />,
                     href: `/dashboard/${params.companySlug}/upgrade`,
                     active: pathname === `/dashboard/${params.companySlug}/upgrade`
                 },
@@ -91,9 +99,9 @@ const AsideLinks = (props: Props) => {
             {
                 links.map(link => <article key={link.title}>
                     <h3 className='text-white opacity-60 pl-[20px] text-[12px]  mt-8 mb-3 uppercase font-light'>{link.title}</h3>
-                    {link.elements.map(el => <Link key={el.title} className={cn('gap-4 px-[20px] py-[12px] flex items-center text-[14px]  tracking-wide rounded-md transition hover:bg-white/10 text-white/60 mb-1', el.active && 'bg-white/10')} href={el.href}>
-                        <Image alt='icon' src={el.icon} width={15} height={15} className={cn(!el.active && 'opacity-60')} />
-                        <p className={cn(el.active && 'text-white')}>{el.title}</p>
+                    {link.elements.map(el => <Link key={el.title} className={cn('gap-4 px-[20px] py-[12px] flex items-center text-[14px]   tracking-wide rounded-md transition hover:bg-white/10 text-white/60 mb-1', el.active && 'bg-white/10 text-white')} href={el.href}>
+                        {el.icon}
+                        <p >{el.title}</p>
                         </Link>)}
                 </article>)
             }

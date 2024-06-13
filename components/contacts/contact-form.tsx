@@ -37,7 +37,7 @@ const ContactForm = ({ contact }: Props) => {
           render={({ field }) => (
             <FormItem className="space-y-3">
               <SettingsFormWrapper>
-                <FormLabel>Lead Type</FormLabel>
+                <FormLabel>Contact Type</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -82,9 +82,9 @@ const ContactForm = ({ contact }: Props) => {
           render={({ field }) => (
             <FormItem>
               <SettingsFormWrapper>
-                <FormLabel>Lead name</FormLabel>
+                <FormLabel>Contact name</FormLabel>
                 <FormControl className="md:col-span-2 max-w-[450px]">
-                  <Input placeholder="Lead Name" {...field} />
+                  <Input placeholder="Contact Name" {...field} />
                 </FormControl>
               </SettingsFormWrapper>
               <FormMessage />
