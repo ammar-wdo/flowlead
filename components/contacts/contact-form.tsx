@@ -19,13 +19,14 @@ import FormItemWrapper from "../forms/form-item-wrapper";
 import SettingsFormWrapper from "../settings/settings-form-wrapper";
 import { Label } from "../ui/label";
 import LoadingButton from "../loading-button";
+import { useContact } from "@/hooks/contact-form-hook";
 
 type Props = {
-  lead: Contact | null;
+  contact: Contact | null;
 };
 
-const LeadForm = ({ lead }: Props) => {
-  const { form, onSubmit } = useLead({ lead });
+const ContactForm = ({ contact }: Props) => {
+  const { form, onSubmit } = useContact({ contact });
   const isLoading = form.formState.isSubmitting;
   return (
     <Form {...form}>
@@ -282,11 +283,11 @@ const LeadForm = ({ lead }: Props) => {
         <LoadingButton
         className="ml-auto  flex bg-second hover:bg-second/90"
           isLoading={isLoading}
-          title={lead ? "Update" : "Create"}
+          title={contact ? "Update" : "Create"}
         />
       </form>
     </Form>
   );
 };
 
-export default LeadForm;
+export default ContactForm;
