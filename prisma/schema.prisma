@@ -72,7 +72,31 @@ model Quotation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  contactId String   @db.ObjectId
+  quotationNumber Int
+  quotationString String
+
+  quotationDate DateTime @default(now())
+  expiryDate    DateTime
+
+  subject   String?
+  lineItems LineItem[]
+
+  footNote String?
+
+  discount       DiscountType?
+  discountAmount Float?
+
+  totalTax Float?
+  isSeen   Boolean @default(false)
+
+  signature    String?
+  dateAccepted DateTime?
+  acceptedBy   String?
+
+  quotationSettingsId String         @db.ObjectId
+  quotationSettings   QoutesSettings @relation(fields: [quotationSettingsId], references: [id])
+
+  contactId String  @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
   companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
@@ -88,7 +112,7 @@ model Submission {
   contactId String  @unique @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
 
-  companyId String   @db.ObjectId
+  companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 }
 
@@ -132,7 +156,7 @@ model Contact {
   quotations     Quotation[]
   contactPersons ContactPerson[]
 
-  companyId String   @db.ObjectId
+  companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 }
 
@@ -148,6 +172,8 @@ model QoutesSettings {
   footNote     String?
   subject      String?
   body         String?
+
+  quotations Quotation[]
 
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?  @unique @db.ObjectId
@@ -431,4 +457,36 @@ enum ContactType {
 enum ContactCategory {
   CONTACT
   LEAD
+}
+
+type LineItem {
+  id            String
+  name          String
+  description   String?
+  quantity      Int
+  price         Float
+  taxPercentage Float
+  totalPrice    Float
+  taxAmount     Float
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+type QuotationDiscount {
+  description     String?
+  type            DiscountType @default(PERCENTAGE)
+  percentageValue Float?
+  fixedValue      Float?
+}
+
+enum QuotationStatus {
+  CONCEPT
+  SENT
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  INVOICED
 }
