@@ -2,6 +2,7 @@
 import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
 import { generateZodSchema } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 
 import { Rule, Element } from "@prisma/client";
 
@@ -72,5 +73,49 @@ if (error instanceof CustomError) message = error.message;
 return { success: false, error: message };
 
 
+  }
+};
+
+
+
+export const deleteSubmission = async ({
+   
+  companySlug,
+  id
+}: {
+
+  companySlug: string;
+  id:string
+}) => {
+  try {
+    const { userId } = auth();
+    if (!userId) throw new CustomError("Unauthorized");
+
+    const company = await prisma.company.findUnique({
+      where: {
+        userId,
+        slug: companySlug,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!company) throw new CustomError("company not found");
+
+    await prisma.submission.delete({
+      where:{
+          id,
+          companyId:company.id
+      }
+    })
+
+    return { success: true, message: "Submission successfully deleted" };
+  } catch (error) {
+    console.error(error);
+    let message = "Internal server error";
+    if (error instanceof CustomError) message = error.message;
+
+    return { success: false, error: message };
   }
 };

@@ -13,6 +13,7 @@ import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { useModal } from "@/hooks/modal-hook"
 import { deleteService } from "@/actions/service-actions"
+import { deleteSubmission } from "@/actions/submission-action"
 
 type Props = {
     submissionId:string
@@ -28,7 +29,7 @@ const SubmissionTableActionsDropdown = ({submissionId}: Props) => {
    const {setOpen} = useModal()
 
 const handleDeleteModalOpen = ()=>{
-setOpen({type:'delete',deleteFunction:()=>deleteService(params.companySlug as string,submissionId)})
+setOpen({type:'delete',deleteFunction:()=>deleteSubmission({companySlug:params.companySlug,id:submissionId})})
   
 }
     
