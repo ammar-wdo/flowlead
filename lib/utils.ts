@@ -102,6 +102,9 @@ export const getServices = async (companySlug: string, userId: string) => {
       }
      
     },
+    orderBy:{
+      createdAt:"desc"
+    }
   });
 
   const refactoredServices = services.map((service) => ({
@@ -135,6 +138,9 @@ export const getForms = async (companySlug: string, userId: string) => {
         },
       },
     },
+    orderBy:{
+      createdAt:"desc"
+    }
   });
 
   return forms;

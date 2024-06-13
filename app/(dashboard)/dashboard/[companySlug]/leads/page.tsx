@@ -21,7 +21,10 @@ if(!userId) throw new CustomError("Unauthorized")
                 slug:companySlug,
                 userId
             },
-            contactCategory:'LEAD'
+            contactCategory:"LEAD"
+        },
+        orderBy:{
+          createdAt:"desc"
         }
     })
 

@@ -24,6 +24,9 @@ if(!userId) throw new CustomError("Unauthorized")
                 userId
             },
             contactCategory:'CONTACT'
+        },
+        orderBy:{
+          createdAt:"desc"
         }
     })
 
