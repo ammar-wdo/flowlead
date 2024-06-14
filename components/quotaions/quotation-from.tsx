@@ -324,11 +324,11 @@ const QuotationsForm = ({
                     {/* body-content */}
                     {form.watch("lineItems").map((lineItem, index) => (
                       <TableRow
-                        key={`line-item-${index}`}
-                        className="w-full border-none border-t-0 relative group"
+                        key={lineItem.id}
+                        className="w-full border-none border-t-0 relative group !h-6 p-0"
                       >
                         {/* item name */}
-                        <TableCell className="font-medium w-fit items-start align-top">
+                        <TableCell className="font-medium w-fit items-start align-top p-2">
                           <FormField
                             control={form.control}
                             name={`lineItems.${index}.name`}
@@ -349,7 +349,7 @@ const QuotationsForm = ({
                           />
                         </TableCell>
                         {/* item quantity */}
-                        <TableCell className="font-medium w-fit align-top">
+                        <TableCell className="font-medium w-fit align-top p-2">
                           <FormField
                             control={form.control}
                             name={`lineItems.${index}.quantity`}
@@ -375,7 +375,7 @@ const QuotationsForm = ({
                           />
                         </TableCell>
                         {/* itam price */}
-                        <TableCell className="font-medium w-fit align-top">
+                        <TableCell className="font-medium w-fit align-top p-2">
                           <FormField
                             control={form.control}
                             name={`lineItems.${index}.price`}
@@ -406,7 +406,7 @@ const QuotationsForm = ({
                           />
                         </TableCell>
                         {/* tax percentage */}
-                        <TableCell className="font-medium w-fit align-top">
+                        <TableCell className="font-medium w-fit align-top p-2">
                           <FormField
                             control={form.control}
                             name={`lineItems.${index}.taxPercentage`}
@@ -432,7 +432,7 @@ const QuotationsForm = ({
                           />
                         </TableCell>
                         {/* total price */}
-                        <TableCell className="font-medium w-fit align-top ">
+                        <TableCell className="font-medium w-fit align-top p-2">
                           <FormField
                             control={form.control}
                             name={`lineItems.${index}.totalPrice`}
@@ -460,7 +460,7 @@ const QuotationsForm = ({
                         </TableCell>
                         {/* delete button */}
                         {!!(form.watch("lineItems").length > 1) && (
-                          <TableCell className="font-medium w-fit align-top ">
+                          <TableCell className="font-medium w-fit align-top p-2">
                             <Button
                               type="button"
                               onClick={() => deleteLineItem(lineItem.id)}
