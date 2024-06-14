@@ -35,33 +35,17 @@ export const saveQuotationsSettings = async (values: z.infer<typeof quotationsSe
                 id: true,   quotesSettings:true
             }
         })
-        if (!company) throw new CustomError("Company Id not found,check provided slug")
+        if (!company || !company.quotesSettings ) throw new CustomError("company or quotation settings does not exist")
 
 
-        if(!company.quotesSettings){
-            await prisma.qoutesSettings.create({
-                data:{
-                    ...validData.data,
-                    attatchments: validData.data.attatchments?.map(att => ({
-                        name: att?.name ?? null,
-                        type: att?.type ?? null,
-                        size: att?.size ?? null,
-                        url: att?.url ?? null,
-                      })),
-                    company:{
-                        connect:{
-                            id:company.id
-                        }
-                    }
-                }
-            })
-        }else {
+    
             await prisma.qoutesSettings.update({
                 where:{
-                    id:company.quotesSettings.id
+                    id:company.quotesSettings?.id
                 },
                 data:{
                     ...validData.data,
+                    prefix: validData.data.prefix ?? undefined,
                     attatchments: validData.data.attatchments?.map(att => ({
                         name: att?.name ?? null,
                         type: att?.type ?? null,
@@ -70,7 +54,7 @@ export const saveQuotationsSettings = async (values: z.infer<typeof quotationsSe
                       }))
                 }
             })
-        }
+        
 
       
   
