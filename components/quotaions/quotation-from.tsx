@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import SettingsFormWrapper from "../settings/settings-form-wrapper";
-import { cn, formatWithLeadingZeros } from "@/lib/utils";
+import { cn, formatWithLeadingZeros, replacePlaceholders } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { format } from "date-fns";
 import {
@@ -137,9 +137,9 @@ const QuotationsForm = ({
               <SettingsFormWrapper>
                 <FormLabel>Quotation Number</FormLabel>
                 <FormControl>
-                  <div className="flex items-center gap-2 md:col-span-2  max-w-[450px]">
-                    <span className="border rounded-lg h-full px-4 py-2 min-w-[50px] pointer-events-none select-none text-slate-500 bg-muted">
-                      {form.watch("quotationString")}
+                  <div className="flex items-center gap-4 md:col-span-2  max-w-[450px]">
+                    <span className="border rounded-lg h-full px-4 py-2 min-w-[50px] pointer-events-none select-none text-slate-500 bg-muted text-sm">
+                      {replacePlaceholders(form.watch("quotationString"))}
                     </span>
                     <Input
                       className="flex-[1]"
@@ -150,14 +150,15 @@ const QuotationsForm = ({
                       value={
                         field.value
                           ? formatWithLeadingZeros(Number(field.value), 4)
-                          : ""
+                          : formatWithLeadingZeros(1, 4)
                       }
                       onChange={(e) =>
                         field.onChange(
-                          +formatWithLeadingZeros(Number(e.target.value), 4)
+                          +formatWithLeadingZeros(Number(!!(+e.target.value === 0) ? 1 :+e.target.value), 4)
                         )
                       }
                     />
+                    <span className="text-gray-500 text-sm">{replacePlaceholders(form.watch("quotationString"))}{formatWithLeadingZeros(Number(field.value || 1), 4)}</span>
                   </div>
                 </FormControl>
               </SettingsFormWrapper>
