@@ -26,7 +26,8 @@ const schema = generateZodSchema(elements,rules,formValues)
 
 const validData = schema.safeParse(values)
 if(!validData.success){ 
-  console.error(JSON.stringify(validData.error,undefined,2))
+  console.error(JSON.stringify(validData.error.flatten().fieldErrors,undefined,2))
+
   throw new CustomError("Invalid Inputs")
  }
 

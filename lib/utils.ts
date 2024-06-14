@@ -162,12 +162,12 @@ export const generateSingleFieldSchema = (
     break;
     case "number":
     case "phone":
-      fieldSchema = z
-        .string()
-        .refine((val) => !val || !isNaN(Number(val)), {
+      fieldSchema = z.union([
+        z.string().refine((val) => !val || !isNaN(Number(val)), {
           message: "Please enter a valid number",
-        })
-        .transform((val) => (val ? Number(val) : undefined));
+        }).transform((val) => (val ? Number(val) : undefined)),
+        z.number().transform((val) => (val ? val : undefined)),
+      ]);
 
       if (field.validations) {
         const { min, max } = field.validations;

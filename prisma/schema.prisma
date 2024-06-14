@@ -79,11 +79,11 @@ model Quotation {
   expiryDate    DateTime
 
   subject   String?
-  lineItems LineItem[]
+  lineItems LineItem[] 
 
   footNote String?
 
-  discount       DiscountType?
+  discount       QuotationDiscount?
   discountAmount Float?
 
   totalAmount Float
@@ -167,8 +167,8 @@ model Contact {
 model QoutesSettings {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   dueDays      Int           @default(14)
-  prefix       String?
-  nextNumber   Int           @default(0)
+  prefix       String        @default("F-")
+  nextNumber   Int           @default(1)
   senderName   String
   senderEmail  String
   bcc          String?
@@ -179,15 +179,15 @@ model QoutesSettings {
 
   quotations Quotation[]
 
-  company   Company? @relation(fields: [companyId], references: [id])
-  companyId String?  @unique @db.ObjectId
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId String  @unique @db.ObjectId
 }
 
 model InvoiceSettings {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   dueDays      Int           @default(14)
-  prefix       String?
-  nextNumber   Int           @default(0)
+  prefix       String        @default("O-")
+  nextNumber   Int           @default(1)
   senderName   String
   senderEmail  String
   bcc          String?
@@ -196,8 +196,8 @@ model InvoiceSettings {
   subject      String?
   body         String?
 
-  company   Company? @relation(fields: [companyId], references: [id])
-  companyId String?  @unique @db.ObjectId
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String  @unique @db.ObjectId
 }
 
 model Form {

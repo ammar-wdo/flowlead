@@ -133,7 +133,7 @@ const QuotationsSettingsForm = ({ quotationsSettings,companyEmail,companyName}: 
                           }
                           onChange={(e) =>
                             field.onChange(
-                              formatWithLeadingZeros(Number(e.target.value), 4)
+                              +formatWithLeadingZeros(Number(e.target.value), 4)
                             )
                           }
                         />

@@ -2,9 +2,11 @@ import {
   Action,
   ComparisonOperator,
   ContactType,
+  DiscountType,
   ElementType,
   FieldType,
   LogicalOperator,
+  QuotationStatus,
 } from "@prisma/client";
 import { ReactNode } from "react";
 import * as z from "zod";
@@ -29,28 +31,28 @@ const phoneReg = requiredString.refine((value) => {
 const optionalPhoneReg = optionalString.refine((value) => {
   const phoneRegex = /^(?:[0-9]){1,3}(?:[ -]*[0-9]){6,14}$/;
 
-  if(!value) return true
-  return  phoneRegex.test(value) ;
+  if (!value) return true;
+  return phoneRegex.test(value);
 }, "Invalid phone number");
 
 // COMPANY SCHEMA
 
-const attatchmentSchema = z.object({
-  name: optionalString.nullable(),
-  type: optionalString.nullable(),
-  size: optionalString.nullable(),
-  url: optionalString.nullable(),
-}).nullable();
+const attatchmentSchema = z
+  .object({
+    name: optionalString.nullable(),
+    type: optionalString.nullable(),
+    size: optionalString.nullable(),
+    url: optionalString.nullable(),
+  })
+  .nullable();
 export const quotationsSettings = z.object({
   dueDays: z.number().positive().default(14),
   prefix: optionalString.nullable(),
-  nextNumber: z.number().nonnegative().default(0),
+  nextNumber: z.number().min(1).nonnegative().default(1),
   senderName: requiredString,
   senderEmail: requiredString.email(),
-  bcc: z.string().email().optional().nullable().or(z.literal(undefined)),
-  attatchments: z
-    .array(attatchmentSchema)
-    .optional(),
+  bcc: z.union([z.string().email(), z.literal(""),z.literal(null), z.literal(undefined)]).optional(),
+  attatchments: z.array(attatchmentSchema).optional(),
   footNote: optionalString.nullable(),
   subject: optionalString.nullable(),
   body: optionalString.nullable(),
@@ -59,10 +61,10 @@ export const quotationsSettings = z.object({
 export const invoicesSettings = z.object({
   dueDays: z.number().positive().default(14),
   prefix: optionalString.nullable(),
-  nextNumber: z.number().nonnegative().default(0),
+  nextNumber: z.number().min(1).nonnegative().default(1),
   senderName: requiredString,
   senderEmail: requiredString.email(),
-  bcc: z.string().email().optional().nullable().or(z.literal(undefined)),
+  bcc: z.union([z.string().email(), z.literal(""),z.literal(null), z.literal(undefined)]).optional(),
   attatchments: z
     .array(
       z
@@ -70,7 +72,7 @@ export const invoicesSettings = z.object({
           name: optionalString.nullable(),
           type: optionalString.nullable(),
           size: optionalString.nullable(),
-          url:optionalString.nullable()
+          url: optionalString.nullable(),
         })
         .nullable()
     )
@@ -78,7 +80,7 @@ export const invoicesSettings = z.object({
   footNote: optionalString.nullable(),
   subject: optionalString.nullable(),
   body: optionalString.nullable(),
-})
+});
 
 export const companySchema = z.object({
   name: requiredString,
@@ -362,6 +364,84 @@ export const formSchema = z
       path: ["elements"],
     }
   );
+
+//contact schema
+export const contactSchema = z
+  .object({
+    contactType: z.nativeEnum(ContactType),
+    contactName: requiredString,
+    emailAddress: requiredString.email(),
+    companyName: optionalString,
+    phoneNumber: optionalPhoneReg,
+    mobileNumber: optionalPhoneReg,
+    address: optionalString,
+    country: optionalString,
+    city: optionalString,
+    zipcode: optionalString,
+    cocNumber: optionalString,
+    vatNumber: optionalString,
+    IBAN: optionalString,
+  })
+  .refine((value) => value.contactType !== "BUSINESS" || !!value.companyName, {
+    path: ["companyName"],
+    message: "Required",
+  });
+
+//quotation schema
+
+export const lineItemSchema = z.object({
+  id: requiredString,
+  name: requiredString,
+  description: optionalString.nullable(),
+  quantity: z.coerce.number({ invalid_type_error: "Enter valid number" }),
+  price: z.coerce.number({ invalid_type_error: "Enter valid number" }),
+  taxPercentage: z.coerce.number({ invalid_type_error: "Enter valid number" }),
+  totalPrice: z.coerce.number({ invalid_type_error: "Enter valid number" }),
+  taxAmount: z.coerce.number({ invalid_type_error: "Enter valid number" }),
+});
+
+export const quotationDiscountSchema = z
+  .object({
+    description: optionalString.nullable(),
+    type: z.nativeEnum(DiscountType),
+    percentageValue:z.union([z.literal(undefined),z.coerce
+      .number({ invalid_type_error: "Enter valid number" })
+      .optional()]) ,
+    fixedValue: z.union([z.literal(undefined),z.coerce
+      .number({ invalid_type_error: "Enter valid number" })
+      .optional()]),
+  })
+  .refine(
+    (data) =>
+      !!(data.type === "PERCENTAGE" && !!data.percentageValue) ||
+      !!(data.type === "FIXED" && !!data.fixedValue),{
+        path:['type'],message:"Please Enter Valid Value According To Discount Type"
+      }
+  );
+
+export const quotationSchema= z.object({
+  contactId:requiredString,
+  quotationNumber: z.coerce
+    .number({ invalid_type_error: "Enter valid number " })
+    .min(1, "required"),
+  quotationString: requiredString,
+  quotationDate: z.date(),
+  expiryDate: z.date(),
+  subject: optionalString.nullable(),
+  lineItems: z.array(lineItemSchema).min(1,"At least on line item is required"),
+  footNote: optionalString,
+  discount:quotationDiscountSchema.optional().nullable(),
+  discountAmount:z.coerce.number({invalid_type_error:"Enter valid number"}).optional().nullable(),
+  totalAmount:z.coerce.number({invalid_type_error:"Enter valid number"}),
+  totalTax:z.coerce.number({invalid_type_error:"Enter valid number"}).optional().nullable(),
+  isSeen:z.boolean(),
+  signature:optionalString,
+  dateAccepted:z.date().optional(),
+  acceptedBy:optionalString,
+  status:z.nativeEnum(QuotationStatus),
+
+
+});
 
 //fields and service elements types
 
@@ -684,20 +764,3 @@ export const VARIABLES_INVOICES = {
   ],
   footnote: ["{expiration date}", "{invoice date}"],
 } as const;
-
-
-export const contactSchema = z.object({
-  contactType:z.nativeEnum(ContactType),
-  contactName:requiredString,
-  emailAddress:requiredString.email(),
-  companyName:optionalString,
-  phoneNumber:optionalPhoneReg,
-  mobileNumber:optionalPhoneReg,
-  address:optionalString,
-  country:optionalString,
-  city:optionalString,
-  zipcode:optionalString,
-  cocNumber:optionalString,
-  vatNumber:optionalString,
-  IBAN:optionalString,
-}).refine(value=>value.contactType !=='BUSINESS' || !!value.companyName,{path:['companyName'],message:"Required"})

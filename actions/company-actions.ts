@@ -88,8 +88,17 @@ export const addCompany = async (values: z.infer<typeof companySchema>) => {
                 ...validData.data,
                 accountId: account.id,
                 slug: randomSlug,
-                invoiceSettings: {
-
+                quotesSettings:{
+                    create:{
+                        senderEmail:validData.data.companyEmail,
+                        senderName:validData.data.name
+                    }
+                },
+                invoiceSettings:{
+                    create:{
+                        senderEmail:validData.data.companyEmail,
+                        senderName:validData.data.name
+                    }
                 },
       
       
