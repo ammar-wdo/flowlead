@@ -429,6 +429,7 @@ export const quotationSchema= z.object({
   expiryDate: z.date(),
   subject: optionalString.nullable(),
   lineItems: z.array(lineItemSchema).min(1,"At least on line item is required"),
+  attatchments: z.array(attatchmentSchema).optional(),
   footNote: optionalString,
   discount:quotationDiscountSchema.optional().nullable(),
   discountAmount:z.coerce.number({invalid_type_error:"Enter valid number"}).optional().nullable(),

@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { quotationSchema } from "@/schemas";
 import { useState } from "react";
 import { v4 as uuid4 } from "uuid";
+import { useEdgeStore } from "@/lib/edgestore";
+import { FileState } from "@/components/MultiFileDropzone";
 
 export const useQuotation = ({
   quotation,
@@ -94,6 +96,80 @@ export const useQuotation = ({
     );
   };
 
+
+
+    //footnote variables
+    const [caretFootnotePosition, setCaretFootnotePosition] = useState(0);
+    const handleFootnoteInputChange = (
+      e: React.ChangeEvent<HTMLTextAreaElement>,
+      field: any
+    ) => {
+      setCaretFootnotePosition(e.target.selectionStart || 0);
+      field.onChange(e.target.value);
+    };
+  
+    const handleFootnoteInsertText = (text: string) => {
+      const currentValue = form.getValues("footNote") || "";
+      const newValue = insertTextAtPosition(
+        currentValue,
+        text,
+        caretFootnotePosition
+      );
+      form.setValue("footNote", newValue);
+    };
+  
+    const insertTextAtPosition = (
+      input: string,
+      text: string,
+      position: number
+    ) => {
+      return input.slice(0, position) + text + input.slice(position);
+    };
+
+
+    //file upload
+  const [file, setFile] = useState<File>();
+  const [progressing, setProgressing] = useState(false);
+  const [deleting, setDeleting] = useState("");
+  const { edgestore } = useEdgeStore();
+
+
+
+  const [fileStates, setFileStates] = useState<FileState[]>([]);
+
+  function updateFileProgress(key: string, progress: FileState['progress'],url:string) {
+    setFileStates((fileStates) => {
+      const newFileStates = structuredClone(fileStates);
+      const fileState = newFileStates.find(
+        (fileState) => fileState.key === key,
+      );
+      if (fileState) {
+        fileState.progress = progress;
+        fileState.url =url
+      }
+      return newFileStates;
+    });
+  }
+
+
+  const deleteFile = async (url: string | undefined | null) => {
+    if(!url )return
+    try {
+      setDeleting(url);
+      await edgestore.publicFiles.delete({
+        url,
+      });
+      setFileStates(prev=>prev.filter(el=>el.url !==url))
+    } catch (error) {
+      console.log(error);
+    
+    } finally {
+      setFile(undefined);
+      form.setValue("attatchments", form.watch('attatchments')?.filter(el=>el?.url !== url));
+      setDeleting("");
+    }
+  };
+
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof quotationSchema>) {
     // Do something with the form values.
@@ -111,5 +187,18 @@ export const useQuotation = ({
     calculate,
     addLineItem,
     deleteLineItem,
+    handleFootnoteInsertText,
+    handleFootnoteInputChange,
+    setCaretFootnotePosition,
+    setFile,
+    file,
+    setDeleting,
+    progressing,
+   fileStates,
+   setFileStates,
+   updateFileProgress,
+   edgestore,
+    deleting,
+    deleteFile,
   };
 };

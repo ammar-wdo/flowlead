@@ -81,6 +81,8 @@ model Quotation {
   subject   String?
   lineItems LineItem[] 
 
+  attatchments      attatchment[]
+
   footNote String?
 
   discount       QuotationDiscount?
