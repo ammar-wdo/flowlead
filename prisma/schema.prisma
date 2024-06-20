@@ -105,6 +105,10 @@ model Quotation {
   quotationSettingsId String         @db.ObjectId
   quotationSettings   QoutesSettings @relation(fields: [quotationSettingsId], references: [id])
 
+
+  contactPersonId String? @db.ObjectId
+  contactPerson ContactPerson? @relation(fields: [contactPersonId],references: [id])
+
   contactId String  @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
   companyId String  @db.ObjectId
@@ -138,6 +142,8 @@ model ContactPerson {
 
   contactId String   @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
+
+  quotations Quotation[]
 }
 
 model Contact {

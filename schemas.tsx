@@ -432,6 +432,7 @@ export const quotationDiscountSchema = z
 
 export const quotationSchema= z.object({
   contactId:requiredString,
+  contactPersonId:optionalString,
   quotationNumber: z.coerce
     .number({ invalid_type_error: "Enter valid number " })
     .min(1, "required"),

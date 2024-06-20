@@ -22,6 +22,8 @@ export const useQuotation = ({
   const [openQuotDate, setOpenQuotDate] = useState(false);
   const [openExpiryQuotDate, setOpenExpiryQuotDate] = useState(false);
 
+  const [contactOpen, setContactOpen] = useState(false)
+
   const form = useForm<z.infer<typeof quotationSchema>>({
     resolver: zodResolver(quotationSchema),
     defaultValues: {
@@ -60,7 +62,8 @@ export const useQuotation = ({
       subject: quotation?.subject || "",
 
       totalTax: quotation?.totalTax || undefined,
-      attatchments:quotation?.attatchments || []
+      attatchments:quotation?.attatchments || [],
+      contactPersonId:quotation?.contactPersonId || undefined
     },
   });
 
@@ -220,5 +223,7 @@ export const useQuotation = ({
     edgestore,
     deleting,
     deleteFile,
+    contactOpen,
+    setContactOpen
   };
 };

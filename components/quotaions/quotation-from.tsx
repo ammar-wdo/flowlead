@@ -25,25 +25,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import SettingsFormWrapper from "../settings/settings-form-wrapper";
-import { cn, formatFileSize, formatWithLeadingZeros, replacePlaceholders } from "@/lib/utils";
+import {
+  cn,
+  formatFileSize,
+  formatWithLeadingZeros,
+  replacePlaceholders,
+} from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { format } from "date-fns";
 import {
+  Building,
   CalendarIcon,
+  Check,
+  ChevronsUpDown,
   FileIcon,
   Loader,
+  MagnetIcon,
   Percent,
   PlusIcon,
   Star,
   Trash,
+  User,
   XIcon,
 } from "lucide-react";
 import { Calendar } from "../ui/calendar";
@@ -54,6 +57,15 @@ import { MultiFileDropzone } from "../MultiFileDropzone";
 
 import { v4 as uuidv4 } from "uuid";
 import LoadingButton from "../loading-button";
+import { RefactoredContacts } from "@/app/(dashboard)/dashboard/[companySlug]/quotations/[quotationId]/page";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "../ui/command";
+import { CommandList } from "cmdk";
 
 type Props = {
   quotation: Quotation | undefined | null;
@@ -69,6 +81,7 @@ type Props = {
   }[];
   contacts: Contact[];
   quotationSettings: { id: string; nextNumber: number; prefix: string };
+  refactoredContacts: RefactoredContacts;
 };
 
 const QuotationsForm = ({
@@ -76,6 +89,7 @@ const QuotationsForm = ({
   contacts,
   options,
   quotationSettings,
+  refactoredContacts,
 }: Props) => {
   const {
     form,
@@ -88,7 +102,20 @@ const QuotationsForm = ({
     addLineItem,
     deleteLineItem,
     handleFootnoteInsertText,
-    handleFootnoteInputChange,setCaretFootnotePosition,deleteFile,deleting,edgestore,file,fileStates,progressing,setDeleting,setFile,setFileStates,updateFileProgress
+    handleFootnoteInputChange,
+    setCaretFootnotePosition,
+    deleteFile,
+    deleting,
+    edgestore,
+    file,
+    fileStates,
+    progressing,
+    setDeleting,
+    setFile,
+    setFileStates,
+    updateFileProgress,
+    contactOpen,
+    setContactOpen,
   } = useQuotation({ quotation, quotationSettings });
 
   const [mount, setMount] = useState(false);
@@ -97,6 +124,8 @@ const QuotationsForm = ({
   }, []);
 
   if (!mount) return null;
+
+  console.log(refactoredContacts);
   return (
     <Form {...form}>
       <form
@@ -110,28 +139,138 @@ const QuotationsForm = ({
             <FormItem>
               <SettingsFormWrapper>
                 <FormLabel>Contact</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger className="md:col-span-2 max-w-[450px] text-start">
-                      <SelectValue placeholder="Please Select Contact Or Lead" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {contacts.map((contact) => (
-                      <SelectItem key={contact.id} value={contact.id}>
-                        <div className="flex flex-col">
-                          <p className="capitalize ">{contact.contactName}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {contact.emailAddress}
-                          </p>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={contactOpen} onOpenChange={setContactOpen}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between capitalize",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {form.watch("contactPersonId")
+                          ? `${
+                              refactoredContacts.find((contact) => {
+                                if (!("contactPerson" in contact)) return;
+                                else {
+                                  return (
+                                    contact.companyId === field.value &&
+                                    contact.contactPersonId ===
+                                      form.watch("contactPersonId")
+                                  );
+                                }
+                              })?.contactName
+                            } - ${
+                              (refactoredContacts.find((contact) => {
+                                if (!("contactPerson" in contact)) return;
+                                else {
+                                  return (
+                                    contact.companyId === field.value &&
+                                    contact.contactPersonId ===
+                                      form.watch("contactPersonId")
+                                  );
+                                }
+                              })as { contactPersonId: string; companyId: string; contactName: string; emailAddress: string; phoneNumber: string | null; companyName: string; contactPerson: boolean; })!.companyName
+                            }`
+                          : field.value
+                          ? refactoredContacts.find(
+                              (contact) => contact.companyId === field.value
+                            )?.contactName
+                          : "Select Contact"}
+                        {}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search Contact..." />
+                      <CommandEmpty>No result found</CommandEmpty>
+                      <CommandGroup>
+                        <CommandList>
+                          {refactoredContacts.map((contact, index) => (
+                            <CommandItem
+                              value={
+                                "contactPerson" in contact
+                                  ? contact.contactName +
+                                    contact.emailAddress +
+                                    contact.companyName
+                                  : contact.contactName + contact.emailAddress
+                              }
+                              key={contact.companyId}
+                              onSelect={() => {
+                                form.setValue("contactId", contact.companyId);
+                                setContactOpen(false);
+                                if ("contactPerson" in contact) {
+                                  form.setValue(
+                                    "contactPersonId",
+                                    contact.contactPersonId
+                                  );
+                                } else {
+                                  form.setValue("contactPersonId", undefined);
+                                }
+                              }}
+                            >
+                              {/* render check only besides contact person id if we had any ,or besides company id  */}
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  (!form.watch("contactPersonId") &&
+                                    contact.companyId === field.value &&
+                                    !("contactPerson" in contact)) ||
+                                    ("contactPerson" in contact &&
+                                      form.watch("contactPersonId") ===
+                                        contact.contactPersonId)
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+
+                              <div className="p-3">
+                                {"contactPerson" in contact ? (
+                                  <div className="flex items-center gap-5 ">
+                                    <span>
+                                      <User />
+                                    </span>
+                                    <div>
+                                      <p className="capitalize">
+                                        {contact.companyName} -{" "}
+                                        {contact.contactName}
+                                      </p>
+                                      <p className="text-muted-foreground text-xs ">
+                                        {contact.emailAddress}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-5 ">
+                                    <span>
+                                      {contact.contactType === "INDIVIDUAL" ? (
+                                        <MagnetIcon />
+                                      ) : (
+                                        <Building />
+                                      )}
+                                    </span>
+                                    <div>
+                                      <p className="capitalize">
+                                        {contact.contactName}
+                                      </p>
+                                      <p className="text-muted-foreground text-xs ">
+                                        {contact.emailAddress}
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </CommandItem>
+                          ))}
+                        </CommandList>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </SettingsFormWrapper>
 
               <FormMessage />
@@ -156,7 +295,6 @@ const QuotationsForm = ({
                       placeholder="Quotation Number"
                       {...field}
                       type="number"
-               
                       value={
                         field.value
                           ? formatWithLeadingZeros(Number(field.value), 4)
@@ -342,7 +480,14 @@ const QuotationsForm = ({
                   <TableBody>
                     {/* body-content */}
                     {form.watch("lineItems").map((lineItem, index) => (
-                   <OptionTableRow key={lineItem.id} calculate={calculate} deleteLineItem={deleteLineItem} form={form} index={index} lineItem={lineItem} />
+                      <OptionTableRow
+                        key={lineItem.id}
+                        calculate={calculate}
+                        deleteLineItem={deleteLineItem}
+                        form={form}
+                        index={index}
+                        lineItem={lineItem}
+                      />
                     ))}
                   </TableBody>
                 </Table>
@@ -379,128 +524,131 @@ const QuotationsForm = ({
 
         <div className="h-px bg-gray-200" />
         <FormField
-            control={form.control}
-            name="attatchments"
-            render={({ field }) => (
-              <FormItem className="flex-[2]">
-                <SettingsFormWrapper>
-                  <div className="flex flex-col gap-1 ">
-                    <FormLabel>Attachments</FormLabel>
-                    <span className="text-sm text-muted-foreground">
-                      Add your attachments here
-                    </span>
-                  </div>
+          control={form.control}
+          name="attatchments"
+          render={({ field }) => (
+            <FormItem className="flex-[2]">
+              <SettingsFormWrapper>
+                <div className="flex flex-col gap-1 ">
+                  <FormLabel>Attachments</FormLabel>
+                  <span className="text-sm text-muted-foreground">
+                    Add your attachments here
+                  </span>
+                </div>
 
-                  <div className="md:col-span-2 max-w-[550px]">
-                    {!!form.watch("attatchments")?.length && (
-                      <div className="space-y-3 mb-4">
-                        {form.watch("attatchments")?.map((file) => {
-                        
-
-                          return (
-                            <article
-                              key={uuidv4()}
-                              className="border p-3 rounded-lg flex items-start gap-3 relative overflow-hidden"
-                            >
-                              {!!deleting && deleting === file?.url && (
-                                <div className=" gap-1 text-xs  w-full h-full absolute top-0 left-0 bg-black/80 text-white z-10 flex items-center justify-center">
-                                  Deleteing...{" "}
-                                  <Loader
-                                    size={16}
-                                    className="animate-spin ml-2"
-                                  />
-                                </div>
-                              )}
-                              {!deleting && (
-                                <XIcon
-                                  onClick={async () =>
-                                    await deleteFile(file?.url)
-                                  }
-                                  className="absolute top-0.5 right-0.5 cursor-pointer "
-                                  size={14}
+                <div className="md:col-span-2 max-w-[550px]">
+                  {!!form.watch("attatchments")?.length && (
+                    <div className="space-y-3 mb-4">
+                      {form.watch("attatchments")?.map((file) => {
+                        return (
+                          <article
+                            key={uuidv4()}
+                            className="border p-3 rounded-lg flex items-start gap-3 relative overflow-hidden"
+                          >
+                            {!!deleting && deleting === file?.url && (
+                              <div className=" gap-1 text-xs  w-full h-full absolute top-0 left-0 bg-black/80 text-white z-10 flex items-center justify-center">
+                                Deleteing...{" "}
+                                <Loader
+                                  size={16}
+                                  className="animate-spin ml-2"
                                 />
-                              )}
-                              <span className="w-12 h-12 flex items-center justify-center bg-second/10 rounded-full shrink-0">
-                                <FileIcon className="text-second"/>
-                              </span>
-                              <div className="text-xs text-muted-foreground">
-                                <p>{file?.name}</p>
-                                <p>{file?.type}</p>
-                                <p>{file?.size}</p>
-                             {file?.url && <a href={file?.url} target="_blank" download className="text-indigo-500 hover:underline">Download</a>}
                               </div>
-                            </article>
-                          );
-                        })}
-                      </div>
-                    )}
-                    <MultiFileDropzone
-                      deleting={deleting}
-                      setDeleting={async (url: string) => {
-                        await deleteFile(url);
-                      }}
-                      value={fileStates}
-                      onChange={(files) => {
-                        setFileStates(files);
-                      }}
-                      onFilesAdded={async (addedFiles) => {
-                        setFileStates([...fileStates, ...addedFiles]);
-                        await Promise.all(
-                          addedFiles.map(async (addedFileState) => {
-                            try {
-                              const res = await edgestore.publicFiles.upload({
-                                file: addedFileState.file,
+                            )}
+                            {!deleting && (
+                              <XIcon
+                                onClick={async () =>
+                                  await deleteFile(file?.url)
+                                }
+                                className="absolute top-0.5 right-0.5 cursor-pointer "
+                                size={14}
+                              />
+                            )}
+                            <span className="w-12 h-12 flex items-center justify-center bg-second/10 rounded-full shrink-0">
+                              <FileIcon className="text-second" />
+                            </span>
+                            <div className="text-xs text-muted-foreground">
+                              <p>{file?.name}</p>
+                              <p>{file?.type}</p>
+                              <p>{file?.size}</p>
+                              {file?.url && (
+                                <a
+                                  href={file?.url}
+                                  target="_blank"
+                                  download
+                                  className="text-indigo-500 hover:underline"
+                                >
+                                  Download
+                                </a>
+                              )}
+                            </div>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <MultiFileDropzone
+                    deleting={deleting}
+                    setDeleting={async (url: string) => {
+                      await deleteFile(url);
+                    }}
+                    value={fileStates}
+                    onChange={(files) => {
+                      setFileStates(files);
+                    }}
+                    onFilesAdded={async (addedFiles) => {
+                      setFileStates([...fileStates, ...addedFiles]);
+                      await Promise.all(
+                        addedFiles.map(async (addedFileState) => {
+                          try {
+                            const res = await edgestore.publicFiles.upload({
+                              file: addedFileState.file,
 
-                                onProgressChange: async (progress) => {
+                              onProgressChange: async (progress) => {
+                                updateFileProgress(
+                                  addedFileState.key,
+                                  progress,
+                                  ""
+                                );
+                                if (progress === 100) {
+                                  // wait 1 second to set it to complete
+                                  // so that the user can see the progress bar at 100%
+                                  await new Promise((resolve) =>
+                                    setTimeout(resolve, 1000)
+                                  );
                                   updateFileProgress(
                                     addedFileState.key,
-                                    progress,
-                                    ""
+                                    "COMPLETE",
+                                    res.url
                                   );
-                                  if (progress === 100) {
-                                    // wait 1 second to set it to complete
-                                    // so that the user can see the progress bar at 100%
-                                    await new Promise((resolve) =>
-                                      setTimeout(resolve, 1000)
-                                    );
-                                    updateFileProgress(
-                                      addedFileState.key,
-                                      "COMPLETE",
-                                      res.url
-                                    );
-                                  }
-                                },
-                              });
-                              console.log(res);
+                                }
+                              },
+                            });
+                            console.log(res);
 
-                              form.setValue("attatchments", [
-                                ...(form.watch("attatchments") || []),
-                                {
-                                  size: formatFileSize(res.size),
-                                  url: res.url,
-                                  name: addedFileState.file.name,
-                                  type: addedFileState.file.type,
-                                },
-                              ]);
-                            } catch (err) {
-                              updateFileProgress(
-                                addedFileState.key,
-                                "ERROR",
-                                ""
-                              );
-                            }
-                          })
-                        );
-                      }}
-                    />
-                  </div>
-                </SettingsFormWrapper>
+                            form.setValue("attatchments", [
+                              ...(form.watch("attatchments") || []),
+                              {
+                                size: formatFileSize(res.size),
+                                url: res.url,
+                                name: addedFileState.file.name,
+                                type: addedFileState.file.type,
+                              },
+                            ]);
+                          } catch (err) {
+                            updateFileProgress(addedFileState.key, "ERROR", "");
+                          }
+                        })
+                      );
+                    }}
+                  />
+                </div>
+              </SettingsFormWrapper>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="mt-4 h-px w-full bg-gray-200 " />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="mt-4 h-px w-full bg-gray-200 " />
         <FormField
           control={form.control}
           name="footNote"
@@ -510,29 +658,26 @@ const QuotationsForm = ({
                 <FormLabel>Footnote</FormLabel>
                 <FormControl>
                   <div className="md:col-span-2  max-w-[450px]">
-                  <div className="flex items-center gap-4 ">
-                 
-                 <Textarea
-                   className="flex-[1] min-h-[200px] resize-none" 
-                   placeholder="Footenote"
-                   {...field}
-                   onChange={(e) => handleFootnoteInputChange(e, field)}
-                   onClick={(e) =>
-                     setCaretFootnotePosition(
-                       (e.target as HTMLInputElement).selectionStart || 0
-                     )
-                   }
-                   onKeyUp={(e) =>
-                     setCaretFootnotePosition(
-                       (e.target as HTMLInputElement).selectionStart || 0
-                     )
-                   }
-                   value={field.value || ""}
-           
-                 />
-
-               </div>
-                  <p className="text-xs mt-2 text-nowrap">
+                    <div className="flex items-center gap-4 ">
+                      <Textarea
+                        className="flex-[1] min-h-[200px] resize-none"
+                        placeholder="Footenote"
+                        {...field}
+                        onChange={(e) => handleFootnoteInputChange(e, field)}
+                        onClick={(e) =>
+                          setCaretFootnotePosition(
+                            (e.target as HTMLInputElement).selectionStart || 0
+                          )
+                        }
+                        onKeyUp={(e) =>
+                          setCaretFootnotePosition(
+                            (e.target as HTMLInputElement).selectionStart || 0
+                          )
+                        }
+                        value={field.value || ""}
+                      />
+                    </div>
+                    <p className="text-xs mt-2 text-nowrap">
                       Here you set a default footnote for the quote. available
                       variables:
                       {VARIABLES.footnote.map((variable) => (
@@ -546,9 +691,7 @@ const QuotationsForm = ({
                       ))}
                     </p>
                   </div>
-               
                 </FormControl>
-               
               </SettingsFormWrapper>
 
               <FormMessage />
@@ -556,7 +699,11 @@ const QuotationsForm = ({
           )}
         />
 
-<LoadingButton className='ml-auto  flex bg-second hover:bg-second/90' title={!quotation ? 'Submit' : 'Update'} isLoading={form.formState.isSubmitting} />
+        <LoadingButton
+          className="ml-auto  flex bg-second hover:bg-second/90"
+          title={!quotation ? "Submit" : "Update"}
+          isLoading={form.formState.isSubmitting}
+        />
         {JSON.stringify(form.formState.errors)}
       </form>
     </Form>
@@ -565,28 +712,12 @@ const QuotationsForm = ({
 
 export default QuotationsForm;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const OptionTableRow = ({
   lineItem,
   form,
   index,
   calculate,
-  deleteLineItem
+  deleteLineItem,
 }: {
   lineItem: {
     id: string;
@@ -600,11 +731,12 @@ const OptionTableRow = ({
   };
   form: any;
   index: number;
-  calculate: (index: number) => void
-  deleteLineItem:(id: string) => void
+  calculate: (index: number) => void;
+  deleteLineItem: (id: string) => void;
 }) => {
-
-  const [shwoDescription, setShowDescription] = useState(!!form.watch(`lineItems.${index}.description`) ? true : false)
+  const [shwoDescription, setShowDescription] = useState(
+    !!form.watch(`lineItems.${index}.description`) ? true : false
+  );
   return (
     <TableRow
       key={lineItem.id}
@@ -613,50 +745,59 @@ const OptionTableRow = ({
       {/* item name */}
       <TableCell className="font-medium w-fit items-start align-top p-2 ">
         <div className="flex flex-col gap-1">
-        <FormField
-          control={form.control}
-          name={`lineItems.${index}.name`}
-          render={({ field }) => (
-            <FormItem className="">
-              <FormControl>
-                <Input
-                  className=""
-                  placeholder="Item"
-                  {...field}
-                  value={field.value || ""}
-                />
-              </FormControl>
+          <FormField
+            control={form.control}
+            name={`lineItems.${index}.name`}
+            render={({ field }) => (
+              <FormItem className="">
+                <FormControl>
+                  <Input
+                    className=""
+                    placeholder="Item"
+                    {...field}
+                    value={field.value || ""}
+                  />
+                </FormControl>
 
-              <FormMessage />
-            </FormItem>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {shwoDescription && (
+            <FormField
+              control={form.control}
+              name={`lineItems.${index}.description`}
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormControl>
+                    <Textarea
+                      className="resize-none"
+                      placeholder="Item description"
+                      {...field}
+                      value={field.value || ""}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           )}
-        />
-        {shwoDescription &&       
-        <FormField
-          control={form.control}
-          name={`lineItems.${index}.description`}
-          render={({ field }) => (
-            <FormItem className="">
-              <FormControl>
-                <Textarea
-                  className="resize-none"
-                  placeholder="Item description"
-                  {...field}
-                  value={field.value || ""}
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />}
-        <Button type="button" className={cn("text-xs px-0 w-fit py-1 self-end h-fit hover:no-underline ",shwoDescription ? "text-rose-600" : "text-indigo-600")} 
-        onClick={()=>{
-          form.setValue(`lineItems.${index}.description`,"")
-          ;setShowDescription(prev=>!prev)}} variant={'link'}>{shwoDescription ? "- Delete description" : "+ Add description"}</Button>
-
+          <Button
+            type="button"
+            className={cn(
+              "text-xs px-0 w-fit py-1 self-end h-fit hover:no-underline ",
+              shwoDescription ? "text-rose-600" : "text-indigo-600"
+            )}
+            onClick={() => {
+              form.setValue(`lineItems.${index}.description`, "");
+              setShowDescription((prev) => !prev);
+            }}
+            variant={"link"}
+          >
+            {shwoDescription ? "- Delete description" : "+ Add description"}
+          </Button>
         </div>
-      
       </TableCell>
       {/* item quantity */}
       <TableCell className="font-medium w-fit align-top p-2">
@@ -785,3 +926,51 @@ const OptionTableRow = ({
     </TableRow>
   );
 };
+
+const ContactElement = () => {};
+
+{
+  /* <CommandGroup>
+{(refactoredContacts).map((contact) => (
+  <CommandItem
+    value={contact.contactName}
+    key={contact.companyId}
+    onSelect={() => {
+      form.setValue("contactId", contact.companyId)
+    }}
+  >
+    <Check
+      className={cn(
+        "mr-2 h-4 w-4",
+        contact.companyId === field.value
+          ? "opacity-100"
+          : "opacity-0"
+      )}
+    />
+   <div className="p-3">
+    {'contactPerson' in contact ?
+    <div className="flex items-center ">
+      <span>
+        <User/>
+      </span>
+      <div>
+        <p>{contact.companyName} - {contact.contactName}</p>
+        <p className="text-muted text-xs">{contact.emailAddress}</p>
+      </div>
+    </div>
+     :
+     <div className="flex items-center ">
+     <span>
+      {contact.contactType === 'INDIVIDUAL' ? <MagnetIcon/> : <Building/>}
+     </span>
+     <div>
+       <p>{contact.contactName}</p>
+       <p className="text-muted text-xs">{contact.emailAddress}</p>
+     </div>
+   </div>
+     }
+   </div>
+  </CommandItem>
+))}
+</CommandGroup> */
+}
