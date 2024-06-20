@@ -27,6 +27,7 @@ model Account {
   companies Company[]
   services  Service[]
   forms     Form[]
+  quotations Quotation[]
 }
 
 model Company {
@@ -72,6 +73,8 @@ model Quotation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  userId   String
+
   quotationNumber Int
   quotationString String
 
@@ -106,6 +109,8 @@ model Quotation {
   contact   Contact @relation(fields: [contactId], references: [id])
   companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
+  accountId String @db.ObjectId
+  account Account @relation(fields: [accountId],references: [id])
 }
 
 model Submission {

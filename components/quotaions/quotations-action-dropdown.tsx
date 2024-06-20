@@ -17,6 +17,7 @@ import { useModal } from "@/hooks/modal-hook"
 import { deleteService } from "@/actions/service-actions"
 import { deleteForm } from "@/actions/form-actions"
 import { deleteContact } from "@/actions/contact-actions"
+import { deleteQuotation } from "@/actions/quotation-actions"
 
 type Props = {
     id:string
@@ -27,12 +28,12 @@ type Props = {
 const QuotationTableActionDropdown = ({id}: Props) => {
     const params = useParams<{companySlug:string}>()
 
-   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/quotions/${id}`
+   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/quotations/${id}`
 
    const {setOpen} = useModal()
 
 const handleDeleteModalOpen = ()=>{
-setOpen({type:'delete',deleteFunction:()=>deleteContact({companySlug:params.companySlug,contactId:id})})
+setOpen({type:'delete',deleteFunction:()=>deleteQuotation(params.companySlug,id)})
   
 }
     

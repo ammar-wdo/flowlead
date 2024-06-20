@@ -59,6 +59,7 @@ export const useComapany = ({company}:{company:Company | null}) => {
    
 
     } catch (error) {
+      console.error(error)
       toast.error("Something went wrong")
     }
 

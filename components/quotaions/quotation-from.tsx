@@ -53,6 +53,7 @@ import { VARIABLES } from "@/schemas";
 import { MultiFileDropzone } from "../MultiFileDropzone";
 
 import { v4 as uuidv4 } from "uuid";
+import LoadingButton from "../loading-button";
 
 type Props = {
   quotation: Quotation | undefined | null;
@@ -341,7 +342,7 @@ const QuotationsForm = ({
                   <TableBody>
                     {/* body-content */}
                     {form.watch("lineItems").map((lineItem, index) => (
-                   <OptionTableRow calculate={calculate} deleteLineItem={deleteLineItem} form={form} index={index} lineItem={lineItem} />
+                   <OptionTableRow key={lineItem.id} calculate={calculate} deleteLineItem={deleteLineItem} form={form} index={index} lineItem={lineItem} />
                     ))}
                   </TableBody>
                 </Table>
@@ -555,7 +556,8 @@ const QuotationsForm = ({
           )}
         />
 
-        <Button type="submit">Submit</Button>
+<LoadingButton className='ml-auto  flex bg-second hover:bg-second/90' title={!quotation ? 'Submit' : 'Update'} isLoading={form.formState.isSubmitting} />
+        {JSON.stringify(form.formState.errors)}
       </form>
     </Form>
   );
@@ -602,7 +604,7 @@ const OptionTableRow = ({
   deleteLineItem:(id: string) => void
 }) => {
 
-  const [shwoDescription, setShowDescription] = useState(false)
+  const [shwoDescription, setShowDescription] = useState(!!form.watch(`lineItems.${index}.description`) ? true : false)
   return (
     <TableRow
       key={lineItem.id}
@@ -648,7 +650,7 @@ const OptionTableRow = ({
             </FormItem>
           )}
         />}
-        <Button type="button" className="text-xs px-0 w-fit py-1 self-end h-fit hover:no-underline" 
+        <Button type="button" className={cn("text-xs px-0 w-fit py-1 self-end h-fit hover:no-underline ",shwoDescription ? "text-rose-600" : "text-indigo-600")} 
         onClick={()=>{
           form.setValue(`lineItems.${index}.description`,"")
           ;setShowDescription(prev=>!prev)}} variant={'link'}>{shwoDescription ? "- Delete description" : "+ Add description"}</Button>

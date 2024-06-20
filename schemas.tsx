@@ -432,10 +432,9 @@ export const quotationSchema= z.object({
   attatchments: z.array(attatchmentSchema).optional(),
   footNote: optionalString,
   discount:quotationDiscountSchema.optional().nullable(),
-  discountAmount:z.coerce.number({invalid_type_error:"Enter valid number"}).optional().nullable(),
-  totalAmount:z.coerce.number({invalid_type_error:"Enter valid number"}),
+
   totalTax:z.coerce.number({invalid_type_error:"Enter valid number"}).optional().nullable(),
-  isSeen:z.boolean(),
+
   signature:optionalString,
   dateAccepted:z.date().optional(),
   acceptedBy:optionalString,

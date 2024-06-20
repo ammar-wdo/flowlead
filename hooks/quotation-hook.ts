@@ -8,6 +8,9 @@ import { useState } from "react";
 import { v4 as uuid4 } from "uuid";
 import { useEdgeStore } from "@/lib/edgestore";
 import { FileState } from "@/components/MultiFileDropzone";
+import { addQuotation, editQuotation } from "@/actions/quotation-actions";
+import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const useQuotation = ({
   quotation,
@@ -22,7 +25,7 @@ export const useQuotation = ({
   const form = useForm<z.infer<typeof quotationSchema>>({
     resolver: zodResolver(quotationSchema),
     defaultValues: {
-      contactId: quotation?.companyId || "",
+      contactId: quotation?.contactId || "",
       acceptedBy: quotation?.acceptedBy || "",
       dateAccepted: quotation?.dateAccepted || undefined,
       discount: quotation?.discount
@@ -32,10 +35,10 @@ export const useQuotation = ({
             fixedValue: quotation.discount.fixedValue ?? undefined,
           }
         : null,
-      discountAmount: quotation?.discountAmount || undefined,
+
       expiryDate: quotation?.expiryDate || undefined,
       footNote: quotation?.footNote || "",
-      isSeen: quotation?.isSeen,
+  
       lineItems: quotation?.lineItems || [
         {
           id: uuid4(),
@@ -55,8 +58,9 @@ export const useQuotation = ({
       signature: quotation?.signature || "",
       status: quotation?.status || "CONCEPT",
       subject: quotation?.subject || "",
-      totalAmount: quotation?.totalAmount || undefined,
+
       totalTax: quotation?.totalTax || undefined,
+      attatchments:quotation?.attatchments || []
     },
   });
 
@@ -96,85 +100,101 @@ export const useQuotation = ({
     );
   };
 
+  //footnote variables
+  const [caretFootnotePosition, setCaretFootnotePosition] = useState(0);
+  const handleFootnoteInputChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    field: any
+  ) => {
+    setCaretFootnotePosition(e.target.selectionStart || 0);
+    field.onChange(e.target.value);
+  };
 
+  const handleFootnoteInsertText = (text: string) => {
+    const currentValue = form.getValues("footNote") || "";
+    const newValue = insertTextAtPosition(
+      currentValue,
+      text,
+      caretFootnotePosition
+    );
+    form.setValue("footNote", newValue);
+  };
 
-    //footnote variables
-    const [caretFootnotePosition, setCaretFootnotePosition] = useState(0);
-    const handleFootnoteInputChange = (
-      e: React.ChangeEvent<HTMLTextAreaElement>,
-      field: any
-    ) => {
-      setCaretFootnotePosition(e.target.selectionStart || 0);
-      field.onChange(e.target.value);
-    };
-  
-    const handleFootnoteInsertText = (text: string) => {
-      const currentValue = form.getValues("footNote") || "";
-      const newValue = insertTextAtPosition(
-        currentValue,
-        text,
-        caretFootnotePosition
-      );
-      form.setValue("footNote", newValue);
-    };
-  
-    const insertTextAtPosition = (
-      input: string,
-      text: string,
-      position: number
-    ) => {
-      return input.slice(0, position) + text + input.slice(position);
-    };
+  const insertTextAtPosition = (
+    input: string,
+    text: string,
+    position: number
+  ) => {
+    return input.slice(0, position) + text + input.slice(position);
+  };
 
-
-    //file upload
+  //file upload
   const [file, setFile] = useState<File>();
   const [progressing, setProgressing] = useState(false);
   const [deleting, setDeleting] = useState("");
   const { edgestore } = useEdgeStore();
 
-
-
   const [fileStates, setFileStates] = useState<FileState[]>([]);
 
-  function updateFileProgress(key: string, progress: FileState['progress'],url:string) {
+  function updateFileProgress(
+    key: string,
+    progress: FileState["progress"],
+    url: string
+  ) {
     setFileStates((fileStates) => {
       const newFileStates = structuredClone(fileStates);
       const fileState = newFileStates.find(
-        (fileState) => fileState.key === key,
+        (fileState) => fileState.key === key
       );
       if (fileState) {
         fileState.progress = progress;
-        fileState.url =url
+        fileState.url = url;
       }
       return newFileStates;
     });
   }
 
-
   const deleteFile = async (url: string | undefined | null) => {
-    if(!url )return
+    if (!url) return;
     try {
       setDeleting(url);
       await edgestore.publicFiles.delete({
         url,
       });
-      setFileStates(prev=>prev.filter(el=>el.url !==url))
+      setFileStates((prev) => prev.filter((el) => el.url !== url));
     } catch (error) {
       console.log(error);
-    
     } finally {
       setFile(undefined);
-      form.setValue("attatchments", form.watch('attatchments')?.filter(el=>el?.url !== url));
+      form.setValue(
+        "attatchments",
+        form.watch("attatchments")?.filter((el) => el?.url !== url)
+      );
       setDeleting("");
     }
   };
 
+  const params = useParams<{ companySlug: string }>();
+  const router = useRouter();
+
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof quotationSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof quotationSchema>) {
+    try {
+      let res;
+      if (quotation) {
+        res = await editQuotation(values, params.companySlug, quotation.id);
+      } else {
+        res = await addQuotation(values, params.companySlug);
+      }
+
+      if (!res.success) return toast.error(res.error);
+      router.push(`/dashboard/${params.companySlug}/quotations`);
+      router.refresh()
+      toast.success(res.message);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
   }
 
   return {
@@ -194,10 +214,10 @@ export const useQuotation = ({
     file,
     setDeleting,
     progressing,
-   fileStates,
-   setFileStates,
-   updateFileProgress,
-   edgestore,
+    fileStates,
+    setFileStates,
+    updateFileProgress,
+    edgestore,
     deleting,
     deleteFile,
   };
