@@ -136,7 +136,7 @@ model ContactPerson {
   emailAddress String
   phoneNumber  String?
 
-  contactId String  @unique @db.ObjectId
+  contactId String   @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
 }
 
@@ -170,6 +170,9 @@ model Contact {
   companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
 }
+
+
+
 
 model QoutesSettings {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId

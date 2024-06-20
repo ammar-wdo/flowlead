@@ -31,7 +31,9 @@ const page = async ({ params: { contactId, companySlug } }: Props) => {
               userId,
             },
             contactCategory: "CONTACT",
-          },
+          },include:{
+            contactPersons:true
+          }
         })
       : null;
 

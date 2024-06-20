@@ -4,6 +4,7 @@ import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
 import { contactSchema } from "@/schemas";
 import { auth } from "@clerk/nextjs/server";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 export const createContact = async ({
@@ -32,13 +33,23 @@ export const createContact = async ({
     const validData = contactSchema.safeParse(values);
     if (!validData.success) throw new CustomError("Invalid Inputs");
 
+    const {contactPersons,...rest} = validData.data
+
+   
+
     const contact = await prisma.contact.create({
       data: {
         companyId: company.id,
-        ...validData.data,
-        contactCategory:'CONTACT'
+        ...rest,
+        contactCategory:'CONTACT',
+        contactPersons:{
+          createMany:{
+            data:contactPersons?.map(person=>({contactName:person.contactName,emailAddress:person.emailAddress,phoneNumber:person.phoneNumber})) || []
+          }
+        }
       },
     });
+    
 
     return { success: true, message: "Contact successfully created" };
   } catch (error) {
@@ -78,7 +89,54 @@ export const updateContact = async ({
   
       const validData = contactSchema.safeParse(values);
       if (!validData.success) throw new CustomError("Invalid Inputs");
-  
+
+      const {contactPersons,...rest} = validData.data
+
+
+ // Fetch existing contact persons
+ const existingContactPersons = await prisma.contactPerson.findMany({
+  where: { contactId }
+});
+// get ids
+const existingContactPersonIds = existingContactPersons.map(cp => cp.id)
+
+ // Identify new, updated, and deleted contact persons
+ const newContactPersons = validData.data.contactPersons?.filter(cp =>cp.id && !existingContactPersonIds.includes(cp.id)) ?? [];
+ const updatedContactPersons = validData.data.contactPersons?.filter(cp =>cp.id && existingContactPersonIds.includes(cp.id)) ?? [];
+ const deletedContactPersons = existingContactPersons.filter(cp => !validData.data.contactPersons?.some(vcp => vcp.id === cp.id));
+
+
+  // Perform bulk operations
+  const createOperations = prisma.contactPerson.createMany({
+    data: newContactPersons.map(cp => ({
+      contactName: cp.contactName,
+      emailAddress: cp.emailAddress,
+      phoneNumber: cp.phoneNumber,
+      contactId 
+    }))
+  });
+
+  const deleteOperations = prisma.contactPerson.deleteMany({
+    where: { id: { in: deletedContactPersons.map(cp => cp.id) } }
+  });
+
+  // Update existing contact persons (requires individual updates due to different data)
+  const updateOperations = updatedContactPersons.map(cp => prisma.contactPerson.update({
+    where: { id: cp.id },
+    data: {
+      contactName: cp.contactName,
+      emailAddress: cp.emailAddress,
+      phoneNumber: cp.phoneNumber
+    }
+  }));
+
+  // Execute the operations
+  await prisma.$transaction([
+    createOperations,
+    deleteOperations,
+    ...updateOperations
+  ]);
+
       const updatedContact = await prisma.contact.update({
         where:{
             id:contactId,
@@ -86,7 +144,7 @@ export const updateContact = async ({
         },
         data: {
          
-          ...validData.data,
+          ...rest,
         },
       });
   
@@ -94,6 +152,13 @@ export const updateContact = async ({
     } catch (error) {
       console.error(error);
       let message = "Internal server error";
+
+        // Check for Prisma error code related to foreign key constraints
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2003') {
+        message = 'Cannot delete contact person because it is related to other records.';
+      }
+    }
       if (error instanceof CustomError) message = error.message;
   
       return { success: false, error: message };
@@ -126,6 +191,14 @@ export const updateContact = async ({
       });
   
       if (!company) throw new CustomError("company not found");
+
+      const contactPerson = await prisma.contactPerson.findFirst({
+        where:{
+          contactId
+        }
+      })
+
+      if(contactPerson) return {success:false,error:"Can not delete this contact, it is related to one or more contact persons"}
   
       await prisma.contact.delete({
         where:{

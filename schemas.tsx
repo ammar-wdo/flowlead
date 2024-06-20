@@ -366,6 +366,13 @@ export const formSchema = z
   );
 
 //contact schema
+
+export const contactPersonSchema = z.object({
+  id:optionalString,
+  contactName:requiredString,
+  emailAddress:requiredString.email(),
+  phoneNumber:optionalPhoneReg.optional().nullable()
+})
 export const contactSchema = z
   .object({
     contactType: z.nativeEnum(ContactType),
@@ -381,11 +388,15 @@ export const contactSchema = z
     cocNumber: optionalString,
     vatNumber: optionalString,
     IBAN: optionalString,
+    contactPersons:z.array(contactPersonSchema).optional()
   })
   .refine((value) => value.contactType !== "BUSINESS" || !!value.companyName, {
     path: ["companyName"],
     message: "Required",
   });
+
+
+ 
 
 //quotation schema
 

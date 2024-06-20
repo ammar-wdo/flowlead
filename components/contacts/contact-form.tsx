@@ -1,7 +1,7 @@
 "use client";
 
 import { useLead } from "@/hooks/lead-form-hook";
-import { Contact } from "@prisma/client";
+import { Contact, ContactPerson } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,12 +21,15 @@ import { Label } from "../ui/label";
 import LoadingButton from "../loading-button";
 import { useContact } from "@/hooks/contact-form-hook";
 
+import { v4 as uuidv4 } from "uuid";
+import SectionsWrapper from "../sections-wrapper";
+
 type Props = {
-  contact: Contact | null;
+  contact: (Contact & { contactPersons: ContactPerson[] }) | null;
 };
 
 const ContactForm = ({ contact }: Props) => {
-  const { form, onSubmit } = useContact({ contact });
+  const { form, onSubmit,handleAddContactPerson, handleDeleteContactPerson } = useContact({ contact });
   const isLoading = form.formState.isSubmitting;
   return (
     <Form {...form}>
@@ -102,13 +105,79 @@ const ContactForm = ({ contact }: Props) => {
                   <SettingsFormWrapper>
                     <FormLabel>Company name</FormLabel>
                     <FormControl className="md:col-span-2 max-w-[450px]">
-                      <Input placeholder="Company name" {...field} />
+                      <div>
+                        <Input placeholder="Company name" {...field} />
+                        <Button type="button" onClick={handleAddContactPerson} className="p-0 mt-6 h-0 ml-auto flex" variant={"link"}>
+                          + Add Contact Person
+                        </Button>
+                      </div>
                     </FormControl>
                   </SettingsFormWrapper>
                   <FormMessage />
                 </FormItem>
               )}
             />{" "}
+            {form.watch("contactPersons")?.map((person, index) => (
+              <article key={person.id || uuidv4()}>
+                <SettingsFormWrapper>
+                  <Label>Contact Person {index + 1}</Label>
+
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name={`contactPersons.${index}.contactName`}
+                      render={({ field }) => (
+                        <FormItem className="mt-2">
+                          <FormLabel>Name</FormLabel>
+                          <FormControl className="">
+                            <Input placeholder="Name" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`contactPersons.${index}.emailAddress`}
+                      render={({ field }) => (
+                        <FormItem className="mt-2">
+                          <FormLabel>Email</FormLabel>
+                          <FormControl className="m">
+                            <Input placeholder="Email" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`contactPersons.${index}.phoneNumber`}
+                      render={({ field }) => (
+                        <FormItem className="mt-2">
+                          <FormLabel>Phone</FormLabel>
+                          <FormControl className="m">
+                            <Input
+                              type="number"
+                              placeholder="Phone"
+                              {...field}
+                              value={field.value || undefined}
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <Button type={"button"} onClick={()=>handleDeleteContactPerson(person?.id!)} variant={'link'} className="p-0 mt-6 h-0  flex text-rose-600">- Delete</Button>
+                  </div>
+
+                 
+                </SettingsFormWrapper>
+               {index+1 !== form.watch('contactPersons')?.length &&  <div className="h-px w-full bg-gray-200 my-6" />}
+              </article>
+            ))}
           </div>
         )}
         <div className="h-px w-full bg-gray-200 my-1" />
@@ -281,7 +350,7 @@ const ContactForm = ({ contact }: Props) => {
           )}
         />
         <LoadingButton
-        className="ml-auto  flex bg-second hover:bg-second/90"
+          className="ml-auto  flex bg-second hover:bg-second/90"
           isLoading={isLoading}
           title={contact ? "Update" : "Create"}
         />
