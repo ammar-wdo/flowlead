@@ -105,38 +105,46 @@ const existingContactPersonIds = existingContactPersons.map(cp => cp.id)
  const updatedContactPersons = validData.data.contactPersons?.filter(cp =>cp.id && existingContactPersonIds.includes(cp.id)) ?? [];
  const deletedContactPersons = existingContactPersons.filter(cp => !validData.data.contactPersons?.some(vcp => vcp.id === cp.id));
 
+//transaction array
+ const transactionOperations: any[] = [];
 
-  // Perform bulk operations
-  const createOperations = prisma.contactPerson.createMany({
-    data: newContactPersons.map(cp => ({
-      contactName: cp.contactName,
-      emailAddress: cp.emailAddress,
-      phoneNumber: cp.phoneNumber,
-      contactId 
-    }))
-  });
 
-  const deleteOperations = prisma.contactPerson.deleteMany({
-    where: { id: { in: deletedContactPersons.map(cp => cp.id) } }
-  });
+ //if new contact perosns then add to transation arry
+ if (newContactPersons.length > 0) {
+   transactionOperations.push(prisma.contactPerson.createMany({
+     data: newContactPersons.map(cp => ({
+       contactName: cp.contactName,
+       emailAddress: cp.emailAddress,
+       phoneNumber: cp.phoneNumber,
+       contactId
+     }))
+   }));
+ }
 
-  // Update existing contact persons (requires individual updates due to different data)
-  const updateOperations = updatedContactPersons.map(cp => prisma.contactPerson.update({
-    where: { id: cp.id },
-    data: {
-      contactName: cp.contactName,
-      emailAddress: cp.emailAddress,
-      phoneNumber: cp.phoneNumber
-    }
-  }));
+ //if deleted contact person ,then add to transaction array
+ if (deletedContactPersons.length > 0) {
+   transactionOperations.push(prisma.contactPerson.deleteMany({
+     where: { id: { in: deletedContactPersons.map(cp => cp.id) } }
+   }));
+ }
 
-  // Execute the operations
-  await prisma.$transaction([
-    createOperations,
-    deleteOperations,
-    ...updateOperations
-  ]);
+ //add updated contact persons to array
+ transactionOperations.push(
+   ...updatedContactPersons.map(cp => prisma.contactPerson.update({
+     where: { id: cp.id },
+     data: {
+       contactName: cp.contactName,
+       emailAddress: cp.emailAddress,
+       phoneNumber: cp.phoneNumber
+     }
+   }))
+ );
 
+ //trigger transaction
+ await prisma.$transaction(transactionOperations);
+
+
+ //update rest of contact
       const updatedContact = await prisma.contact.update({
         where:{
             id:contactId,
