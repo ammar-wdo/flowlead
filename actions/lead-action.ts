@@ -32,10 +32,12 @@ export const createLead = async ({
     const validData = contactSchema.safeParse(values);
     if (!validData.success) throw new CustomError("Invalid Inputs");
 
+    const {contactPersons,...rest} = validData.data
+
     const contactLead = await prisma.contact.create({
       data: {
         companyId: company.id,
-        ...validData.data,
+        ...rest,
       },
     });
 
@@ -77,6 +79,8 @@ export const updateLead = async ({
   
       const validData = contactSchema.safeParse(values);
       if (!validData.success) throw new CustomError("Invalid Inputs");
+
+      const {contactPersons,...rest} = validData.data
   
       const updatedLead = await prisma.contact.update({
         where:{
@@ -85,7 +89,7 @@ export const updateLead = async ({
         },
         data: {
          
-          ...validData.data,
+          ...rest,
         },
       });
   
