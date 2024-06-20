@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuotation } from "@/hooks/quotation-hook";
-import { Contact, Quotation } from "@prisma/client";
+import { Contact, DiscountType, Quotation } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 import {
   Table,
@@ -39,10 +49,12 @@ import {
   CalendarIcon,
   Check,
   ChevronsUpDown,
+  Euro,
   FileIcon,
   Loader,
   MagnetIcon,
   Percent,
+  PercentCircle,
   PlusIcon,
   Star,
   Trash,
@@ -116,6 +128,8 @@ const QuotationsForm = ({
     updateFileProgress,
     contactOpen,
     setContactOpen,
+    handleDeleteDiscount,
+    handleSetDiscount
   } = useQuotation({ quotation, quotationSettings });
 
   const [mount, setMount] = useState(false);
@@ -192,6 +206,7 @@ const QuotationsForm = ({
                         <CommandList>
                           {refactoredContacts.map((contact, index) => (
                             <CommandItem
+                            className=" cursor-pointer"
                               value={
                                 "contactPerson" in contact
                                   ? contact.contactName +
@@ -512,15 +527,14 @@ const QuotationsForm = ({
             >
               <Star size={15} className="mr-2" /> Choose Option
             </Button>
-            <Button
-              type="button"
-              variant={"ghost"}
-              className="rounded-none hover:rounded-none text-sm"
-            >
-              <Percent size={15} className="mr-2" /> Add Discount
-            </Button>
+            <DiscountDropdownMenue  className="rounded-none hover:rounded-none text-sm" discountType={form.watch('discount.type')} setDiscountType={(value)=>handleSetDiscount(value as DiscountType)}/>
+           
           </div>
         </div>
+
+        {!!form.watch('discount')&& <div className="mt-12">
+          {JSON.stringify(form.watch('discount'),null,2)}
+          </div>}
 
         <div className="h-px bg-gray-200" />
         <FormField
@@ -927,50 +941,22 @@ const OptionTableRow = ({
   );
 };
 
-const ContactElement = () => {};
+const DiscountDropdownMenue = ({discountType,setDiscountType,className}:{discountType:'FIXED' | 'PERCENTAGE',setDiscountType:(value:string)=>void,className:string})=>{
+  return (
+    <DropdownMenu>
+    <DropdownMenuTrigger  asChild>
+      <Button   variant={"ghost"} className={className}><Percent  size={15} className="mr-2"/> Add Discount</Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent className="w-56">
 
-{
-  /* <CommandGroup>
-{(refactoredContacts).map((contact) => (
-  <CommandItem
-    value={contact.contactName}
-    key={contact.companyId}
-    onSelect={() => {
-      form.setValue("contactId", contact.companyId)
-    }}
-  >
-    <Check
-      className={cn(
-        "mr-2 h-4 w-4",
-        contact.companyId === field.value
-          ? "opacity-100"
-          : "opacity-0"
-      )}
-    />
-   <div className="p-3">
-    {'contactPerson' in contact ?
-    <div className="flex items-center ">
-      <span>
-        <User/>
-      </span>
-      <div>
-        <p>{contact.companyName} - {contact.contactName}</p>
-        <p className="text-muted text-xs">{contact.emailAddress}</p>
-      </div>
-    </div>
-     :
-     <div className="flex items-center ">
-     <span>
-      {contact.contactType === 'INDIVIDUAL' ? <MagnetIcon/> : <Building/>}
-     </span>
-     <div>
-       <p>{contact.contactName}</p>
-       <p className="text-muted text-xs">{contact.emailAddress}</p>
-     </div>
-   </div>
-     }
-   </div>
-  </CommandItem>
-))}
-</CommandGroup> */
+
+      <DropdownMenuRadioGroup value={discountType} onValueChange={setDiscountType}>
+        <DropdownMenuRadioItem value="FIXED"><Euro size={15} className="mr-2"/> Fixed Amount</DropdownMenuRadioItem>
+        <DropdownMenuRadioItem value="PERCENTAGE"><Percent size={15} className="mr-2"/> Percentage</DropdownMenuRadioItem>
+    
+      </DropdownMenuRadioGroup>
+    </DropdownMenuContent>
+  </DropdownMenu>
+  )
 }
+

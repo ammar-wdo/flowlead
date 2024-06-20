@@ -1,4 +1,4 @@
-import { Quotation } from "@prisma/client";
+import { DiscountType, Quotation } from "@prisma/client";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -63,7 +63,8 @@ export const useQuotation = ({
 
       totalTax: quotation?.totalTax || undefined,
       attatchments:quotation?.attatchments || [],
-      contactPersonId:quotation?.contactPersonId || undefined
+      contactPersonId:quotation?.contactPersonId || undefined,
+
     },
   });
 
@@ -200,6 +201,31 @@ export const useQuotation = ({
     }
   }
 
+
+ 
+
+
+  const handleSetDiscount=(value:DiscountType)=>{
+
+    if(!form.watch('discount'))
+      {
+        form.setValue('discount',{type:value,description:undefined,fixedValue:undefined,percentageValue:undefined})
+      }else{
+        const discount = form.watch('discount') as {
+          type: "PERCENTAGE" | "FIXED";
+          description?: string | null | undefined;
+          percentageValue?: number | undefined;
+          fixedValue?: number | undefined;
+        }
+        form.setValue('discount',{...discount,type:value})
+      }
+
+  }
+
+  const handleDeleteDiscount = ()=>{
+    form.setValue('discount',null)
+  }
+
   return {
     form,
     onSubmit,
@@ -224,6 +250,8 @@ export const useQuotation = ({
     deleting,
     deleteFile,
     contactOpen,
-    setContactOpen
+    setContactOpen,
+    handleSetDiscount,
+    handleDeleteDiscount
   };
 };
