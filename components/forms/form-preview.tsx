@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { useFormPreview } from "@/hooks/use-form-preview";
 import { Element, Form, ServiceElement } from "@prisma/client";
 import { Button } from "@/components/ui/button";
@@ -1176,7 +1176,9 @@ const DatePickerView = ({
   formPreview: UseFormReturn<any>;
   fieldElement: any;
 }) => {
-  return  <Popover>
+
+  const [open, setOpen] = useState(false)
+  return  <Popover open={open} onOpenChange={setOpen}>
   <PopoverTrigger asChild>
     <Button
       variant={"outline"}
@@ -1194,12 +1196,17 @@ const DatePickerView = ({
       mode="single"
       selected={fieldValue}
       onSelect={(date) => {
+        
         if (date) {
           // Create a new date without timezone offset
           const adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
           field.onChange(adjustedDate);
-        }
-      }}
+          
+        };
+        setOpen(false)
+      }
+    
+    }
       initialFocus
     />
   </PopoverContent>

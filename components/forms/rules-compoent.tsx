@@ -9,7 +9,7 @@ import {
   rulesActionArray,
 } from "@/schemas";
 import { ComparisonOperator, Element, FieldType, Form } from "@prisma/client";
-import React from "react";
+import React, { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
@@ -506,6 +506,8 @@ const renderValueComponent = (
 
   console.log(fieldType,)
 
+  const [open, setOpen] = useState(false)
+
   if (!element) return null;
 
   if (emptyOperators.includes(operator || "")) {
@@ -541,7 +543,7 @@ const renderValueComponent = (
   }
 
   if(showDatePicker)
-    return  <Popover>
+    return  <Popover open={open} onOpenChange={setOpen}>
   <PopoverTrigger asChild>
     <Button
       variant={"outline"}
@@ -567,6 +569,7 @@ const renderValueComponent = (
           // Update the field value
           field.onChange(isoString);
         } 
+        setOpen(false)
       }}
       initialFocus
     />
