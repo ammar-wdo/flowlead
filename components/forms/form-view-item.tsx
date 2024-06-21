@@ -19,6 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import { Calendar as CalendarIcon } from "lucide-react"
+
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { useSortable } from "@dnd-kit/sortable";
@@ -35,6 +44,7 @@ import { cn } from "@/lib/utils";
 import { useSelectedElement } from "@/hooks/selected-element-hook";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Textarea } from "../ui/textarea";
+import { format } from "date-fns";
 
 type Form = UseFormReturn<z.infer<typeof formSchema>>;
 type FieldType = ControllerRenderProps<
@@ -200,6 +210,9 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
               {!!(
                 element.type === "FIELD" && element.field?.type === "phone"
               ) && <PhoneInputViewItem form={form} index={i} />}
+              {!!(
+                element.type === "FIELD" && element.field?.type === "date"
+              ) && <DateInputViewItem form={form} index={i} />}
             </FormItem>
           )}
         />
@@ -940,6 +953,61 @@ const PhoneInputViewItem = ({
               />
               </div>
       
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </FormControl>
+  );
+};
+
+const DateInputViewItem = ({ index, form }: { index: number; form: Form }) => {
+  const [date, setDate] = useState<Date>()
+  return (
+    <FormControl>
+      <FormField
+        control={form.control}
+        name={`elements.${index}.field.label`}
+        render={({ field }) => (
+          <FormItem>
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center gap-1">
+                {form.watch("elements")[index].field?.label}
+                {form.watch("elements")[index].field?.validations?.required ? (
+                  "*"
+                ) : (
+                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                )}
+              </Label>
+              {form.watch("elements")[index].field?.hint && (
+                <Label className="text-sm text-muted-foreground font-light ">
+                  {form.watch("elements")[index].field?.hint}
+                </Label>
+              )}
+             <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "w-[280px] justify-start text-left font-normal",
+            !date && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {date ? format(date, "PPP") : <span>{form.watch("elements")[index].field?.placeholder || "Pick a date"}</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          initialFocus
+        />
+      </PopoverContent>
+    </Popover>
+            </div>
+
             <FormMessage />
           </FormItem>
         )}

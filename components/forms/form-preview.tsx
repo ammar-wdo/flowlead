@@ -20,14 +20,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { cn, isFieldVisible } from "@/lib/utils";
-import { Circle, Loader, Square, SquareCheckBig } from "lucide-react";
+import { CalendarIcon, Circle, Loader, Square, SquareCheckBig } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import Image from "next/image";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
+import { format } from "date-fns";
 
 type Props = {
   form: Form;
@@ -35,7 +43,7 @@ type Props = {
 
 const FormPreview = ({ form }: Props) => {
   const { formPreview, onSubmit, handleBlur } = useFormPreview(form);
-  const isLoading =formPreview.formState.isSubmitting
+  const isLoading = formPreview.formState.isSubmitting;
   const formValues = formPreview.watch();
 
   const renderElement = (element: Element) => {
@@ -224,6 +232,9 @@ const FormPreview = ({ form }: Props) => {
                       />
                     </>
                   )}
+                  {fieldElement.type === "date" && (
+                    <DatePickerView  field={field} fieldElement={fieldElement} fieldValue={field.value} formPreview={formPreview}  /> 
+                  )}
                 </div>
               </FormControl>
               {fieldElement.hint && (
@@ -315,7 +326,10 @@ const FormPreview = ({ form }: Props) => {
         className="space-y-8 max-w-[800px]"
       >
         {form.elements.map((element) => renderElement(element))}
-        <Button className="" disabled={isLoading} type="submit">Submit {isLoading  && <Loader size={12} className="ml-3 animate-spin" />}</Button>
+        <Button className="" disabled={isLoading} type="submit">
+          Submit{" "}
+          {isLoading && <Loader size={12} className="ml-3 animate-spin" />}
+        </Button>
         {JSON.stringify(formPreview.formState.errors)}
       </form>
     </FormComponent>
@@ -485,11 +499,11 @@ const ServiceCheckBoxView = ({
 }) => {
   return (
     <FormItem>
-      <div   
-       id="quill-content-container"
+      <div
+        id="quill-content-container"
         className="quill-content prose"
         dangerouslySetInnerHTML={{ __html: serviceElement.description || "" }}
-     />
+      />
       <div className="mb-4 grid grid-cols-1 md:grid-cols-2   gap-1">
         {serviceElement.options.map((option, i) => (
           <FormItem
@@ -503,7 +517,12 @@ const ServiceCheckBoxView = ({
               !(fieldValue || []).some((el: any) => el.id === option.id)
                 ? field.onChange([
                     ...(fieldValue || []),
-                    { ...option, quantity: 1,serviceName:serviceElement.name,serviceId:serviceElement.id },
+                    {
+                      ...option,
+                      quantity: 1,
+                      serviceName: serviceElement.name,
+                      serviceId: serviceElement.id,
+                    },
                   ])
                 : field.onChange(
                     fieldValue.filter((el: any) => el.id !== option.id)
@@ -666,17 +685,24 @@ const ServiceRadioView = ({
   return (
     <FormItem className="space-y-0">
       <FormLabel className="flex flex-row items-center gap-1 space-y-0">
-      <div   
-       id="quill-content-container"
-        className="quill-content prose"
-        dangerouslySetInnerHTML={{ __html: serviceElement.description || "" }}
-     />
+        <div
+          id="quill-content-container"
+          className="quill-content prose"
+          dangerouslySetInnerHTML={{ __html: serviceElement.description || "" }}
+        />
       </FormLabel>
       <FormControl>
         <FormItem className="grid grid-cols-1 lg:grid-cols-2 gap-1 space-y-0 ">
           {serviceElement.options.map((option, i) => (
             <div
-              onClick={() => field.onChange({ ...option, quantity: 1,serviceName:serviceElement.name,serviceId:serviceElement.id })}
+              onClick={() =>
+                field.onChange({
+                  ...option,
+                  quantity: 1,
+                  serviceName: serviceElement.name,
+                  serviceId: serviceElement.id,
+                })
+              }
               key={option.id}
               className={cn(
                 "grid grid-cols-2 gap-3 bg-white p-4 rounded-md border",
@@ -813,11 +839,11 @@ const ServiceDropDownView = ({
 }) => {
   return (
     <div>
-         <div   
-       id="quill-content-container"
+      <div
+        id="quill-content-container"
         className="quill-content prose"
         dangerouslySetInnerHTML={{ __html: serviceElement.description || "" }}
-     />
+      />
       <Select
         onValueChange={(id: string) => {
           if (id === "NONE") {
@@ -825,7 +851,12 @@ const ServiceDropDownView = ({
             return;
           }
           const theOption = serviceElement.options.find((el) => el.id === id);
-          field.onChange({ ...theOption, quantity: 1,serviceName:serviceElement.name,serviceId:serviceElement.id });
+          field.onChange({
+            ...theOption,
+            quantity: 1,
+            serviceName: serviceElement.name,
+            serviceId: serviceElement.id,
+          });
         }}
         defaultValue={field.value}
       >
@@ -1006,124 +1037,165 @@ const ServiceSinglepriceView = ({
 }) => {
   return (
     <div>
-         <div   
-       id="quill-content-container"
+      <div
+        id="quill-content-container"
         className="quill-content prose"
         dangerouslySetInnerHTML={{ __html: serviceElement.description || "" }}
-     />
-       <FormItem
-      className={cn(
-        "grid grid-cols-2 gap-3 rounded-lg border bg-white p-4 max-w-[400px]",
-        !!(field.value?.id === serviceElement.options[0].id) && "border-second "
-      )}
-      onClick={() => {
-        !field.value?.id
-          ? field.onChange({
-              ...serviceElement.options[0],
-              quantity: 1,
-              serviceName:serviceElement.name,serviceId:serviceElement.id
-            })
-          : field.onChange(undefined);
-      }}
-    >
-      <div className="flex flex-col gap-1 justify-between">
-        <FormLabel className=" capitalize cursor-pointer ">
-          {serviceElement.options[0].name}
-        </FormLabel>
-        <p className="text-xs  font-light    line-clamp-4">
-          {serviceElement.options[0].description}
-        </p>
-        <div className="flex items-center justify-between">
-          <p className="">${serviceElement.options[0].price}</p>
-          {!!serviceElement.options[0].enableQuantity &&
-          field.value?.id === serviceElement.options[0].id ? (
-            <div className="flex border items-center h-8 bg-white text-black rounded-lg overflow-hidden">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
+      />
+      <FormItem
+        className={cn(
+          "grid grid-cols-2 gap-3 rounded-lg border bg-white p-4 max-w-[400px]",
+          !!(field.value?.id === serviceElement.options[0].id) &&
+            "border-second "
+        )}
+        onClick={() => {
+          !field.value?.id
+            ? field.onChange({
+                ...serviceElement.options[0],
+                quantity: 1,
+                serviceName: serviceElement.name,
+                serviceId: serviceElement.id,
+              })
+            : field.onChange(undefined);
+        }}
+      >
+        <div className="flex flex-col gap-1 justify-between">
+          <FormLabel className=" capitalize cursor-pointer ">
+            {serviceElement.options[0].name}
+          </FormLabel>
+          <p className="text-xs  font-light    line-clamp-4">
+            {serviceElement.options[0].description}
+          </p>
+          <div className="flex items-center justify-between">
+            <p className="">${serviceElement.options[0].price}</p>
+            {!!serviceElement.options[0].enableQuantity &&
+            field.value?.id === serviceElement.options[0].id ? (
+              <div className="flex border items-center h-8 bg-white text-black rounded-lg overflow-hidden">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
 
-                  let serviceOptions = formPreview.watch(
-                    `${serviceElement.name}-service`
-                  ) as {
-                    id: string;
-                    price: number;
-                    quantity: number;
-                  };
+                    let serviceOptions = formPreview.watch(
+                      `${serviceElement.name}-service`
+                    ) as {
+                      id: string;
+                      price: number;
+                      quantity: number;
+                    };
 
-                  let currentOption = serviceOptions;
-                  console.log("currentOption", currentOption);
-                  serviceOptions = {
-                    ...currentOption,
-                    quantity: currentOption.quantity + 1,
-                  };
-                  formPreview.setValue(
-                    `${serviceElement.name}-service`,
-                    serviceOptions
-                  );
-                }}
-                type="button"
-                className="flex items-center justify-center  cursor-pointer py-1 px-3 hover:bg-muted transition"
-              >
-                +
-              </button>
-              <p className="px-3 py-1">{field.value?.quantity || 0}</p>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (field.value?.quantity === 1) return;
+                    let currentOption = serviceOptions;
+                    console.log("currentOption", currentOption);
+                    serviceOptions = {
+                      ...currentOption,
+                      quantity: currentOption.quantity + 1,
+                    };
+                    formPreview.setValue(
+                      `${serviceElement.name}-service`,
+                      serviceOptions
+                    );
+                  }}
+                  type="button"
+                  className="flex items-center justify-center  cursor-pointer py-1 px-3 hover:bg-muted transition"
+                >
+                  +
+                </button>
+                <p className="px-3 py-1">{field.value?.quantity || 0}</p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (field.value?.quantity === 1) return;
 
-                  let serviceOptions = formPreview.watch(
-                    `${serviceElement.name}-service`
-                  ) as {
-                    id: string;
-                    price: number;
-                    quantity: number;
-                  };
+                    let serviceOptions = formPreview.watch(
+                      `${serviceElement.name}-service`
+                    ) as {
+                      id: string;
+                      price: number;
+                      quantity: number;
+                    };
 
-                  let currentOption = serviceOptions;
-                  console.log("currentOption", currentOption);
-                  serviceOptions = {
-                    ...currentOption,
-                    quantity: currentOption.quantity - 1,
-                  };
-                  formPreview.setValue(
-                    `${serviceElement.name}-service`,
-                    serviceOptions
-                  );
-                }}
-                type="button"
-                className="flex items-center justify-center  cursor-pointer py-1 px-3 hover:bg-muted transition"
-              >
-                -
-              </button>
-            </div>
-          ) : (
-            <div className="h-8" />
-          )}
+                    let currentOption = serviceOptions;
+                    console.log("currentOption", currentOption);
+                    serviceOptions = {
+                      ...currentOption,
+                      quantity: currentOption.quantity - 1,
+                    };
+                    formPreview.setValue(
+                      `${serviceElement.name}-service`,
+                      serviceOptions
+                    );
+                  }}
+                  type="button"
+                  className="flex items-center justify-center  cursor-pointer py-1 px-3 hover:bg-muted transition"
+                >
+                  -
+                </button>
+              </div>
+            ) : (
+              <div className="h-8" />
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="flex items-center gap-1">
-        <div className="relative aspect-square rounded-lg overflow-hidden flex-1">
-          {serviceElement.options[0].image && (
-            <Image
-              src={serviceElement.options[0].image}
-              alt={serviceElement.options[0].name}
-              fill
-              className="object-cover"
-            />
-          )}
+        <div className="flex items-center gap-1">
+          <div className="relative aspect-square rounded-lg overflow-hidden flex-1">
+            {serviceElement.options[0].image && (
+              <Image
+                src={serviceElement.options[0].image}
+                alt={serviceElement.options[0].name}
+                fill
+                className="object-cover"
+              />
+            )}
+          </div>
+          <div className="h-6">
+            {!!(field.value?.id === serviceElement.options[0].id) ? (
+              <SquareCheckBig className="h-6 text-second" />
+            ) : (
+              <Square className="h-6" />
+            )}
+          </div>
         </div>
-        <div className="h-6">
-          {!!(field.value?.id === serviceElement.options[0].id) ? (
-            <SquareCheckBig className="h-6 text-second" />
-          ) : (
-            <Square className="h-6" />
-          )}
-        </div>
-      </div>
-    </FormItem>
+      </FormItem>
     </div>
-  
   );
+};
+
+const DatePickerView = ({
+  field,
+  fieldElement,
+  fieldValue,
+  formPreview,
+}: {
+  field: ControllerRenderProps<
+    {
+      [x: string]: any;
+    },
+    `${string}-field`
+  >;
+  fieldValue: any;
+  formPreview: UseFormReturn<any>;
+  fieldElement: any;
+}) => {
+  return  <Popover>
+  <PopoverTrigger asChild>
+    <Button
+      variant={"outline"}
+      className={cn(
+        "w-[280px] justify-start text-left font-normal",
+        !fieldValue && "text-muted-foreground"
+      )}
+    >
+      <CalendarIcon className="mr-2 h-4 w-4" />
+      {fieldValue ? format(fieldValue, "PPP") : <span>{fieldElement.placeHolder || "Pick a date"}</span>}
+    </Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-auto p-0">
+    <Calendar
+      mode="single"
+      selected={fieldValue}
+      onSelect={field.onChange}
+      initialFocus
+    />
+  </PopoverContent>
+</Popover>;
 };

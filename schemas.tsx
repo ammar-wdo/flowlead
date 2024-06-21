@@ -17,7 +17,7 @@ import { IoCheckboxSharp } from "react-icons/io5";
 import { IoOptionsSharp } from "react-icons/io5";
 import { IoArrowDownCircle } from "react-icons/io5";
 import { BsFileBreakFill } from "react-icons/bs";
-import { Minus, NotepadText, Phone } from "lucide-react";
+import { CalendarDays, Minus, NotepadText, Phone } from "lucide-react";
 import { FaAddressCard } from "react-icons/fa";
 import { MdLocalPhone } from "react-icons/md";
 
@@ -169,6 +169,7 @@ export const fieldTypeArray = [
   "phone",
   "breaker",
   "sectionBreaker",
+  "date",
 ];
 
 export type FieldTypeMapper = [
@@ -183,7 +184,8 @@ export type FieldTypeMapper = [
   "address",
   "phone",
   "breaker",
-  "sectionBreaker"
+  "sectionBreaker",
+  "date",
 ][number];
 
 export const fieldTypeEnum = [
@@ -199,6 +201,7 @@ export const fieldTypeEnum = [
   "phone",
   "breaker",
   "sectionBreaker",
+  "date",
 ] as const;
 
 export const logicOperatorArray = ["AND", "OR", "NOT"];
@@ -504,6 +507,27 @@ export const emptyTextFieldElement: ElementComponentType = {
     validations: null,
   },
 };
+
+export const emptyDateFieldElement: ElementComponentType = {
+  id: "",
+  type: "FIELD",
+  component: (
+    <div className="flex items-center gap-2 text-[12px] ">
+      {" "}
+      <CalendarDays size={20} />
+      Date
+    </div>
+  ),
+  field: {
+    id: "",
+    label: "Date Input",
+    placeholder: "",
+    options: [],
+    type: "date",
+
+    validations: null,
+  },
+};
 export const emptyLongTextFieldElement: ElementComponentType = {
   id: "",
   type: "FIELD",
@@ -660,6 +684,7 @@ export const emptyAddressElement: ElementComponentType = {
     validations: null,
   },
 };
+
 export const emptyBreakerElement: ElementComponentType = {
   id: "",
   type: "FIELD",
@@ -719,6 +744,7 @@ export const controllerElements = [
       emptyCheckBoxFieldElement,
       emptyRadioFieldElement,
       emptySelectElement,
+      emptyDateFieldElement
     ],
   },
   {

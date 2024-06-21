@@ -291,6 +291,7 @@ enum FieldType {
   phone
   breaker
   sectionBreaker
+  date
 }
 
 enum LogicalOperator {

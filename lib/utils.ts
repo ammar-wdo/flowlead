@@ -95,24 +95,22 @@ export const getServices = async (companySlug: string, userId: string) => {
       id: true,
       name: true,
       createdAt: true,
-      company:{
-        select:{
-          slug:true
-        }
-      }
-     
+      company: {
+        select: {
+          slug: true,
+        },
+      },
     },
-    orderBy:{
-      createdAt:"desc"
-    }
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   const refactoredServices = services.map((service) => ({
     id: service.id,
     name: service.name,
     createdAt: service.createdAt,
-    company:{slug:service.company.slug}
-   
+    company: { slug: service.company.slug },
   }));
 
   return refactoredServices;
@@ -138,9 +136,9 @@ export const getForms = async (companySlug: string, userId: string) => {
         },
       },
     },
-    orderBy:{
-      createdAt:"desc"
-    }
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return forms;
@@ -156,16 +154,21 @@ export const generateSingleFieldSchema = (
   let fieldSchema;
 
   switch (field.type) {
-    case "name" : fieldSchema=z.string().min(1,"Required")
-    break;
-    case "email":fieldSchema=z.string().email()
-    break;
+    case "name":
+      fieldSchema = z.string().min(1, "Required");
+      break;
+    case "email":
+      fieldSchema = z.string().email();
+      break;
     case "number":
     case "phone":
       fieldSchema = z.union([
-        z.string().refine((val) => !val || !isNaN(Number(val)), {
-          message: "Please enter a valid number",
-        }).transform((val) => (val ? Number(val) : undefined)),
+        z
+          .string()
+          .refine((val) => !val || !isNaN(Number(val)), {
+            message: "Please enter a valid number",
+          })
+          .transform((val) => (val ? Number(val) : undefined)),
         z.number().transform((val) => (val ? val : undefined)),
       ]);
 
@@ -283,11 +286,20 @@ export const generateSingleFieldSchema = (
                   ? z.string().min(1, "Required")
                   : z.string().optional(),
             })
-            .optional().default({})
-            ;
+            .optional()
+            .default({});
 
       break;
-
+    case "date":
+      fieldSchema = z.date();
+      if (!isRequired) {
+        fieldSchema = fieldSchema.optional();
+      } else {
+        fieldSchema = fieldSchema.refine((val) => val !== undefined, {
+          message: "Required",
+        });
+      }
+      break;
     default:
       fieldSchema = z.string();
       if (isRequired) {
@@ -312,11 +324,11 @@ export const generateSingleServiceSchema = (
     id: z.string().min(1),
     price: z.coerce.number(),
     quantity: z.coerce.number(),
-    name:z.string().min(1,"required"),
-    description:z.string().optional(),
-    image:z.string().optional(),
-    serviceName:z.string().min(1),
-    serviceId:z.string().min(1)
+    name: z.string().min(1, "required"),
+    description: z.string().optional(),
+    image: z.string().optional(),
+    serviceName: z.string().min(1),
+    serviceId: z.string().min(1),
   });
   switch (service?.pricingType) {
     case "CHECKBOX_GROUP":
