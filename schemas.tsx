@@ -426,7 +426,7 @@ export const quotationDiscountSchema = z
     (data) =>
       !!(data.type === "PERCENTAGE" && !!data.percentageValue) ||
       !!(data.type === "FIXED" && !!data.fixedValue),{
-        path:['type'],message:"Please Enter Valid Value According To Discount Type"
+        path:['description'],message:"Please Enter Valid Value According To Discount Type"
       }
   );
 

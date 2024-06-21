@@ -209,7 +209,7 @@ export const useQuotation = ({
 
     if(!form.watch('discount'))
       {
-        form.setValue('discount',{type:value,description:undefined,fixedValue:undefined,percentageValue:undefined})
+        form.setValue('discount',{type:value,description:undefined,fixedValue:0,percentageValue:0})
       }else{
         const discount = form.watch('discount') as {
           type: "PERCENTAGE" | "FIXED";
