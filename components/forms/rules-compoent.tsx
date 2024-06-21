@@ -14,7 +14,7 @@ import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "../ui/button";
-import { Plus, XIcon } from "lucide-react";
+import { CalendarIcon, Plus, XIcon } from "lucide-react";
 import {
   Form as FormComponent,
   FormControl,
@@ -34,6 +34,9 @@ import { operatorTypeMapp } from "@/mapping";
 import { Input } from "../ui/input";
 import LoadingButton from "../loading-button";
 import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { format } from "date-fns";
+import { Calendar } from "../ui/calendar";
 
 type Props = {
   fetchedForm: Form | undefined | null;
@@ -496,9 +499,12 @@ const renderValueComponent = (
 ) => {
   const emptyOperators = ["EMPTY", "NOT_EMPTY"];
   const showSelect = ["select", "checkbox", "radio"].includes(fieldType || "");
+  const showDatePicker = fieldType==='date'
   const showTextInput = ["text", "longText", "number"].includes(
     fieldType || ""
   );
+
+  console.log(fieldType,)
 
   if (!element) return null;
 
@@ -533,6 +539,39 @@ const renderValueComponent = (
       </Select>
     );
   }
+
+  if(showDatePicker)
+    return  <Popover>
+  <PopoverTrigger asChild>
+    <Button
+      variant={"outline"}
+      className={cn(
+        "w-[280px] justify-start text-left font-normal",
+        !field.value && "text-muted-foreground"
+      )}
+    >
+      <CalendarIcon className="mr-2 h-4 w-4" />
+      {field.value ? format(new Date(field.value), "PPP") : <span>Pick a date</span>}
+    </Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-auto p-0">
+    <Calendar
+      mode="single"
+      selected={field.value ? new Date(field.value) : undefined}
+      onSelect={(date) => {
+        if (date) {
+          // Create a new date without timezone offset
+          const adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+          // Convert the adjusted date to ISO string
+          const isoString = adjustedDate.toISOString();
+          // Update the field value
+          field.onChange(isoString);
+        } 
+      }}
+      initialFocus
+    />
+  </PopoverContent>
+</Popover>
 
   if (showTextInput) {
     return <Input  placeholder="Enter value" {...field} />;

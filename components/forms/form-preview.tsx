@@ -1193,7 +1193,13 @@ const DatePickerView = ({
     <Calendar
       mode="single"
       selected={fieldValue}
-      onSelect={field.onChange}
+      onSelect={(date) => {
+        if (date) {
+          // Create a new date without timezone offset
+          const adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+          field.onChange(adjustedDate);
+        }
+      }}
       initialFocus
     />
   </PopoverContent>

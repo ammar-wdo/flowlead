@@ -1,7 +1,7 @@
 import { ReactElement, ReactNode } from "react";
 import { SinglePricingType } from "./components/pricing-type";
 import { ArrowDown, Check, CheckCircle, LucideIcon, ShieldCheck } from "lucide-react";
-import { ComparisonOperatorType, FieldTypeMapper, numberComparisonOperator, phoneComparisonOperator, serviceAndMultipleComparisonOperator, textComparisonOperatorArray } from "./schemas";
+import { ComparisonOperatorType, FieldTypeMapper, dateComparisonOperator, numberComparisonOperator, phoneComparisonOperator, serviceAndMultipleComparisonOperator, textComparisonOperatorArray } from "./schemas";
 
 
 export const pricingTypeMap: { [key in SinglePricingType]: { title: string, Icon: ReactNode } } = {
@@ -26,7 +26,8 @@ export const inputsLabelsMap : {[key in FieldTypeMapper]:string} ={
     longText:"Long Text",
     phone:"Phone",
     name:"Naam",
-    email:"Email Adres"
+    email:"Email Adres",
+    date:"Date Picker"
 }
 
 
@@ -44,6 +45,7 @@ export const operatorTypeMapp :{[key in FieldTypeMapper]: ComparisonOperatorType
     select:serviceAndMultipleComparisonOperator as unknown as ComparisonOperatorType[],
     name:textComparisonOperatorArray as unknown as ComparisonOperatorType[],
     email:textComparisonOperatorArray as unknown as ComparisonOperatorType[],
+    date:dateComparisonOperator as unknown as ComparisonOperatorType[]
  
 
 
