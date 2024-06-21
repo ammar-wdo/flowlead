@@ -23,7 +23,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 import {
   Table,
@@ -130,7 +130,10 @@ const QuotationsForm = ({
     contactOpen,
     setContactOpen,
     handleDeleteDiscount,
-    handleSetDiscount
+    handleSetDiscount,
+    discountValue,
+    subTotalWithDiscount,
+    total
   } = useQuotation({ quotation, quotationSettings });
 
   const [mount, setMount] = useState(false);
@@ -187,7 +190,15 @@ const QuotationsForm = ({
                                       form.watch("contactPersonId")
                                   );
                                 }
-                              })as { contactPersonId: string; companyId: string; contactName: string; emailAddress: string; phoneNumber: string | null; companyName: string; contactPerson: boolean; })!.companyName
+                              }) as {
+                                contactPersonId: string;
+                                companyId: string;
+                                contactName: string;
+                                emailAddress: string;
+                                phoneNumber: string | null;
+                                companyName: string;
+                                contactPerson: boolean;
+                              })!.companyName
                             }`
                           : field.value
                           ? refactoredContacts.find(
@@ -199,100 +210,97 @@ const QuotationsForm = ({
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-           
+
                   <PopoverContent className="w-full p-0">
-               
                     <Command>
                       <CommandInput placeholder="Search Contact..." />
                       <CommandEmpty>No result found</CommandEmpty>
                       <ScrollArea className="h-[300px] w-full">
-                      <CommandGroup>
-                        <CommandList>
-                          {refactoredContacts.map((contact, index) => (
-                            <CommandItem
-                            className=" cursor-pointer"
-                              value={
-                                "contactPerson" in contact
-                                  ? contact.contactName +
-                                    contact.emailAddress +
-                                    contact.companyName
-                                  : contact.contactName + contact.emailAddress
-                              }
-                              key={contact.companyId}
-                              onSelect={() => {
-                                form.setValue("contactId", contact.companyId);
-                                setContactOpen(false);
-                                if ("contactPerson" in contact) {
-                                  form.setValue(
-                                    "contactPersonId",
-                                    contact.contactPersonId
-                                  );
-                                } else {
-                                  form.setValue("contactPersonId", undefined);
+                        <CommandGroup>
+                          <CommandList>
+                            {refactoredContacts.map((contact, index) => (
+                              <CommandItem
+                                className=" cursor-pointer"
+                                value={
+                                  "contactPerson" in contact
+                                    ? contact.contactName +
+                                      contact.emailAddress +
+                                      contact.companyName
+                                    : contact.contactName + contact.emailAddress
                                 }
-                              }}
-                            >
-                              {/* render check only besides contact person id if we had any ,or besides company id  */}
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  (!form.watch("contactPersonId") &&
-                                    contact.companyId === field.value &&
-                                    !("contactPerson" in contact)) ||
-                                    ("contactPerson" in contact &&
-                                      form.watch("contactPersonId") ===
-                                        contact.contactPersonId)
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
+                                key={contact.companyId}
+                                onSelect={() => {
+                                  form.setValue("contactId", contact.companyId);
+                                  setContactOpen(false);
+                                  if ("contactPerson" in contact) {
+                                    form.setValue(
+                                      "contactPersonId",
+                                      contact.contactPersonId
+                                    );
+                                  } else {
+                                    form.setValue("contactPersonId", undefined);
+                                  }
+                                }}
+                              >
+                                {/* render check only besides contact person id if we had any ,or besides company id  */}
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    (!form.watch("contactPersonId") &&
+                                      contact.companyId === field.value &&
+                                      !("contactPerson" in contact)) ||
+                                      ("contactPerson" in contact &&
+                                        form.watch("contactPersonId") ===
+                                          contact.contactPersonId)
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
 
-                              <div className="p-3">
-                                {"contactPerson" in contact ? (
-                                  <div className="flex items-center gap-5 ">
-                                    <span>
-                                      <User />
-                                    </span>
-                                    <div>
-                                      <p className="capitalize">
-                                        {contact.companyName} -{" "}
-                                        {contact.contactName}
-                                      </p>
-                                      <p className="text-muted-foreground text-xs ">
-                                        {contact.emailAddress}
-                                      </p>
+                                <div className="p-3">
+                                  {"contactPerson" in contact ? (
+                                    <div className="flex items-center gap-5 ">
+                                      <span>
+                                        <User />
+                                      </span>
+                                      <div>
+                                        <p className="capitalize">
+                                          {contact.companyName} -{" "}
+                                          {contact.contactName}
+                                        </p>
+                                        <p className="text-muted-foreground text-xs ">
+                                          {contact.emailAddress}
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center gap-5 ">
-                                    <span>
-                                      {contact.contactType === "INDIVIDUAL" ? (
-                                        <MagnetIcon />
-                                      ) : (
-                                        <Building />
-                                      )}
-                                    </span>
-                                    <div>
-                                      <p className="capitalize">
-                                        {contact.contactName}
-                                      </p>
-                                      <p className="text-muted-foreground text-xs ">
-                                        {contact.emailAddress}
-                                      </p>
+                                  ) : (
+                                    <div className="flex items-center gap-5 ">
+                                      <span>
+                                        {contact.contactType ===
+                                        "INDIVIDUAL" ? (
+                                          <MagnetIcon />
+                                        ) : (
+                                          <Building />
+                                        )}
+                                      </span>
+                                      <div>
+                                        <p className="capitalize">
+                                          {contact.contactName}
+                                        </p>
+                                        <p className="text-muted-foreground text-xs ">
+                                          {contact.emailAddress}
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
-                              </div>
-                            </CommandItem>
-                          ))}
-                        </CommandList>
-                      </CommandGroup>
+                                  )}
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandList>
+                        </CommandGroup>
                       </ScrollArea>
                     </Command>
-              
                   </PopoverContent>
-               
-            
                 </Popover>
               </SettingsFormWrapper>
 
@@ -535,79 +543,124 @@ const QuotationsForm = ({
             >
               <Star size={15} className="mr-2" /> Choose Option
             </Button>
-            <DiscountDropdownMenue  className="rounded-none hover:rounded-none text-sm" discountType={form.watch('discount.type')} setDiscountType={(value)=>handleSetDiscount(value as DiscountType)}/>
-           
+            <DiscountDropdownMenue
+              className="rounded-none hover:rounded-none text-sm"
+              discountType={form.watch("discount.type")}
+              setDiscountType={(value) =>
+                handleSetDiscount(value as DiscountType)
+              }
+            />
           </div>
         </div>
 
-        {!!form.watch('discount')&& <div className="mt-12 flex items-start gap-3 w-full group">
-        {form.watch('discount.type') ==='PERCENTAGE' ?<FormField
-          control={form.control}
-          name="discount.percentageValue"
-          render={({ field }) => (
-            <FormItem className="flex-1">
-
-                <FormControl>
-                  <div className={cn("flex  ")}>
-                  <Input
-                   type="number"
-                    className=" rounded-r-none focus:ring-0 focus:ring-transparent focus-visible:ring-0 focus-visible:ring-transparent"
-                    placeholder="Percent value discount"
-                    {...field}
-                    value={form.watch('discount.percentageValue')}
-                    onChange={(e)=>form.setValue('discount.percentageValue',+e.target.value)}
-               
-                  />
-                  <span className="flex items-center bg-muted text-sm px-2 rounded-r-lg border-r border-y"><Percent size={14} className="mr-3"/> Discount</span>
-                  </div>
-                
-                </FormControl>
-              <FormMessage />
-            </FormItem>
+        {!!form.watch("discount") && (
+          <div className="mt-12 flex items-start gap-3 w-full group">
+            {form.watch("discount.type") === "PERCENTAGE" ? (
+              <FormField
+                control={form.control}
+                name="discount.percentageValue"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormControl>
+                      <div className={cn("flex  ")}>
+                        <Input
+                          type="number"
+                          className=" rounded-r-none focus:ring-0 focus:ring-transparent focus-visible:ring-0 focus-visible:ring-transparent"
+                          placeholder="Percent value discount"
+                          {...field}
+                          value={form.watch("discount.percentageValue")}
+                          onChange={(e) =>
+                            form.setValue(
+                              "discount.percentageValue",
+                              +e.target.value
+                            )
+                          }
+                        />
+                        <span className="flex items-center bg-muted text-sm px-2 rounded-r-lg border-r border-y">
+                          <Percent size={14} className="mr-3" /> Discount
+                        </span>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <FormField
+                control={form.control}
+                name="discount.fixedValue"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormControl>
+                      <div className={cn("flex  ")}>
+                        <Input
+                          type="number"
+                          className=" rounded-r-none focus:ring-0 focus:ring-transparent focus-visible:ring-0 focus-visible:ring-transparent"
+                          placeholder="Fixed value discount"
+                          {...field}
+                          value={form.watch("discount.fixedValue")}
+                          onChange={(e) =>
+                            form.setValue(
+                              "discount.fixedValue",
+                              +e.target.value
+                            )
+                          }
+                        />
+                        <span className="flex items-center bg-muted text-sm px-2 rounded-r-lg border-r border-y">
+                          <Euro size={14} className="mr-3" /> Discount
+                        </span>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            <FormField
+              control={form.control}
+              name="discount.description"
+              render={({ field }) => (
+                <FormItem className="flex-[2]">
+                  <FormControl>
+                    <Input
+                      className=""
+                      placeholder="Description"
+                      {...field}
+                      value={field.value || ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              onClick={handleDeleteDiscount}
+              type="button"
+              variant={"ghost"}
+              className="text-gray-400 opacity-0 group-hover:opacity-100 transition"
+            >
+              <Trash size={17} />
+            </Button>
+          </div>
+        )}
+        <div className="h-px bg-gray-200" />
+        {/* Show discount section  */}
+        <div className="flex ml-auto max-w-[300px] flex-col space-y-2">
+          {/* discount */}
+          {!!form.watch("discount") && (
+            <ShowValueElement title="Discount" value={discountValue} minus={true}/>
           )}
-        /> : <FormField
-        control={form.control}
-        name="discount.fixedValue"
-        render={({ field }) => (
-          <FormItem className="flex-1">
-      <FormControl>
-      <div className={cn("flex  ")}>
-                  <Input
-                   type="number"
-                    className=" rounded-r-none focus:ring-0 focus:ring-transparent focus-visible:ring-0 focus-visible:ring-transparent"
-                    placeholder="Fixed value discount"
-                    {...field}
-                    value={form.watch('discount.fixedValue')}
-                    onChange={(e)=>form.setValue('discount.fixedValue',+e.target.value)}
-               
-                  />
-                  <span className="flex items-center bg-muted text-sm px-2 rounded-r-lg border-r border-y"><Euro size={14} className="mr-3"/> Discount</span>
-                  </div>
-              </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />}
-          <FormField
-        control={form.control}
-        name="discount.description"
-        render={({ field }) => (
-          <FormItem className="flex-[2]">
-      <FormControl>
-                <Input
-                  className=""
-                  placeholder="Description"
-                  {...field}
-                  value={field.value || ""}
-                />
-              </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <Button onClick={handleDeleteDiscount} type="button" variant={'ghost'} className="text-gray-400 opacity-0 group-hover:opacity-100 transition"><Trash size={17} /></Button>
-          </div>}
-  
+          {/* subtotal */}
+          <ShowValueElement title="Subtotal" value={subTotalWithDiscount} />
+
+          {/* lineitemes vat */}
+          {form.watch("lineItems").map((el, index) => (
+            <ShowValueElement key={`vat - ${index}`} title={`${el.taxPercentage}% VAT`} value={el.taxPercentage * el.price * el.quantity /100} />
+          
+          ))}
+          {/* total amount */}
+          <ShowValueElement title={"Total"} value={total} />
+        </div>
 
         <div className="h-px bg-gray-200" />
         <FormField
@@ -1014,22 +1067,52 @@ const OptionTableRow = ({
   );
 };
 
-const DiscountDropdownMenue = ({discountType,setDiscountType,className}:{discountType:'FIXED' | 'PERCENTAGE',setDiscountType:(value:string)=>void,className:string})=>{
+const DiscountDropdownMenue = ({
+  discountType,
+  setDiscountType,
+  className,
+}: {
+  discountType: "FIXED" | "PERCENTAGE";
+  setDiscountType: (value: string) => void;
+  className: string;
+}) => {
   return (
     <DropdownMenu>
-    <DropdownMenuTrigger  asChild>
-      <Button   variant={"ghost"} className={className}><Percent  size={15} className="mr-2"/> Add Discount</Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent className="w-56">
+      <DropdownMenuTrigger asChild>
+        <Button variant={"ghost"} className={className}>
+          <Percent size={15} className="mr-2" /> Add Discount
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuRadioGroup
+          value={discountType}
+          onValueChange={setDiscountType}
+        >
+          <DropdownMenuRadioItem className="cursor-pointer" value="FIXED">
+            <Euro size={15} className="mr-2" /> Fixed Amount
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem className="cursor-pointer" value="PERCENTAGE">
+            <Percent size={15} className="mr-2" /> Percentage
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
-
-      <DropdownMenuRadioGroup value={discountType} onValueChange={setDiscountType}>
-        <DropdownMenuRadioItem className="cursor-pointer"  value="FIXED"><Euro size={15} className="mr-2"/> Fixed Amount</DropdownMenuRadioItem>
-        <DropdownMenuRadioItem className="cursor-pointer" value="PERCENTAGE"><Percent size={15} className="mr-2"/> Percentage</DropdownMenuRadioItem>
-    
-      </DropdownMenuRadioGroup>
-    </DropdownMenuContent>
-  </DropdownMenu>
-  )
-}
-
+const ShowValueElement = ({
+  title,
+  value,
+  minus
+}: {
+  title: string;
+  value: number;
+  minus?:boolean
+}) => {
+  return (
+    <article className="flex items-center justify-between text-sm ">
+      <span className="flex items-center gap-3 font-semibold">{title}</span>
+      <span>{minus && "- "}€ {value}</span>
+    </article>
+  );
+};

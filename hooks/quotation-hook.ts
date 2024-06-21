@@ -72,12 +72,24 @@ export const useQuotation = ({
   const calculate = (index: number) => {
     const price = form.watch(`lineItems.${index}.price`);
     const quantity = form.watch(`lineItems.${index}.quantity`);
-    const taxPercentage = form.watch(`lineItems.${index}.taxPercentage`);
+    // const taxPercentage = form.watch(`lineItems.${index}.taxPercentage`);
 
-    const totalPrice =
-      price * quantity - (price * quantity * taxPercentage) / 100;
-    form.setValue(`lineItems.${index}.totalPrice`, totalPrice);
+    // const totalPrice =
+    //   price * quantity - (price * quantity * taxPercentage) / 100;
+    form.setValue(`lineItems.${index}.totalPrice`, quantity * price);
   };
+
+  const subTotalAmount = form.watch('lineItems').reduce((acc,val)=>acc + (val.price * val.quantity),0)
+
+  const discountValue = form.watch('discount')?.type==='PERCENTAGE' ?  ((form.watch('discount')?.percentageValue || 0) * subTotalAmount ) / 100 : (form.watch('discount')?.fixedValue || 0)
+
+  const subTotalWithDiscount = subTotalAmount - discountValue
+
+  const totalVat = form.watch('lineItems').reduce((acc,val)=>acc + (val.taxPercentage * val.price * val.quantity /100),0)
+
+  const total = totalVat + subTotalWithDiscount
+
+
 
   //add new line item
   const addLineItem = () => {
@@ -252,6 +264,9 @@ export const useQuotation = ({
     contactOpen,
     setContactOpen,
     handleSetDiscount,
-    handleDeleteDiscount
+    handleDeleteDiscount,
+    discountValue,
+    subTotalWithDiscount,
+    total
   };
 };
