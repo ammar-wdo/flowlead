@@ -286,7 +286,7 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
 
                                 return (
                                   <FormItem className="col-span-2 ">
-                                    {renderValueComponent(
+                                    {RenderValueComponent(
                                       fieldType,
                                       operator,
                                       field,
@@ -491,7 +491,7 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
 
 export default RulesComponent;
 
-const renderValueComponent = (
+const RenderValueComponent = (
   fieldType: FieldType,
   operator: ComparisonOperator,
   field: any,
