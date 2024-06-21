@@ -43,9 +43,13 @@ export const createContact = async ({
         ...rest,
         contactCategory:'CONTACT',
         contactPersons:{
-          createMany:{
-            data:contactPersons?.map(person=>({contactName:person.contactName,emailAddress:person.emailAddress,phoneNumber:person.phoneNumber})) || []
-          }
+        createMany: contactPersons && contactPersons.length > 0 ? {
+            data: contactPersons.map(person => ({
+              contactName: person.contactName,
+              emailAddress: person.emailAddress,
+              phoneNumber: person.phoneNumber
+            }))
+          } : undefined
         }
       },
     });
