@@ -51,7 +51,7 @@ export const columns: ColumnDef<FullQuotation>[] = [
   {
     accessorKey: "totalAmount",
     header: "Total Amount",
-    cell: ({ row }) => <p className="">{row.original.totalAmount}</p>,
+    cell: ({ row }) => <p className="">€ {row.original.totalAmount}</p>,
   },
   {
     accessorKey: "actions",
