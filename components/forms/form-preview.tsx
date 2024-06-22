@@ -341,33 +341,38 @@ const FormPreview = ({ form }: Props) => {
   };
   return (
     <FormComponent {...formPreview}>
+      
+      <section className="bg-white px-6 pb-12 pt-4 max-w-[800px] w-full min-h-[500px] h-full flex flex-col">
+      <StepsIndicator steps={steps.length} currentStep={currentStep}/>
       <form
         onSubmit={formPreview.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-[800px]"
+        className="flex flex-col gap-8 flex-1 mt-12"
       >
         {steps[currentStep].map((element) => renderElement(element))}
         
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-auto w-full">
           {currentStep > 0 && (
-            <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+            <Button variant={"secondary"}  className="px-8 py-2" type="button" onClick={() => setCurrentStep(currentStep - 1)}>
               Back
             </Button>
           )}
              {currentStep < steps.length - 1 && (
-            <Button type="button" onClick={handleNext}>
+            <Button className="px-8 py-2 ml-auto bg-second hover:bg-second/80" type="button" onClick={handleNext}>
              {labels[currentStep] || 'Next'}
             </Button>
           )}
           {currentStep === steps.length - 1 && (
-            <Button disabled={isLoading} type="submit">
+            <Button className="px-8 py-2 bg-second hover:bg-second/80" disabled={isLoading} type="submit">
               Submit
               {isLoading && <Loader size={12} className="ml-3 animate-spin" />}
             </Button>
           )}
+            {/* {JSON.stringify(formPreview.formState.errors)} */}
         </div>
 
-        {JSON.stringify(formPreview.formState.errors)}
+      
       </form>
+      </section>
     </FormComponent>
   );
 };
@@ -938,7 +943,9 @@ const ServiceDropDownView = ({
           ))}
         </SelectContent>
       </Select>
-      {field.value && (
+      {formPreview.watch(
+                        `${serviceElement.name}-service`
+                      ) && (
         <FormItem
           className={cn(
             "grid grid-cols-2 gap-3 rounded-lg border bg-white p-4 mt-2 max-w-[400px]"
@@ -1248,3 +1255,41 @@ const DatePickerView = ({
   </PopoverContent>
 </Popover>;
 };
+
+
+type StepsIndicatorProps = {
+  steps: number;
+  currentStep: number;
+};
+
+const StepsIndicator: React.FC<StepsIndicatorProps> = ({
+  steps,
+  currentStep,
+}) => {
+
+  const stepsArray = Array(steps).fill('')
+  return (
+    <div className="flex items-center justify-between gap-3 w-full">
+    {stepsArray.map((_, index) => (
+      <React.Fragment key={index}>
+        <div
+          className={`relative h-[12px] flex-1 ${
+            index === currentStep ? "bg-blue-500" : "bg-gray-200"
+          }`}
+        >
+          {index === currentStep ? (
+            <>
+              <div className="absolute right-[-6px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[6px] border-t-transparent border-l-[6px] border-l-blue-500 border-b-[6px] border-b-transparent"></div>
+              <div className="absolute left-[0px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[6px] border-t-transparent border-l-[6px] border-l-white border-b-[6px] border-b-transparent"></div>
+            </>
+          ): <>
+          <div className="absolute right-[-6px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[6px] border-t-transparent border-l-[6px] border-l-gray-200 border-b-[6px] border-b-transparent"></div>
+          <div className="absolute left-[0px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[6px] border-t-transparent border-l-[6px] border-l-white border-b-[6px] border-b-transparent"></div>
+        </>}
+        </div>
+      </React.Fragment>
+    ))}
+  </div>
+  );
+};
+
