@@ -31,7 +31,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { cn, isFieldVisible } from "@/lib/utils";
-import { CalendarIcon, Circle, Loader, Square, SquareCheckBig } from "lucide-react";
+import { CalendarIcon, CheckCircle, Circle, Loader, Square, SquareCheckBig } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import Image from "next/image";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
@@ -343,7 +343,7 @@ const FormPreview = ({ form }: Props) => {
     <FormComponent {...formPreview}>
       
       <section className="bg-white px-6 pb-12 pt-4 max-w-[800px] w-full min-h-[500px] h-full flex flex-col">
-      <StepsIndicator steps={steps.length} currentStep={currentStep}/>
+    {steps.length  > 1 &&  <StepsIndicator steps={steps.length} currentStep={currentStep}/>}
       <form
         onSubmit={formPreview.handleSubmit(onSubmit)}
         className="flex flex-col gap-8 flex-1 mt-12"
@@ -1269,23 +1269,24 @@ const StepsIndicator: React.FC<StepsIndicatorProps> = ({
 
   const stepsArray = Array(steps).fill('')
   return (
-    <div className="flex items-center justify-between gap-3 w-full">
+    <div className="flex items-center  justify-between gap-3 w-full">
     {stepsArray.map((_, index) => (
       <React.Fragment key={index}>
         <div
-          className={`relative h-[12px] flex-1 ${
-            index === currentStep ? "bg-blue-500" : "bg-gray-200"
+          className={`relative text-sm  h-[24px] flex-1 flex items-center justify-center text-white ${
+            index <= currentStep ? "bg-second" : "bg-gray-200"
           }`}
         >
-          {index === currentStep ? (
+          {index <= currentStep  ? (
             <>
-              <div className="absolute right-[-6px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[6px] border-t-transparent border-l-[6px] border-l-blue-500 border-b-[6px] border-b-transparent"></div>
-              <div className="absolute left-[0px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[6px] border-t-transparent border-l-[6px] border-l-white border-b-[6px] border-b-transparent"></div>
+              <div className="absolute right-[-12px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[12px] border-t-transparent border-l-[12px] border-l-second border-b-[12px] border-b-transparent"></div>
+              <div className="absolute left-[0px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[12px] border-t-transparent border-l-[12px] border-l-white border-b-[12px] border-b-transparent"></div>
             </>
-          ): <>
-          <div className="absolute right-[-6px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[6px] border-t-transparent border-l-[6px] border-l-gray-200 border-b-[6px] border-b-transparent"></div>
-          <div className="absolute left-[0px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[6px] border-t-transparent border-l-[6px] border-l-white border-b-[6px] border-b-transparent"></div>
+          ):<>
+          <div className="absolute right-[-12px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[12px] border-t-transparent border-l-[12px] border-l-gray-200 border-b-[12px] border-b-transparent"></div>
+          <div className="absolute left-[0px] top-1/2 -translate-y-[50%]  w-0 h-0 border-t-[12px] border-t-transparent border-l-[12px] border-l-white border-b-[12px] border-b-transparent"></div>
         </>}
+        { index < currentStep ? <CheckCircle size={15}/> : `Step ${index + 1}`}
         </div>
       </React.Fragment>
     ))}
