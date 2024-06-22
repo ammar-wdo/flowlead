@@ -42,7 +42,7 @@ type Props = {
 };
 
 const FormPreview = ({ form }: Props) => {
-  const { formPreview, onSubmit, handleBlur } = useFormPreview(form);
+  const { formPreview, onSubmit, handleBlur,currentStep,setCurrentStep,steps,labels} = useFormPreview(form);
   const isLoading = formPreview.formState.isSubmitting;
   const formValues = formPreview.watch();
 
@@ -319,17 +319,53 @@ const FormPreview = ({ form }: Props) => {
     return null;
   };
 
+
+
+  const handleNext = async () => {
+    const fieldsToValidate = steps[currentStep]
+      .map((element) => {
+        if (element.field) {
+          return `${element.field.label}-field`;
+        } else if (element.service) {
+          return `${element.service.name}-service`;
+        }
+        return null;
+      })
+      .filter((fieldName): fieldName is string => fieldName !== null);
+
+    const isValid = await formPreview.trigger(fieldsToValidate);
+
+    if (isValid) {
+      setCurrentStep((prevStep) => prevStep + 1);
+    }
+  };
   return (
     <FormComponent {...formPreview}>
       <form
         onSubmit={formPreview.handleSubmit(onSubmit)}
         className="space-y-8 max-w-[800px]"
       >
-        {form.elements.map((element) => renderElement(element))}
-        <Button className="" disabled={isLoading} type="submit">
-          Submit{" "}
-          {isLoading && <Loader size={12} className="ml-3 animate-spin" />}
-        </Button>
+        {steps[currentStep].map((element) => renderElement(element))}
+        
+        <div className="flex justify-between">
+          {currentStep > 0 && (
+            <Button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+              Back
+            </Button>
+          )}
+             {currentStep < steps.length - 1 && (
+            <Button type="button" onClick={handleNext}>
+             {labels[currentStep] || 'Next'}
+            </Button>
+          )}
+          {currentStep === steps.length - 1 && (
+            <Button disabled={isLoading} type="submit">
+              Submit
+              {isLoading && <Loader size={12} className="ml-3 animate-spin" />}
+            </Button>
+          )}
+        </div>
+
         {JSON.stringify(formPreview.formState.errors)}
       </form>
     </FormComponent>

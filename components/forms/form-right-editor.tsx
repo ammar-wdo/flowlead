@@ -811,6 +811,9 @@ const PageBreakEditor = ({
   const handleHintChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     form.setValue(`elements.${elementIndex}.field.hint`, e.target.value);
   };
+  const handlePlaceholderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue(`elements.${elementIndex}.field.placeholder`, e.target.value);
+  };
 
   return (
     <div className="space-y-3">
@@ -822,6 +825,13 @@ const PageBreakEditor = ({
         />
       </div>
 
+      <div>
+        <Label>Placeholder:</Label>
+        <Input
+          value={element?.field?.placeholder || ""}
+          onChange={(e) => handlePlaceholderChange(e)}
+        />
+      </div>
       <div>
         <Label>Hint:</Label>
         <Input

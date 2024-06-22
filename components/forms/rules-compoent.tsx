@@ -504,7 +504,7 @@ const RenderValueComponent = (
     fieldType || ""
   );
 
-  console.log(fieldType,)
+
 
   const [open, setOpen] = useState(false)
 

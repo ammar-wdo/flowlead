@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
-import { generateZodSchema, isFieldVisible } from "@/lib/utils";
+import { generateZodSchema, groupElementsBySteps, isFieldVisible } from "@/lib/utils";
 import { toast } from "sonner";
 import { createSubmission } from "@/actions/submission-action";
 
@@ -12,6 +12,9 @@ export const useFormPreview = (form: Form) => {
 
   const formPreview: UseFormReturn<z.infer<typeof schema>> = useForm({
     resolver: zodResolver(schema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    criteriaMode: 'all',
     defaultValues: {},
    
    
@@ -71,5 +74,8 @@ if(!res.success) return toast.error(res.error)
     }
   }
 
-  return { formPreview, onSubmit, handleBlur: evaluateAndUpdateSchema };
+  const {steps,labels} = groupElementsBySteps(form.elements); // Group form elements into steps
+  const [currentStep, setCurrentStep] = useState(0); // State to track the current step
+
+  return { formPreview, onSubmit, handleBlur: evaluateAndUpdateSchema,steps,currentStep,setCurrentStep,labels };
 };

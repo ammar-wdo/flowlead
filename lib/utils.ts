@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import * as clerkClient from "@clerk/clerk-sdk-node";
 import { describe } from "node:test";
 import { object, z } from "zod";
-import { ComparisonOperator, Element, Rule } from "@prisma/client";
+import { ComparisonOperator, Element, FieldType, Rule } from "@prisma/client";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -708,4 +708,39 @@ export function formatFileSize(bytes?: number) {
   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
+
+
+
+
+
+// This function splits the form elements into groups (steps) based on the presence of "breaker"
+interface StepsWithLabels {
+  steps: Element[][];
+  labels: (string | null)[];
+}
+
+export function groupElementsBySteps(elements: Element[]): StepsWithLabels {
+  const steps: Element[][] = [];
+  const labels: (string | null)[] = [];
+  let currentStep: Element[] = [];
+
+  elements.forEach((element) => {
+    if (element.field?.type === FieldType.breaker) {
+      if (currentStep.length > 0) {
+        steps.push(currentStep);
+        currentStep = [];
+      }
+      labels.push(element.field?.placeholder || null); // Save the breaker label
+    } else {
+      currentStep.push(element);
+    }
+  });
+
+  if (currentStep.length > 0) {
+    steps.push(currentStep);
+    labels.push(null); // No breaker after the last step
+  }
+
+  return { steps, labels };
 }
