@@ -16,6 +16,16 @@ import {
 import { Input } from "@/components/ui/input";
 
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose
+} from "@/components/ui/dialog";
+
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
@@ -79,18 +89,22 @@ import {
 } from "../ui/command";
 import { CommandList } from "cmdk";
 import { ScrollArea } from "../ui/scroll-area";
+import { Checkbox } from "../ui/checkbox";
 
 type Props = {
   quotation: Quotation | undefined | null;
   options: {
-    serviceName: string;
-    serviceId: string;
     id: string;
     name: string;
-    description: string | null;
-    image: string | null;
-    enableQuantity: boolean;
-    price: number;
+    taxPercentage: number
+    options: {
+      id: string;
+      name: string;
+      description: string | null;
+      image: string | null;
+      enableQuantity: boolean;
+      price: number;
+    }[];
   }[];
   contacts: Contact[];
   quotationSettings: { id: string; nextNumber: number; prefix: string };
@@ -133,7 +147,7 @@ const QuotationsForm = ({
     handleSetDiscount,
     discountValue,
     subTotalWithDiscount,
-    total
+    total,
   } = useQuotation({ quotation, quotationSettings });
 
   const [mount, setMount] = useState(false);
@@ -536,13 +550,11 @@ const QuotationsForm = ({
             >
               <PlusIcon size={15} className="mr-2" /> Add Item
             </Button>
-            <Button
-              type="button"
-              variant={"ghost"}
-              className="rounded-none hover:rounded-none text-sm border-r"
-            >
-              <Star size={15} className="mr-2" /> Choose Option
-            </Button>
+            <OptionsModal  options={options} selectOptions={(options)=>{
+
+              const lineItems = form.watch('lineItems')
+              form.setValue('lineItems',[...lineItems,...options])
+            }}/>
             <DiscountDropdownMenue
               className="rounded-none hover:rounded-none text-sm"
               discountType={form.watch("discount.type")}
@@ -648,15 +660,22 @@ const QuotationsForm = ({
         <div className="flex ml-auto max-w-[300px] flex-col space-y-2">
           {/* discount */}
           {!!form.watch("discount") && (
-            <ShowValueElement title="Discount" value={discountValue} minus={true}/>
+            <ShowValueElement
+              title="Discount"
+              value={discountValue}
+              minus={true}
+            />
           )}
           {/* subtotal */}
           <ShowValueElement title="Subtotal" value={subTotalWithDiscount} />
 
           {/* lineitemes vat */}
           {form.watch("lineItems").map((el, index) => (
-            <ShowValueElement key={`vat - ${index}`} title={`${el.taxPercentage}% VAT`} value={el.taxPercentage * el.price * el.quantity /100} />
-          
+            <ShowValueElement
+              key={`vat - ${index}`}
+              title={`${el.taxPercentage}% VAT`}
+              value={(el.taxPercentage * el.price * el.quantity) / 100}
+            />
           ))}
           {/* total amount */}
           <ShowValueElement title={"Total"} value={total} />
@@ -1103,16 +1122,126 @@ const DiscountDropdownMenue = ({
 const ShowValueElement = ({
   title,
   value,
-  minus
+  minus,
 }: {
   title: string;
   value: number;
-  minus?:boolean
+  minus?: boolean;
 }) => {
   return (
     <article className="flex items-center justify-between text-sm ">
       <span className="flex items-center gap-3 font-semibold">{title}</span>
-      <span>{minus && "- "}€ {value}</span>
+      <span>
+        {minus && "- "}€ {value}
+      </span>
     </article>
+  );
+};
+
+
+type LineItem = {
+  id: string;
+  name: string;
+  quantity: number;
+  price: number;
+  taxPercentage: number;
+  totalPrice: number;
+  taxAmount: number;
+  description?: string | null | undefined;
+}
+const OptionsModal = ({
+  options,
+  selectOptions
+}: {
+  options: {
+    id: string;
+    name: string;
+    taxPercentage: number
+    options: {
+      id: string;
+      name: string;
+      description: string | null;
+      image: string | null;
+      enableQuantity: boolean;
+      price: number;
+    }[];
+  }[]
+  ,
+  selectOptions:(options:LineItem[])=>void
+}) => {
+
+  const [optionsItems, setOptionsItems] = useState<LineItem[]>([])
+ 
+  return (
+    <Dialog >
+      <DialogTrigger>
+        {" "}
+        <Button
+          type="button"
+          variant={"ghost"}
+          className="rounded-none hover:rounded-none text-sm border-r"
+        >
+          <Star size={15} className="mr-2" /> Choose Option
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-[800px] w-full">
+        <DialogHeader>
+          <DialogTitle>Choose Options</DialogTitle>
+          <DialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div>
+{options.map(service=><article key={service.id}>
+
+  <h4 className="font-semibold">{service.name}</h4>
+  <div className="mt-2 space-y-1">
+    
+    
+    <div className="grid grid-cols-4 gap-3 font-semibold">
+
+    <span>Name</span>
+    <span>Price</span>
+    <span className="flex-shrink-0 text-nowrap">Tax Percentage</span>
+    </div>
+
+    {service.options.map(option=><div key={option.id} className="grid grid-cols-4 gap-3 text-slate-600 items-center">
+      <div className="flex items-center gap-1">
+      <Checkbox id={option.id}  checked={optionsItems.some(item=>item.id===option.id)} onCheckedChange={()=>{
+if(optionsItems.some(item=>item.id===option.id)) return setOptionsItems(prev=>prev.filter(el=>el.id !==option.id))
+  else return setOptionsItems(prev=>[...prev,{name:option.name,price:option.price,quantity:1,taxPercentage:service.taxPercentage,description:option.description,totalPrice:option.price,taxAmount:option.price * service.taxPercentage /100,id:option.id}])
+
+      }}/>
+      <label
+        htmlFor={option.id}
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+       {option.name}
+      </label>
+      </div>
+  
+      <span>€ {option.price}</span>
+      <span>{service.taxPercentage}</span>
+
+    </div>)}
+  </div>
+</article>)}
+        </div>
+        <DialogClose>
+
+       
+        <Button className="bg-second hover:bg-second/80 text-white"
+        onClick={()=>{
+const modifiedLineItmes = optionsItems.map(item=>({...item,id:uuidv4()}))
+selectOptions(modifiedLineItmes)
+setOptionsItems([])
+
+        }}
+        >Save</Button>
+         </DialogClose>
+      </DialogContent>
+    </Dialog>
   );
 };

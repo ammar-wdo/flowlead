@@ -87,19 +87,11 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
       select: {
         id: true,
         name: true,
+        taxPercentage:true,
         options: true,
       },
     })
-    .then((data) =>
-      data.flatMap((service) => {
-        const newOption = service.options.map((option) => ({
-          ...option,
-          serviceName: service.name,
-          serviceId: service.id,
-        }));
-        return newOption;
-      })
-    );
+ 
 
   const [contacts, options] = await Promise.all([contactsRes, optionsRes]);
 
