@@ -1220,7 +1220,7 @@ const OptionsModal = ({
     
        
           </div>
-        <div className="grid grid-cols-4 gap-3 font-semibold w-full ">
+        <div className="grid grid-cols-3 gap-3 font-semibold w-full ">
                   <span >Name</span>
                   <span className="justify-self-center">Price</span>
                   <span className="flex-shrink-0 text-nowrap justify-self-center">
@@ -1240,7 +1240,7 @@ const OptionsModal = ({
                 {service.options.map((option) => (
                   <div
                     key={option.id}
-                    className="grid grid-cols-4 gap-3 text-slate-600 items-center w-full"
+                    className="grid grid-cols-3 gap-3 text-slate-600 items-center w-full"
                   >
                     <div className="flex items-center gap-1">
                       <Checkbox
