@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose
+  DialogClose,
 } from "@/components/ui/dialog";
 
 import {
@@ -72,7 +72,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { Calendar } from "../ui/calendar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { VARIABLES } from "@/schemas";
 import { MultiFileDropzone } from "../MultiFileDropzone";
@@ -90,13 +90,14 @@ import {
 import { CommandList } from "cmdk";
 import { ScrollArea } from "../ui/scroll-area";
 import { Checkbox } from "../ui/checkbox";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 type Props = {
   quotation: Quotation | undefined | null;
   options: {
     id: string;
     name: string;
-    taxPercentage: number
+    taxPercentage: number;
     options: {
       id: string;
       name: string;
@@ -195,24 +196,26 @@ const QuotationsForm = ({
                                 }
                               })?.contactName
                             } - ${
-                              (refactoredContacts.find((contact) => {
-                                if (!("contactPerson" in contact)) return;
-                                else {
-                                  return (
-                                    contact.companyId === field.value &&
-                                    contact.contactPersonId ===
-                                      form.watch("contactPersonId")
-                                  );
+                              (
+                                refactoredContacts.find((contact) => {
+                                  if (!("contactPerson" in contact)) return;
+                                  else {
+                                    return (
+                                      contact.companyId === field.value &&
+                                      contact.contactPersonId ===
+                                        form.watch("contactPersonId")
+                                    );
+                                  }
+                                }) as {
+                                  contactPersonId: string;
+                                  companyId: string;
+                                  contactName: string;
+                                  emailAddress: string;
+                                  phoneNumber: string | null;
+                                  companyName: string;
+                                  contactPerson: boolean;
                                 }
-                              }) as {
-                                contactPersonId: string;
-                                companyId: string;
-                                contactName: string;
-                                emailAddress: string;
-                                phoneNumber: string | null;
-                                companyName: string;
-                                contactPerson: boolean;
-                              })?.companyName
+                              )?.companyName
                             }`
                           : field.value
                           ? refactoredContacts.find(
@@ -252,7 +255,7 @@ const QuotationsForm = ({
                                       contact.contactPersonId
                                     );
                                   } else {
-                                    form.setValue("contactPersonId", '');
+                                    form.setValue("contactPersonId", "");
                                   }
                                 }}
                               >
@@ -550,11 +553,13 @@ const QuotationsForm = ({
             >
               <PlusIcon size={15} className="mr-2" /> Add Item
             </Button>
-            <OptionsModal  options={options} selectOptions={(options)=>{
-
-              const lineItems = form.watch('lineItems')
-              form.setValue('lineItems',[...lineItems,...options])
-            }}/>
+            <OptionsModal
+              options={options}
+              selectOptions={(options) => {
+                const lineItems = form.watch("lineItems");
+                form.setValue("lineItems", [...lineItems, ...options]);
+              }}
+            />
             <DiscountDropdownMenue
               className="rounded-none hover:rounded-none text-sm"
               discountType={form.watch("discount.type")}
@@ -946,7 +951,7 @@ const OptionTableRow = ({
             type="button"
             className={cn(
               "text-xs px-0 w-fit py-1 self-end h-fit hover:no-underline ",
-              shwoDescription ? "text-rose-600" : "text-indigo-600"
+              shwoDescription ? "text-muted-foreground" : "text-indigo-600"
             )}
             onClick={() => {
               form.setValue(`lineItems.${index}.description`, "");
@@ -1138,7 +1143,6 @@ const ShowValueElement = ({
   );
 };
 
-
 type LineItem = {
   id: string;
   name: string;
@@ -1148,15 +1152,15 @@ type LineItem = {
   totalPrice: number;
   taxAmount: number;
   description?: string | null | undefined;
-}
+};
 const OptionsModal = ({
   options,
-  selectOptions
+  selectOptions,
 }: {
   options: {
     id: string;
     name: string;
-    taxPercentage: number
+    taxPercentage: number;
     options: {
       id: string;
       name: string;
@@ -1165,15 +1169,27 @@ const OptionsModal = ({
       enableQuantity: boolean;
       price: number;
     }[];
-  }[]
-  ,
-  selectOptions:(options:LineItem[])=>void
+  }[];
+  selectOptions: (options: LineItem[]) => void;
 }) => {
+  const [optionsItems, setOptionsItems] = useState<LineItem[]>([]);
 
-  const [optionsItems, setOptionsItems] = useState<LineItem[]>([])
- 
+  const [search, setSearch] = useState('')
+
+
+  const filteredOptions = useMemo(()=>{
+    if(!search) return options
+
+    return options
+    .map(option => ({
+      ...option,
+      options: option.options.filter(el => el.name.toLowerCase().startsWith(search.toLowerCase()))
+    }))
+    .filter(option => option.options.length > 0)
+  },[options,search])
+
   return (
-    <Dialog >
+    <Dialog>
       <DialogTrigger>
         {" "}
         <Button
@@ -1184,63 +1200,103 @@ const OptionsModal = ({
           <Star size={15} className="mr-2" /> Choose Option
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[800px] w-full">
-        <DialogHeader>
+      <DialogContent className="max-w-[1100px] w-full px-12 flex flex-col justify-start max-h-[80vh] overflow-y-auto">
+        <DialogHeader >
           <DialogTitle>Choose Options</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+       {"Choose Service's options to put in line items"}
           </DialogDescription>
         </DialogHeader>
 
-        <div>
-{options.map(service=><article key={service.id}>
-
-  <h4 className="font-semibold">{service.name}</h4>
-  <div className="mt-2 space-y-1">
+        <div className="w-full mt-8">
+          <div className="mb-4 p-px border rounded-lg flex items-center gap-1">
+            <Input placeholder="Search by option name" value={search} onChange={(e)=>setSearch(e.target.value)} className="flex-1 border-0"/>
+       <span className="px-4"> <FaMagnifyingGlass className=""/></span>
+           
     
-    
-    <div className="grid grid-cols-4 gap-3 font-semibold">
-
-    <span>Name</span>
-    <span>Price</span>
-    <span className="flex-shrink-0 text-nowrap">Tax Percentage</span>
-    </div>
-
-    {service.options.map(option=><div key={option.id} className="grid grid-cols-4 gap-3 text-slate-600 items-center">
-      <div className="flex items-center gap-1">
-      <Checkbox id={option.id}  checked={optionsItems.some(item=>item.id===option.id)} onCheckedChange={()=>{
-if(optionsItems.some(item=>item.id===option.id)) return setOptionsItems(prev=>prev.filter(el=>el.id !==option.id))
-  else return setOptionsItems(prev=>[...prev,{name:option.name,price:option.price,quantity:1,taxPercentage:service.taxPercentage,description:option.description,totalPrice:option.price,taxAmount:option.price * service.taxPercentage /100,id:option.id}])
-
-      }}/>
-      <label
-        htmlFor={option.id}
-        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-      >
-       {option.name}
-      </label>
-      </div>
-  
-      <span>€ {option.price}</span>
-      <span>{service.taxPercentage}</span>
-
-    </div>)}
-  </div>
-</article>)}
-        </div>
-        <DialogClose>
-
        
-        <Button className="bg-second hover:bg-second/80 text-white"
-        onClick={()=>{
-const modifiedLineItmes = optionsItems.map(item=>({...item,id:uuidv4()}))
-selectOptions(modifiedLineItmes)
-setOptionsItems([])
+          </div>
+        <div className="grid grid-cols-4 gap-3 font-semibold w-full ">
+                  <span >Name</span>
+                  <span className="justify-self-center">Price</span>
+                  <span className="flex-shrink-0 text-nowrap justify-self-center">
+                    Tax Percentage
+                  </span></div>
+          {filteredOptions.map((service) => (
+            <article key={service.id}>
+             
+              <div className="mt-2 space-y-1">
+          
+               
+                  <h4 className="text-neutral-500 font-medium col-span-3 mt-8 text-sm">{service.name}</h4>
+              
 
-        }}
-        >Save</Button>
-         </DialogClose>
+                {service.options.map((option) => (
+                  <div
+                    key={option.id}
+                    className="grid grid-cols-4 gap-3 text-slate-600 items-center w-full"
+                  >
+                    <div className="flex items-center gap-1">
+                      <Checkbox
+                        id={option.id}
+                        checked={optionsItems.some(
+                          (item) => item.id === option.id
+                        )}
+                        onCheckedChange={() => {
+                          if (
+                            optionsItems.some((item) => item.id === option.id)
+                          )
+                            return setOptionsItems((prev) =>
+                              prev.filter((el) => el.id !== option.id)
+                            );
+                          else
+                            return setOptionsItems((prev) => [
+                              ...prev,
+                              {
+                                name: option.name,
+                                price: option.price,
+                                quantity: 1,
+                                taxPercentage: service.taxPercentage,
+                                description: option.description,
+                                totalPrice: option.price,
+                                taxAmount:
+                                  (option.price * service.taxPercentage) / 100,
+                                id: option.id,
+                              },
+                            ]);
+                        }}
+                      />
+                      <label
+                        htmlFor={option.id}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {option.name}
+                      </label>
+                    </div>
+
+                    <span className="justify-self-center ">€ {option.price}</span>
+                    <span className="justify-self-center">{service.taxPercentage}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+        <DialogClose className="w-fit ml-auto mt-auto">
+          <Button
+            className="bg-second hover:bg-second/80 text-white px-24" 
+            onClick={() => {
+              const modifiedLineItmes = optionsItems.map((item) => ({
+                ...item,
+                id: uuidv4(),
+              }));
+              selectOptions(modifiedLineItmes);
+              setOptionsItems([]);
+            }}
+          >
+            Save
+          </Button>
+        </DialogClose>
       </DialogContent>
     </Dialog>
   );
