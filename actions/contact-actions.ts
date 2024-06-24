@@ -139,7 +139,8 @@ const existingContactPersonIds = existingContactPersons.map(cp => cp.id)
      data: {
        contactName: cp.contactName,
        emailAddress: cp.emailAddress,
-       phoneNumber: cp.phoneNumber
+       phoneNumber: cp.phoneNumber,
+       
      }
    }))
  );

@@ -212,7 +212,7 @@ const QuotationsForm = ({
                                 phoneNumber: string | null;
                                 companyName: string;
                                 contactPerson: boolean;
-                              })!.companyName
+                              })?.companyName
                             }`
                           : field.value
                           ? refactoredContacts.find(
@@ -252,7 +252,7 @@ const QuotationsForm = ({
                                       contact.contactPersonId
                                     );
                                   } else {
-                                    form.setValue("contactPersonId", undefined);
+                                    form.setValue("contactPersonId", '');
                                   }
                                 }}
                               >

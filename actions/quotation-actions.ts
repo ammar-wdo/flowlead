@@ -151,6 +151,9 @@ export const editQuotation = async (
       0
     );
     const totalAmount = totalTax + subTotalWithDiscount;
+
+    //handle contact person id 
+    const contactPersonId = validData.data.contactPersonId?.trim() === "" ? null : validData.data.contactPersonId;
     //update form
 
     const updatedQuotation = await prisma.quotation.update({
@@ -171,6 +174,7 @@ export const editQuotation = async (
         totalAmount,
         totalTax,
         discountAmount,
+        contactPersonId
       },
     });
 
