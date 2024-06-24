@@ -65,6 +65,8 @@ export const addQuotation = async (
 
     //create quotation
 
+    const contactPersonId = validData.data.contactPersonId?.trim() === "" ? null : validData.data.contactPersonId;
+
     const newQuotatuon = await prisma.quotation.create({
       data: {
         userId,
@@ -81,6 +83,7 @@ export const addQuotation = async (
         totalAmount,
         totalTax,
         discountAmount,
+        contactPersonId
       },
     });
 

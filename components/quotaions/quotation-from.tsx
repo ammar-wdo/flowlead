@@ -149,6 +149,7 @@ const QuotationsForm = ({
     discountValue,
     subTotalWithDiscount,
     total,
+    pending
   } = useQuotation({ quotation, quotationSettings });
 
   const [mount, setMount] = useState(false);
@@ -163,7 +164,7 @@ const QuotationsForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-[1100px] bg-white p-8"
+        className=" max-w-[1100px] bg-white p-8 flex flex-col gap-8"
       >
         <FormField
           control={form.control}
@@ -867,7 +868,9 @@ const QuotationsForm = ({
           className="ml-auto  flex bg-second hover:bg-second/90"
           title={!quotation ? "Submit" : "Update"}
           isLoading={form.formState.isSubmitting}
+       
         />
+           {pending && <div className="fixed top-0 left-0 h-screen w-screen flex items-center justify-center bg-black/60 z-[99999999]"><p className="flex items-center gap-2 text-gray-500 text-sm  justify-center   p-8 border bg-white rounded-lg ">Redirecting <Loader className="animate-spin"/></p></div>}
         {JSON.stringify(form.formState.errors)}
       </form>
     </Form>
@@ -1183,7 +1186,7 @@ const OptionsModal = ({
     return options
     .map(option => ({
       ...option,
-      options: option.options.filter(el => el.name.toLowerCase().startsWith(search.toLowerCase()))
+      options: option.options.filter(el => el.name.toLowerCase().includes(search.toLowerCase()))
     }))
     .filter(option => option.options.length > 0)
   },[options,search])
@@ -1210,7 +1213,8 @@ const OptionsModal = ({
 
         <div className="w-full mt-8">
           <div className="mb-4 p-px border rounded-lg flex items-center gap-1">
-            <Input placeholder="Search by option name" value={search} onChange={(e)=>setSearch(e.target.value)} className="flex-1 border-0"/>
+            {!!search && <Button size={'icon'} variant={'secondary'} onClick={()=>setSearch("")}><XIcon className="text-gray-400"/></Button>}
+            <Input placeholder="Search by option name" value={search} onChange={(e)=>setSearch(e.target.value)} className="flex-1 border-0  focus-visible:ring-offset-0   focus-visible:ring-0 focus-visible:ring-transparent  "/>
        <span className="px-4"> <FaMagnifyingGlass className=""/></span>
            
     
@@ -1222,6 +1226,8 @@ const OptionsModal = ({
                   <span className="flex-shrink-0 text-nowrap justify-self-center">
                     Tax Percentage
                   </span></div>
+                  {!options.length && <p className="col-span-3 text-center text-lg font-bold my-12 text-gray-400">No Options</p>}
+                  {!filteredOptions.length && !!options.length && <p className="col-span-3 text-center text-lg font-bold my-12 text-gray-400">No Result</p>}
           {filteredOptions.map((service) => (
             <article key={service.id}>
              

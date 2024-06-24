@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { quotationSchema } from "@/schemas";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { v4 as uuid4 } from "uuid";
 import { useEdgeStore } from "@/lib/edgestore";
 import { FileState } from "@/components/MultiFileDropzone";
@@ -21,6 +21,7 @@ export const useQuotation = ({
 }) => {
   const [openQuotDate, setOpenQuotDate] = useState(false);
   const [openExpiryQuotDate, setOpenExpiryQuotDate] = useState(false);
+  const [pending, startTransitions] = useTransition()
 
   const [contactOpen, setContactOpen] = useState(false)
 
@@ -195,6 +196,7 @@ export const useQuotation = ({
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof quotationSchema>) {
+   
     try {
       let res;
       if (quotation) {
@@ -203,14 +205,23 @@ export const useQuotation = ({
         res = await addQuotation(values, params.companySlug);
       }
 
-      if (!res.success) return toast.error(res.error);
+      if (!res.success){  toast.error(res.error)
+
+        return 
+      };
+      startTransitions(()=>{
       router.push(`/dashboard/${params.companySlug}/quotations`);
       router.refresh()
       toast.success(res.message);
+    })
+
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
+
+      
     }
+
   }
 
 
@@ -267,6 +278,7 @@ export const useQuotation = ({
     handleDeleteDiscount,
     discountValue,
     subTotalWithDiscount,
-    total
+    total,
+    pending
   };
 };
