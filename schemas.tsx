@@ -46,7 +46,7 @@ const attatchmentSchema = z
   })
   .nullable();
 export const quotationsSettings = z.object({
-  dueDays: z.number().positive().default(14),
+  dueDays: z.coerce.number().positive().default(14),
   prefix: optionalString.nullable(),
   nextNumber: z.number().min(1).nonnegative().default(1),
   senderName: requiredString,
@@ -457,6 +457,19 @@ export const quotationSchema= z.object({
 
 
 });
+
+//email send schema 
+export const emailSendSchema = z.object({
+
+    quotationId:requiredString,
+    senderEmail:requiredString.email(),
+    senderName:requiredString,
+    receiverEmail:requiredString.email(),
+    subject:requiredString,
+    content:requiredString,
+    attatchments:z.array(attatchmentSchema).optional()
+  
+})
 
 //fields and service elements types
 

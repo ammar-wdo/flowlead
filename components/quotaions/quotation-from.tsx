@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuotation } from "@/hooks/quotation-hook";
+import { useQuotation, useSendEmail } from "@/hooks/quotation-hook";
 import { Contact, DiscountType, Quotation } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import { FaUser } from "react-icons/fa6";
+
 import {
   Dialog,
   DialogContent,
@@ -23,6 +25,9 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
+  DialogFooter,
+  DialogOverlay,
+  DialogPortal
 } from "@/components/ui/dialog";
 
 import {
@@ -74,7 +79,7 @@ import {
 import { Calendar } from "../ui/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { Textarea } from "../ui/textarea";
-import { VARIABLES } from "@/schemas";
+import { VARIABLES, emailSendSchema } from "@/schemas";
 import { MultiFileDropzone } from "../MultiFileDropzone";
 
 import { v4 as uuidv4 } from "uuid";
@@ -91,6 +96,8 @@ import { CommandList } from "cmdk";
 import { ScrollArea } from "../ui/scroll-area";
 import { Checkbox } from "../ui/checkbox";
 import { FaMagnifyingGlass } from "react-icons/fa6";
+import { z } from "zod";
+import QuillEditor from "../quill-editor";
 
 type Props = {
   quotation: Quotation | undefined | null;
@@ -108,7 +115,19 @@ type Props = {
     }[];
   }[];
   contacts: Contact[];
-  quotationSettings: { id: string; nextNumber: number; prefix: string };
+  quotationSettings: {
+    id: string;
+    attatchments: {
+      name: string | null;
+      type: string | null;
+      size: string | null;
+      url: string | null;
+    }[];
+    footNote: string | null;
+    dueDays: number;
+    prefix: string;
+    nextNumber: number;
+  };
   refactoredContacts: RefactoredContacts;
 };
 
@@ -149,7 +168,9 @@ const QuotationsForm = ({
     discountValue,
     subTotalWithDiscount,
     total,
-    pending
+    pending,
+    emailData,
+    handleResetEmailData,
   } = useQuotation({ quotation, quotationSettings });
 
   const [mount, setMount] = useState(false);
@@ -159,7 +180,7 @@ const QuotationsForm = ({
 
   if (!mount) return null;
 
-  console.log(refactoredContacts);
+  console.log("Email Data", JSON.stringify(emailData, null, 2));
   return (
     <Form {...form}>
       <form
@@ -868,10 +889,20 @@ const QuotationsForm = ({
           className="ml-auto  flex bg-second hover:bg-second/90"
           title={!quotation ? "Submit" : "Update"}
           isLoading={form.formState.isSubmitting}
-       
         />
-           {pending && <div className="fixed top-0 left-0 h-screen w-screen flex items-center justify-center bg-black/60 z-[99999999]"><p className="flex items-center gap-2 text-gray-500 text-sm  justify-center   p-8 border bg-white rounded-lg ">Redirecting <Loader className="animate-spin"/></p></div>}
+
+        {pending && (
+          <div className="fixed top-0 left-0 h-screen w-screen flex items-center justify-center bg-black/60 z-[99999999]">
+            <p className="flex items-center gap-2 text-gray-500 text-sm  justify-center   p-8 border bg-white rounded-lg ">
+              Redirecting <Loader className="animate-spin" />
+            </p>
+          </div>
+        )}
         {JSON.stringify(form.formState.errors)}
+        <SendEmailModal
+          emailData={emailData}
+          handleResetEmailData={handleResetEmailData}
+        />
       </form>
     </Form>
   );
@@ -1177,19 +1208,20 @@ const OptionsModal = ({
 }) => {
   const [optionsItems, setOptionsItems] = useState<LineItem[]>([]);
 
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState("");
 
-
-  const filteredOptions = useMemo(()=>{
-    if(!search) return options
+  const filteredOptions = useMemo(() => {
+    if (!search) return options;
 
     return options
-    .map(option => ({
-      ...option,
-      options: option.options.filter(el => el.name.toLowerCase().includes(search.toLowerCase()))
-    }))
-    .filter(option => option.options.length > 0)
-  },[options,search])
+      .map((option) => ({
+        ...option,
+        options: option.options.filter((el) =>
+          el.name.toLowerCase().includes(search.toLowerCase())
+        ),
+      }))
+      .filter((option) => option.options.length > 0);
+  }, [options, search]);
 
   return (
     <Dialog>
@@ -1204,38 +1236,58 @@ const OptionsModal = ({
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[1100px] w-full px-12 flex flex-col justify-start max-h-[80vh] overflow-y-auto">
-        <DialogHeader >
+        <DialogHeader>
           <DialogTitle>Choose Options</DialogTitle>
           <DialogDescription>
-       {"Choose Service's options to put in line items"}
+            {"Choose Service's options to put in line items"}
           </DialogDescription>
         </DialogHeader>
 
         <div className="w-full mt-8">
           <div className="mb-4 p-px border rounded-lg flex items-center gap-1">
-            {!!search && <Button size={'icon'} variant={'secondary'} onClick={()=>setSearch("")}><XIcon className="text-gray-400"/></Button>}
-            <Input placeholder="Search by option name" value={search} onChange={(e)=>setSearch(e.target.value)} className="flex-1 border-0  focus-visible:ring-offset-0   focus-visible:ring-0 focus-visible:ring-transparent  "/>
-       <span className="px-4"> <FaMagnifyingGlass className=""/></span>
-           
-    
-       
+            {!!search && (
+              <Button
+                size={"icon"}
+                variant={"secondary"}
+                onClick={() => setSearch("")}
+              >
+                <XIcon className="text-gray-400" />
+              </Button>
+            )}
+            <Input
+              placeholder="Search by option name"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 border-0  focus-visible:ring-offset-0   focus-visible:ring-0 focus-visible:ring-transparent  "
+            />
+            <span className="px-4">
+              {" "}
+              <FaMagnifyingGlass className="" />
+            </span>
           </div>
-        <div className="grid grid-cols-3 gap-3 font-semibold w-full ">
-                  <span >Name</span>
-                  <span className="justify-self-center">Price</span>
-                  <span className="flex-shrink-0 text-nowrap justify-self-center">
-                    Tax Percentage
-                  </span></div>
-                  {!options.length && <p className="col-span-3 text-center text-lg font-bold my-12 text-gray-400">No Options</p>}
-                  {!filteredOptions.length && !!options.length && <p className="col-span-3 text-center text-lg font-bold my-12 text-gray-400">No Result</p>}
+          <div className="grid grid-cols-3 gap-3 font-semibold w-full ">
+            <span>Name</span>
+            <span className="justify-self-center">Price</span>
+            <span className="flex-shrink-0 text-nowrap justify-self-center">
+              Tax Percentage
+            </span>
+          </div>
+          {!options.length && (
+            <p className="col-span-3 text-center text-lg font-bold my-12 text-gray-400">
+              No Options
+            </p>
+          )}
+          {!filteredOptions.length && !!options.length && (
+            <p className="col-span-3 text-center text-lg font-bold my-12 text-gray-400">
+              No Result
+            </p>
+          )}
           {filteredOptions.map((service) => (
             <article key={service.id}>
-             
               <div className="mt-2 space-y-1">
-          
-               
-                  <h4 className="text-neutral-500 font-medium col-span-3 mt-8 text-sm">{service.name}</h4>
-              
+                <h4 className="text-neutral-500 font-medium col-span-3 mt-8 text-sm">
+                  {service.name}
+                </h4>
 
                 {service.options.map((option) => (
                   <div
@@ -1280,8 +1332,12 @@ const OptionsModal = ({
                       </label>
                     </div>
 
-                    <span className="justify-self-center ">€ {option.price}</span>
-                    <span className="justify-self-center">{service.taxPercentage}</span>
+                    <span className="justify-self-center ">
+                      € {option.price}
+                    </span>
+                    <span className="justify-self-center">
+                      {service.taxPercentage}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -1290,7 +1346,7 @@ const OptionsModal = ({
         </div>
         <DialogClose className="w-fit ml-auto mt-auto">
           <Button
-            className="bg-second hover:bg-second/80 text-white px-24" 
+            className="bg-second hover:bg-second/80 text-white px-24"
             onClick={() => {
               const modifiedLineItmes = optionsItems.map((item) => ({
                 ...item,
@@ -1304,6 +1360,206 @@ const OptionsModal = ({
           </Button>
         </DialogClose>
       </DialogContent>
+    </Dialog>
+  );
+};
+
+const SendEmailModal = ({
+  emailData,
+  handleResetEmailData,
+}: {
+  emailData: z.infer<typeof emailSendSchema> | null;
+  handleResetEmailData: (val: boolean) => void;
+}) => {
+  const { form, onSubmit } = useSendEmail({ emailData });
+
+  return (
+    <Dialog
+      open={!!emailData}
+      onOpenChange={(val) => handleResetEmailData(val)}
+    >
+  
+      <DialogContent  color="white" className="max-w-[700px] p-0 border-0 overflow-hidden">
+     
+        <DialogHeader className="bg-second px-10 py-4 text-white">
+    <div className="flex items-center gap-2">
+    <FaUser size={17}/>
+      <p className="text-1xl font-semibold">Send to contact</p>
+    </div>
+      
+        </DialogHeader>
+
+        <Form {...form}>
+          <form  className="space-y-8 p-8">
+            <FormField
+              control={form.control}
+              name="senderName"
+              render={({ field }) => (
+                <FormItem>
+                  <SettingsFormWrapper>
+                    <FormLabel>Sender Name</FormLabel>
+                    <FormControl>
+                      <Input
+                      autoFocus={false}
+                        readOnly
+                        placeholder="sender name"
+                        className="col-span-2 max-w-[450px] pointer-events-none bg-gray-100 text-gray-400"
+                        {...field}
+                      />
+                    </FormControl>
+                  </SettingsFormWrapper>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="senderEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <SettingsFormWrapper>
+                    <FormLabel>Sender Email</FormLabel>
+                    <FormControl>
+                      <Input
+                       autoFocus={false}
+                        readOnly
+                        placeholder="sender email"
+                        className="col-span-2 max-w-[450px] pointer-events-none bg-gray-100 text-gray-400"
+                        {...field}
+                      />
+                    </FormControl>
+                  </SettingsFormWrapper>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="receiverEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <SettingsFormWrapper>
+                    <FormLabel>Send To:</FormLabel>
+                    <FormControl>
+                      <Input
+                      autoFocus={true}
+                        placeholder="Send To"
+                        {...field}
+                        className="col-span-2 max-w-[450px]"
+                      />
+                    </FormControl>
+                  </SettingsFormWrapper>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="subject"
+              render={({ field }) => (
+                <FormItem>
+                  <SettingsFormWrapper>
+                    <FormLabel>Subject:</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Subject"
+                        {...field}
+                        className="col-span-2 max-w-[450px]"
+                      />
+                    </FormControl>
+                  </SettingsFormWrapper>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <SettingsFormWrapper>
+                    <FormLabel>Body:</FormLabel>
+                    <FormControl>
+                      <div className="col-span-2">
+                      <QuillEditor value={field.value || ''} onChange={field.onChange} />
+                      </div>
+
+                  
+                    </FormControl>
+                  </SettingsFormWrapper>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="attatchments"
+              render={({ field }) => (
+                <FormItem>
+                  <SettingsFormWrapper>
+                    <FormLabel>Attatchments:</FormLabel>
+                    <div className="flex items-center gap-4 col-span-2 max-w-[450px]">
+                      {field.value?.map((file, index) => (
+                          <article
+                          key={uuidv4()}
+                          className="border p-3 rounded-lg flex items-start gap-3 relative overflow-hidden"
+                        >
+                     
+                          <span className="w-12 h-12 flex items-center justify-center bg-second/10 rounded-full shrink-0">
+                            <FileIcon className="text-second" />
+                          </span>
+                          <div className="text-xs text-muted-foreground">
+                            <p>{file?.name}</p>
+                            {/* <p>{file?.type}</p> */}
+                            <p>{file?.size}</p>
+                            {file?.url && (
+                              <a
+                                href={file?.url}
+                                target="_blank"
+                                download
+                                className="text-indigo-500 hover:underline"
+                              >
+                                Download
+                              </a>
+                            )}
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </SettingsFormWrapper>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter>
+              <Button
+              type="button"
+                onClick={() => handleResetEmailData(false)}
+                variant={"secondary"}
+              >
+                Not Now
+              </Button>
+              <Button
+              onClick={form.handleSubmit(onSubmit)}
+             
+                variant={"default"}
+                className="bg-second hover:bg-second/80 text-white hover:text-white"
+              >
+                Send
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+ 
     </Dialog>
   );
 };

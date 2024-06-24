@@ -85,6 +85,33 @@ export const addQuotation = async (
         discountAmount,
         contactPersonId
       },
+      include:{
+        company:{
+          select:{
+            name:true,
+            companyEmail:true
+          }
+        },
+        contact:{
+          select:{
+            contactName:true,
+            emailAddress:true
+          }
+        },
+        contactPerson:{
+          select:{
+            contactName:true,
+            emailAddress:true
+          }
+        },
+        quotationSettings:{
+          select:{
+            subject:true,
+            body:true
+          }
+        }
+     
+      }
     });
 
     await prisma.qoutesSettings.update({
@@ -96,7 +123,7 @@ export const addQuotation = async (
       },
     });
 
-    return { success: true, message: "Quotation Created Successfully" };
+    return { success: true, message: "Quotation Created Successfully",data:newQuotatuon };
   } catch (error) {
     console.log(error);
     let message = "Internal server error";
@@ -179,9 +206,35 @@ export const editQuotation = async (
         discountAmount,
         contactPersonId
       },
+      include:{
+        company:{
+          select:{
+            name:true,
+            companyEmail:true
+          }
+        },
+        contact:{
+          select:{
+            contactName:true,
+            emailAddress:true
+          }
+        },
+        contactPerson:{
+          select:{
+            contactName:true,
+            emailAddress:true
+          }
+        }  , quotationSettings:{
+          select:{
+            subject:true,
+            body:true
+          }
+        }
+     
+      }
     });
 
-    return { success: true, message: "Quotation Updated Successfully" };
+    return { success: true, message: "Quotation Updated Successfully",data:updatedQuotation };
   } catch (error) {
     console.log(error);
     let message = "Internal server error";

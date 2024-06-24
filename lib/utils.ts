@@ -9,6 +9,7 @@ import * as clerkClient from "@clerk/clerk-sdk-node";
 import { describe } from "node:test";
 import { object, z } from "zod";
 import { ComparisonOperator, Element, FieldType, Rule } from "@prisma/client";
+import { format } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -743,4 +744,18 @@ export function groupElementsBySteps(elements: Element[]): StepsWithLabels {
   }
 
   return { steps, labels };
+}
+
+
+export function replaceDates(content:string, quotationDate:Date, expiryDate:Date) {
+  // Ensure dates are in a readable format (you can customize the format as needed)
+  const formattedQuotationDate = format(new Date(quotationDate),"dd-MM-yyyy") ;
+  const formattedExpiryDate = format(new Date(expiryDate),"dd-MM-yyyy");
+
+  // Replace placeholders in the content
+  const updatedContent = content
+    .replace(/{quotation date}/g, formattedQuotationDate)
+    .replace(/{expiration date}/g, formattedExpiryDate);
+
+  return updatedContent;
 }

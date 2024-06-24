@@ -46,7 +46,9 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
               slug: companySlug,
               userId,
             },
+            
           },
+
         })
       : null;
 
@@ -62,6 +64,9 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
           id: true,
           nextNumber: true,
           prefix: true,
+          dueDays:true,
+          attatchments:true,
+          footNote:true,
         },
       },
     },

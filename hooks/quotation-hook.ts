@@ -3,28 +3,50 @@ import { DiscountType, Quotation } from "@prisma/client";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { quotationSchema } from "@/schemas";
-import { useState, useTransition } from "react";
+import { emailSendSchema, quotationSchema } from "@/schemas";
+import { useEffect, useState, useTransition } from "react";
 import { v4 as uuid4 } from "uuid";
 import { useEdgeStore } from "@/lib/edgestore";
 import { FileState } from "@/components/MultiFileDropzone";
 import { addQuotation, editQuotation } from "@/actions/quotation-actions";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { replaceDates } from "@/lib/utils";
 
 export const useQuotation = ({
   quotation,
   quotationSettings,
 }: {
   quotation: Quotation | null | undefined;
-  quotationSettings: { id: string; nextNumber: number; prefix: string };
+  quotationSettings: {
+    id: string;
+    attatchments: {
+      name: string | null;
+      type: string | null;
+      size: string | null;
+      url: string | null;
+    }[];
+    footNote: string | null;
+    dueDays: number;
+    prefix: string;
+    nextNumber: number;
+  };
 }) => {
   const [openQuotDate, setOpenQuotDate] = useState(false);
   const [openExpiryQuotDate, setOpenExpiryQuotDate] = useState(false);
-  const [pending, startTransitions] = useTransition()
+  const [pending, startTransitions] = useTransition();
 
-  const [contactOpen, setContactOpen] = useState(false)
+  const [contactOpen, setContactOpen] = useState(false);
 
+  const [emailData, setEmailData] = useState<z.infer<
+    typeof emailSendSchema
+  > | null>(null);
+
+  const quotationExpiryDate =
+    quotation?.expiryDate ||
+    new Date(
+      new Date().setDate(new Date().getDate() + quotationSettings.dueDays)
+    );
   const form = useForm<z.infer<typeof quotationSchema>>({
     resolver: zodResolver(quotationSchema),
     defaultValues: {
@@ -39,9 +61,13 @@ export const useQuotation = ({
           }
         : null,
 
-      expiryDate: quotation?.expiryDate || undefined,
-      footNote: quotation?.footNote || "",
-  
+      expiryDate: quotationExpiryDate,
+      footNote: replaceDates(
+        quotation?.footNote || quotationSettings.footNote || "",
+        quotation?.quotationDate || new Date(),
+        quotationExpiryDate
+      ),
+
       lineItems: quotation?.lineItems || [
         {
           id: uuid4(),
@@ -63,11 +89,22 @@ export const useQuotation = ({
       subject: quotation?.subject || "",
 
       totalTax: quotation?.totalTax || undefined,
-      attatchments:quotation?.attatchments || [],
-      contactPersonId:quotation?.contactPersonId || undefined,
-
+      attatchments: quotation
+        ? quotation.attatchments
+        : quotationSettings.attatchments,
+      contactPersonId: quotation?.contactPersonId || undefined,
     },
   });
+
+  useEffect(() => {
+    const refactoredFootNoteContent = replaceDates(
+      form.watch("footNote") || "",
+      form.watch("quotationDate"),
+      form.watch("expiryDate")
+    );
+
+    form.setValue("footNote", refactoredFootNoteContent);
+  }, [form.watch("footNote")]);
 
   //calculate total when inputs change
   const calculate = (index: number) => {
@@ -80,17 +117,25 @@ export const useQuotation = ({
     form.setValue(`lineItems.${index}.totalPrice`, quantity * price);
   };
 
-  const subTotalAmount = form.watch('lineItems').reduce((acc,val)=>acc + (val.price * val.quantity),0)
+  const subTotalAmount = form
+    .watch("lineItems")
+    .reduce((acc, val) => acc + val.price * val.quantity, 0);
 
-  const discountValue = form.watch('discount')?.type==='PERCENTAGE' ?  ((form.watch('discount')?.percentageValue || 0) * subTotalAmount ) / 100 : (form.watch('discount')?.fixedValue || 0)
+  const discountValue =
+    form.watch("discount")?.type === "PERCENTAGE"
+      ? ((form.watch("discount")?.percentageValue || 0) * subTotalAmount) / 100
+      : form.watch("discount")?.fixedValue || 0;
 
-  const subTotalWithDiscount = subTotalAmount - discountValue
+  const subTotalWithDiscount = subTotalAmount - discountValue;
 
-  const totalVat = form.watch('lineItems').reduce((acc,val)=>acc + (val.taxPercentage * val.price * val.quantity /100),0)
+  const totalVat = form
+    .watch("lineItems")
+    .reduce(
+      (acc, val) => acc + (val.taxPercentage * val.price * val.quantity) / 100,
+      0
+    );
 
-  const total = totalVat + subTotalWithDiscount
-
-
+  const total = totalVat + subTotalWithDiscount;
 
   //add new line item
   const addLineItem = () => {
@@ -175,9 +220,11 @@ export const useQuotation = ({
     if (!url) return;
     try {
       setDeleting(url);
-      await edgestore.publicFiles.delete({
-        url,
-      });
+      if (!quotationSettings.attatchments.some((el) => el.url === url)) {
+        await edgestore.publicFiles.delete({
+          url,
+        });
+      }
       setFileStates((prev) => prev.filter((el) => el.url !== url));
     } catch (error) {
       console.log(error);
@@ -196,7 +243,6 @@ export const useQuotation = ({
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof quotationSchema>) {
-   
     try {
       let res;
       if (quotation) {
@@ -205,49 +251,62 @@ export const useQuotation = ({
         res = await addQuotation(values, params.companySlug);
       }
 
-      if (!res.success){  toast.error(res.error)
+      if (!res.success) {
+        toast.error(res.error);
 
-        return 
-      };
-      startTransitions(()=>{
-      router.push(`/dashboard/${params.companySlug}/quotations`);
-      router.refresh()
+        return;
+      }
+
+      const returnedQuotation = res.data;
+      setEmailData({
+        quotationId: returnedQuotation?.id!,
+        content: returnedQuotation?.quotationSettings!.body!,
+        subject: returnedQuotation?.quotationSettings.subject!,
+        receiverEmail:
+          returnedQuotation?.contactPerson?.emailAddress ||
+          returnedQuotation?.contact.emailAddress!,
+        senderEmail: returnedQuotation?.company.companyEmail!,
+        senderName:returnedQuotation?.company.name!,
+        attatchments:returnedQuotation?.attatchments
+      });
+
+ 
       toast.success(res.message);
-    })
-
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
-
-      
     }
-
   }
 
-
- 
-
-
-  const handleSetDiscount=(value:DiscountType)=>{
-
-    if(!form.watch('discount'))
-      {
-        form.setValue('discount',{type:value,description:undefined,fixedValue:0,percentageValue:0})
-      }else{
-        const discount = form.watch('discount') as {
-          type: "PERCENTAGE" | "FIXED";
-          description?: string | null | undefined;
-          percentageValue?: number | undefined;
-          fixedValue?: number | undefined;
-        }
-        form.setValue('discount',{...discount,type:value})
-      }
-
+  const handleResetEmailData = (val:boolean)=>{
+    if(val===true) return 
+    setEmailData(null)
+    router.refresh()
+    router.push(`/dashboard/${params.companySlug}/quotations`)
   }
 
-  const handleDeleteDiscount = ()=>{
-    form.setValue('discount',null)
-  }
+  const handleSetDiscount = (value: DiscountType) => {
+    if (!form.watch("discount")) {
+      form.setValue("discount", {
+        type: value,
+        description: undefined,
+        fixedValue: 0,
+        percentageValue: 0,
+      });
+    } else {
+      const discount = form.watch("discount") as {
+        type: "PERCENTAGE" | "FIXED";
+        description?: string | null | undefined;
+        percentageValue?: number | undefined;
+        fixedValue?: number | undefined;
+      };
+      form.setValue("discount", { ...discount, type: value });
+    }
+  };
+
+  const handleDeleteDiscount = () => {
+    form.setValue("discount", null);
+  };
 
   return {
     form,
@@ -279,6 +338,36 @@ export const useQuotation = ({
     discountValue,
     subTotalWithDiscount,
     total,
-    pending
+    pending,
+    emailData,
+    handleResetEmailData
   };
 };
+
+
+
+export const useSendEmail = ({emailData}:{emailData:z.infer<typeof emailSendSchema> | null})=>{
+
+
+
+  useEffect(()=>{
+   form.reset({...emailData})
+  },[emailData])
+
+
+
+  const form = useForm<z.infer<typeof emailSendSchema>>({
+    resolver: zodResolver(emailSendSchema),
+    defaultValues: {
+...emailData
+    },
+  })
+ 
+
+  function onSubmit(values: z.infer<typeof emailSendSchema>) {
+  
+   console.log(JSON.stringify(values,undefined,2))
+  }
+
+return {form, onSubmit}
+}
