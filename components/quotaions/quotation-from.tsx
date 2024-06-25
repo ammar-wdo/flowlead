@@ -98,6 +98,8 @@ import { Checkbox } from "../ui/checkbox";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { z } from "zod";
 import QuillEditor from "../quill-editor";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import QuotationPdfGenerator from "./quotation-pdf-generator";
 
 type Props = {
   quotation: Quotation | undefined | null;
@@ -904,6 +906,16 @@ const QuotationsForm = ({
           handleResetEmailData={handleResetEmailData}
         />
       </form>
+      <PDFDownloadLink
+        document={<QuotationPdfGenerator quotation={quotation} />}
+        fileName="quotation.pdf"
+      >
+        {({ loading }) => (loading ? 'Generating PDF...' : 'Download PDF')}
+      </PDFDownloadLink>
+      {/* PDF Veiwer */}
+      <PDFViewer width="100%" height="1200">
+      <QuotationPdfGenerator quotation={quotation} />
+    </PDFViewer>
     </Form>
   );
 };
@@ -1563,3 +1575,6 @@ const SendEmailModal = ({
     </Dialog>
   );
 };
+
+
+
