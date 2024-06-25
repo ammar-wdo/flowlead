@@ -89,12 +89,13 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
   if (element.type === "SERVICE_ELEMENT")
     return (
       <div
+      data-id={element.id}
       style={style}
         onClick={(e) => handleSelectedElementClick()}
         ref={setNodeRef}
         className={cn(
           " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px]  mb-4",
-          isDragging && "z-10 opacity-0 relative",
+          isDragging && "z-10 opacity-20 relative ",
           selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
       
@@ -138,11 +139,12 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
   else
     return (
       <div
+      data-id={element.id}
       style={style}
         ref={setNodeRef}
         className={cn(
-          " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px] mb-4",
-          isDragging && "z-10 opacity-0 relative ",
+          " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px] mb-4 ",
+          isDragging && "z-10 opacity-20 relative ",
           selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
      

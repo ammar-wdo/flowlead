@@ -1,6 +1,6 @@
 import { controllerElements, formSchema } from "@/schemas";
 import { Form, Service } from "@prisma/client";
-import React, { MouseEvent, useRef, useState } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import FormItemWrapper from "./form-item-wrapper";
@@ -28,6 +28,8 @@ import {
 import {
   DndContext,
   DragEndEvent,
+  DragMoveEvent,
+  DragOverEvent,
   DragOverlay,
   DragStartEvent,
   KeyboardSensor,
@@ -42,6 +44,7 @@ import Scroller from "../scroller";
 import { useSelectedElement } from "@/hooks/selected-element-hook";
 import FormRightController from "./form-right-editor";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type Props = {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -92,16 +95,16 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
     }
   };
   const isLoading = form.formState.isSubmitting;
-  
+
+ 
 
 
+ 
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over, } = event;
-   
+    const { active, over } = event;
 
     if (over && active.id !== over.id) {
-   
       const items = form.watch("elements");
       const oldIndex = items.findIndex((item) => item.id === active.id);
       const newIndex = items.findIndex((item) => item.id === over.id);
@@ -110,10 +113,7 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
 
       form.setValue("elements", newElements);
     }
-
   };
-  
-
 
  
 
@@ -170,12 +170,7 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
                 />
               </div>
               {/* Form Elements */}
-              <DndContext
-     
-               
-                onDragEnd={handleDragEnd}
-           
-              >
+              <DndContext  onDragEnd={handleDragEnd}   >
                 <SortableContext items={form.watch("elements")}>
                   <div className="bg-white p-8 space-y-8">
                     <FormField
@@ -191,8 +186,12 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
                                 </div>
                               ) : (
                                 field.value.map((element, i) => (
-                                  <div key={element.id}>
+                                  <div
+                                    key={element.id}
+                                   
+                                  >
                                     <FormViewItem
+                                    
                                       handleDelete={(
                                         id: string,
                                         e: MouseEvent<HTMLButtonElement>
@@ -248,13 +247,17 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
                     />
                   </div>
                 </SortableContext>
-                <DragOverlay style={{ opacity: 1 }} className="transition-none duration-0">
-                 {<div className=" ring-[1px] rounded-lg bg-white w-[200px] p-12 flex items-center justify-center text-xl font-bold text-gray-500 ">
-               
-                   Drop Field
-                  </div>
+                <DragOverlay
+             
+                  className="  w-fit "
+                >
+                  {
+                    <div
+                 
+                    className=" ring-[1px] rounded-lg bg-white w-[200px] p-12 flex items-center justify-center text-xl font-bold text-gray-500 ">
+                      Drop Field
+                    </div>
                   }
-               
                 </DragOverlay>
               </DndContext>
               <Scroller
