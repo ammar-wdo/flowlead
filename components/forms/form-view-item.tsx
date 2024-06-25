@@ -81,22 +81,23 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
   } = useSortable({ id: element.id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+
     transition,
-    ...(isDragging ? { height: "auto", width: "auto" } : {}),
+
   };
 
   if (element.type === "SERVICE_ELEMENT")
     return (
       <div
+      style={style}
         onClick={(e) => handleSelectedElementClick()}
         ref={setNodeRef}
         className={cn(
           " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px]  mb-4",
-          isDragging && "z-10 opacity-60 relative",
+          isDragging && "z-10 opacity-0 relative",
           selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
-        style={style}
+      
       >
         <Button
           size={"icon"}
@@ -137,13 +138,14 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
   else
     return (
       <div
+      style={style}
         ref={setNodeRef}
         className={cn(
           " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px] mb-4",
-          isDragging && "z-10 opacity-60 relative ",
+          isDragging && "z-10 opacity-0 relative ",
           selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
-        style={style}
+     
         onClick={handleSelectedElementClick}
       >
        {element.field?.type !=='name' && element.field?.type !=='email' && <Button

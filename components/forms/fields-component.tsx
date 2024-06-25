@@ -31,7 +31,9 @@ import {
   DragOverlay,
   DragStartEvent,
   KeyboardSensor,
+  MouseSensor,
   PointerSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,
@@ -42,34 +44,33 @@ import FormRightController from "./form-right-editor";
 import { toast } from "sonner";
 
 type Props = {
-
   form: UseFormReturn<z.infer<typeof formSchema>>;
   onSubmit: (
     values: z.infer<typeof formSchema>
   ) => Promise<string | number | undefined>;
   services: Service[];
-  fetchedForm:Form | null | undefined
+  fetchedForm: Form | null | undefined;
 };
 
-const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
+const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
   const previousVar = useRef(1);
 
   const { selectedElement, setSelectedElementNull } = useSelectedElement();
 
   const handleDelete = (id: string, e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-  
+
     // Update elements
     const newOptions = form.watch("elements");
     const filteredOptions = newOptions.filter((el) => el.id !== id);
     form.setValue("elements", filteredOptions);
     previousVar.current--;
-  
+
     // Update selected element if necessary
     if (selectedElement && id === selectedElement.id) {
       setSelectedElementNull();
     }
-  
+
     // Update rules and check if any rule is deleted
     const rules = form.watch("rules") || [];
     let ruleDeleted = false;
@@ -84,29 +85,42 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
       return !(conditionsContainElement || thenContainsElement);
     });
     form.setValue("rules", filteredRules);
-  
+
     // Show toast notification if a rule is deleted
     if (ruleDeleted) {
       toast.success("A rule that contains this element has been also deleted");
     }
-  }
+  };
   const isLoading = form.formState.isSubmitting;
+  
+
+
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    const { active, over, } = event;
+   
 
     if (over && active.id !== over.id) {
+   
       const items = form.watch("elements");
       const oldIndex = items.findIndex((item) => item.id === active.id);
       const newIndex = items.findIndex((item) => item.id === over.id);
+
       const newElements = arrayMove(items, oldIndex, newIndex);
 
       form.setValue("elements", newElements);
     }
+
   };
-  const labels = form.watch('elements')
-    .filter(element => element.field !== undefined && element.field !== null)
-    .map(element => element.field!.label);
+  
+
+
+ 
+
+  const labels = form
+    .watch("elements")
+    .filter((element) => element.field !== undefined && element.field !== null)
+    .map((element) => element.field!.label);
 
   const hasDuplicateLabels = labels.length !== new Set(labels).size;
   return (
@@ -141,8 +155,8 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
                       <FormLabel>
                         Service Description{" "}
                         <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                      Optional
-                    </span>
+                          Optional
+                        </span>
                       </FormLabel>
                       <FormControl>
                         <QuillEditor
@@ -157,14 +171,10 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
               </div>
               {/* Form Elements */}
               <DndContext
-                sensors={useSensors(
-                  useSensor(PointerSensor),
-                  useSensor(KeyboardSensor, {
-                    coordinateGetter: sortableKeyboardCoordinates,
-                  })
-                )}
-                collisionDetection={closestCenter}
+     
+               
                 onDragEnd={handleDragEnd}
+           
               >
                 <SortableContext items={form.watch("elements")}>
                   <div className="bg-white p-8 space-y-8">
@@ -203,24 +213,59 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
                                 At least one field or service
                               </span>
                             )}
-                             {!!form.formState.errors.elements && form.watch('elements').some(el=>(!!el.service && !el.service?.id)) && <span className='text-rose-500 mt-12 block'>Please choose service</span>}
-                             {!!form.formState.errors.rules && form.watch('rules')?.some(el=>((el.conditions.some(el=>!el.field || !el.value)|| !el.then.field))) && <span className='text-rose-500 mt-12 block'>Please Enter Valid Rules Inputs</span>}
-                             {!!(form.formState.errors.elements && hasDuplicateLabels)  && (
-        <span className='text-rose-500 mt-12 block'>Fields must have unique labels</span>
-      )}
+                          {!!form.formState.errors.elements &&
+                            form
+                              .watch("elements")
+                              .some(
+                                (el) => !!el.service && !el.service?.id
+                              ) && (
+                              <span className="text-rose-500 mt-12 block">
+                                Please choose service
+                              </span>
+                            )}
+                          {!!form.formState.errors.rules &&
+                            form
+                              .watch("rules")
+                              ?.some(
+                                (el) =>
+                                  el.conditions.some(
+                                    (el) => !el.field || !el.value
+                                  ) || !el.then.field
+                              ) && (
+                              <span className="text-rose-500 mt-12 block">
+                                Please Enter Valid Rules Inputs
+                              </span>
+                            )}
+                          {!!(
+                            form.formState.errors.elements && hasDuplicateLabels
+                          ) && (
+                            <span className="text-rose-500 mt-12 block">
+                              Fields must have unique labels
+                            </span>
+                          )}
                         </FormItem>
                       )}
                     />
                   </div>
                 </SortableContext>
+                <DragOverlay style={{ opacity: 1 }} className="transition-none duration-0">
+                 {<div className=" ring-[1px] rounded-lg bg-white w-[200px] p-12 flex items-center justify-center text-xl font-bold text-gray-500 ">
+               
+                   Drop Field
+                  </div>
+                  }
+               
+                </DragOverlay>
               </DndContext>
               <Scroller
                 variable={form.watch("elements").length}
                 previousVar={previousVar}
               />
-              <LoadingButton isLoading={isLoading} title={fetchedForm ? "Update" : "Submit"} />
-              {JSON.stringify(form.formState.errors,null,2)}
-        
+              <LoadingButton
+                isLoading={isLoading}
+                title={fetchedForm ? "Update" : "Submit"}
+              />
+              {JSON.stringify(form.formState.errors, null, 2)}
             </form>
           </FormComponent>
         </div>
@@ -232,7 +277,7 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
           {!selectedElement ? (
             <div className="space-y-6">
               {controllerElements.map((element) => (
-                <div  key={uuidv4()}>
+                <div key={uuidv4()}>
                   <h3 className="text-sm text-muted-foreground">
                     {element.section}
                   </h3>
@@ -249,7 +294,7 @@ const FieldsComponent = ({ form, onSubmit,services ,fetchedForm }: Props) => {
               ))}
             </div>
           ) : (
-          <FormRightController services={services} form={form} />
+            <FormRightController services={services} form={form} />
           )}
         </div>{" "}
       </div>
