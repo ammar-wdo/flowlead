@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { CSS } from "@dnd-kit/utilities";
 
 import { FaUser } from "react-icons/fa6";
 
@@ -27,7 +28,7 @@ import {
   DialogClose,
   DialogFooter,
   DialogOverlay,
-  DialogPortal
+  DialogPortal,
 } from "@/components/ui/dialog";
 
 import {
@@ -66,6 +67,7 @@ import {
   ChevronsUpDown,
   Euro,
   FileIcon,
+  GripVertical,
   Loader,
   MagnetIcon,
   Percent,
@@ -100,6 +102,23 @@ import { z } from "zod";
 import QuillEditor from "../quill-editor";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import QuotationPdfGenerator from "./quotation-pdf-generator";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 
 type Props = {
   quotation: Quotation | undefined | null;
@@ -180,9 +199,36 @@ const QuotationsForm = ({
     setMount(true);
   }, []);
 
-  if (!mount) return null;
+ 
 
-  console.log("Email Data", JSON.stringify(emailData, null, 2));
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(String(event.active.id));
+    const index = form.watch('lineItems').findIndex(el=>el.id===event.active.id)
+    setActiveIndex(index)
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+    setActiveIndex(null)
+    if (over && active.id !== over.id) {
+      const items = form.watch("lineItems");
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over.id);
+      const newElements = arrayMove(items, oldIndex, newIndex);
+
+      form.setValue("lineItems", newElements);
+    }
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(null);
+    setActiveIndex(null)
+  };
+  if (!mount) return null;
   return (
     <Form {...form}>
       <form
@@ -539,7 +585,8 @@ const QuotationsForm = ({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[400px]">Item</TableHead>
+                    <TableHead></TableHead>
+                      <TableHead className="w-[300px]">Item</TableHead>
                       <TableHead>Quantity</TableHead>
                       <TableHead>Price</TableHead>
                       <TableHead>Tax Percentage</TableHead>
@@ -551,16 +598,47 @@ const QuotationsForm = ({
                   </TableHeader>
                   <TableBody>
                     {/* body-content */}
-                    {form.watch("lineItems").map((lineItem, index) => (
-                      <OptionTableRow
-                        key={lineItem.id}
-                        calculate={calculate}
-                        deleteLineItem={deleteLineItem}
-                        form={form}
-                        index={index}
-                        lineItem={lineItem}
-                      />
-                    ))}
+                    {/* drag and drop */}
+                    <DndContext
+                      // sensors={useSensors(
+                      //   useSensor(PointerSensor),
+                      //   useSensor(KeyboardSensor, {
+                      //     coordinateGetter: sortableKeyboardCoordinates,
+                      //   })
+                      // )}
+                      // collisionDetection={closestCenter}
+
+                      onDragStart={handleDragStart}
+                      onDragEnd={handleDragEnd}
+                      onDragCancel={handleDragCancel}
+                    >
+                      <SortableContext items={form.watch("lineItems")}>
+                        {form.watch("lineItems").map((lineItem, index) => (
+                          <OptionTableRow
+                            key={lineItem.id}
+                            calculate={calculate}
+                            deleteLineItem={deleteLineItem}
+                            form={form}
+                            index={index}
+                            lineItem={lineItem}
+                          />
+                        ))}
+                      </SortableContext>
+                      <DragOverlay style={{opacity:1}} className="">
+                        <div>
+                        <OptionTableRow
+                      
+                            key={"any"}
+                            calculate={calculate}
+                            deleteLineItem={deleteLineItem}
+                            form={form}
+                            index={activeIndex as number}
+                            lineItem={form.watch('lineItems').find(item=>item.id === activeId)!}
+                          />
+                        </div>
+                    
+                      </DragOverlay>
+                    </DndContext>
                   </TableBody>
                 </Table>
               </FormControl>
@@ -686,7 +764,7 @@ const QuotationsForm = ({
         )}
         <div className="h-px bg-gray-200" />
         {/* Show discount section  */}
-        <div className="flex ml-auto max-w-[300px] flex-col space-y-2">
+        <div className="flex ml-auto max-w-[300px] w-full flex-col space-y-2">
           {/* discount */}
           {!!form.watch("discount") && (
             <ShowValueElement
@@ -906,16 +984,11 @@ const QuotationsForm = ({
           handleResetEmailData={handleResetEmailData}
         />
       </form>
-      <PDFDownloadLink
-        document={<QuotationPdfGenerator quotation={quotation} />}
-        fileName="quotation.pdf"
-      >
-        {({ loading }) => (loading ? 'Generating PDF...' : 'Download PDF')}
-      </PDFDownloadLink>
+
       {/* PDF Veiwer */}
       <PDFViewer width="100%" height="1200">
-      <QuotationPdfGenerator quotation={quotation} />
-    </PDFViewer>
+        <QuotationPdfGenerator quotation={quotation} />
+      </PDFViewer>
     </Form>
   );
 };
@@ -947,14 +1020,47 @@ const OptionTableRow = ({
   const [shwoDescription, setShowDescription] = useState(
     !!form.watch(`lineItems.${index}.description`) ? true : false
   );
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: lineItem.id });
+
+  const style = {
+   
+    transition,
+  
+  };
+
   return (
     <TableRow
+      style={style}
+      ref={setNodeRef}
+   
       key={lineItem.id}
-      className="w-full border-none border-t-0 relative group !h-6 p-0"
+      className={cn(
+        "w-full border-none border-t-0 relative group !h-6 p-0  bg-white hover:!opacity-100 hover:bg-muted/80",
+        isDragging && "z-10 opacity-0 relative "
+      )}
     >
+      <TableCell className="self-start">
+      <Button
+          {...attributes}
+          {...listeners}
+          type="button"
+          variant={"ghost"}
+          className="cursor-move"
+        >
+          <GripVertical />
+        </Button>
+      </TableCell>
       {/* item name */}
-      <TableCell className="font-medium w-fit items-start align-top p-2 ">
-        <div className="flex flex-col gap-1">
+      <TableCell className="font-medium items-start align-top p-2 w-[300px]">
+        <div className="flex flex-col gap-1 relative">
           <FormField
             control={form.control}
             name={`lineItems.${index}.name`}
@@ -1390,19 +1496,19 @@ const SendEmailModal = ({
       open={!!emailData}
       onOpenChange={(val) => handleResetEmailData(val)}
     >
-  
-      <DialogContent  color="white" className="max-w-[700px] p-0 border-0 overflow-hidden">
-     
+      <DialogContent
+        color="white"
+        className="max-w-[700px] p-0 border-0 overflow-hidden"
+      >
         <DialogHeader className="bg-second px-10 py-4 text-white">
-    <div className="flex items-center gap-2">
-    <FaUser size={17}/>
-      <p className="text-1xl font-semibold">Send to contact</p>
-    </div>
-      
+          <div className="flex items-center gap-2">
+            <FaUser size={17} />
+            <p className="text-1xl font-semibold">Send to contact</p>
+          </div>
         </DialogHeader>
 
         <Form {...form}>
-          <form  className="space-y-8 p-8">
+          <form className="space-y-8 p-8">
             <FormField
               control={form.control}
               name="senderName"
@@ -1412,7 +1518,7 @@ const SendEmailModal = ({
                     <FormLabel>Sender Name</FormLabel>
                     <FormControl>
                       <Input
-                      autoFocus={false}
+                        autoFocus={false}
                         readOnly
                         placeholder="sender name"
                         className="col-span-2 max-w-[450px] pointer-events-none bg-gray-100 text-gray-400"
@@ -1434,7 +1540,7 @@ const SendEmailModal = ({
                     <FormLabel>Sender Email</FormLabel>
                     <FormControl>
                       <Input
-                       autoFocus={false}
+                        autoFocus={false}
                         readOnly
                         placeholder="sender email"
                         className="col-span-2 max-w-[450px] pointer-events-none bg-gray-100 text-gray-400"
@@ -1456,7 +1562,7 @@ const SendEmailModal = ({
                     <FormLabel>Send To:</FormLabel>
                     <FormControl>
                       <Input
-                      autoFocus={true}
+                        autoFocus={true}
                         placeholder="Send To"
                         {...field}
                         className="col-span-2 max-w-[450px]"
@@ -1497,10 +1603,11 @@ const SendEmailModal = ({
                     <FormLabel>Body:</FormLabel>
                     <FormControl>
                       <div className="col-span-2">
-                      <QuillEditor value={field.value || ''} onChange={field.onChange} />
+                        <QuillEditor
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                        />
                       </div>
-
-                  
                     </FormControl>
                   </SettingsFormWrapper>
 
@@ -1518,11 +1625,10 @@ const SendEmailModal = ({
                     <FormLabel>Attatchments:</FormLabel>
                     <div className="flex items-center gap-4 col-span-2 max-w-[450px]">
                       {field.value?.map((file, index) => (
-                          <article
+                        <article
                           key={uuidv4()}
                           className="border p-3 rounded-lg flex items-start gap-3 relative overflow-hidden"
                         >
-                     
                           <span className="w-12 h-12 flex items-center justify-center bg-second/10 rounded-full shrink-0">
                             <FileIcon className="text-second" />
                           </span>
@@ -1553,15 +1659,14 @@ const SendEmailModal = ({
 
             <DialogFooter>
               <Button
-              type="button"
+                type="button"
                 onClick={() => handleResetEmailData(false)}
                 variant={"secondary"}
               >
                 Not Now
               </Button>
               <Button
-              onClick={form.handleSubmit(onSubmit)}
-             
+                onClick={form.handleSubmit(onSubmit)}
                 variant={"default"}
                 className="bg-second hover:bg-second/80 text-white hover:text-white"
               >
@@ -1571,10 +1676,6 @@ const SendEmailModal = ({
           </form>
         </Form>
       </DialogContent>
- 
     </Dialog>
   );
 };
-
-
-
