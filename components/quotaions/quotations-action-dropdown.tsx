@@ -84,31 +84,25 @@ const QuotationTableActionDropdown = ({ id }: Props) => {
 export default QuotationTableActionDropdown;
 
 const FetchButon = ({ id }: { id: string }) => {
-
   const {
     quotation,
-    loading: loadingFetching,
-    fetchData,companyInfo
-  } = useDownloadPDF({ id, type: "quotation"});
 
+    fetchData,
+    companyInfo,
+    pending,
+  } = useDownloadPDF({ id, type: "quotation" });
 
-
- 
   return (
     <div>
-   
-        <Button
-          variant={"ghost"}
-          className="w-full gap-3 justify-start px-2"
-          onClick={fetchData}
-          disabled={loadingFetching}
-        >
-          <Download /> PDF{" "}
-          {loadingFetching && (
-            <Loader size={12} className="ml-2 animate-spin" />
-          )}
-        </Button>
-    
+      <Button
+        variant={"ghost"}
+        className="w-full gap-3 justify-start px-2"
+        onClick={fetchData}
+        disabled={pending}
+      >
+        <Download /> PDF{" "}
+        {!!pending && <Loader size={12} className="ml-2 animate-spin" />}
+      </Button>
     </div>
   );
 };
