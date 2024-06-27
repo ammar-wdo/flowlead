@@ -1,8 +1,9 @@
 import { fetchQuotationPDF } from "@/actions/fetch-quotationPDF-action";
+import QuotationPdfGenerator from "@/components/quotaions/quotation-pdf-generator";
 import { $Enums, Quotation } from "@prisma/client";
-import ReactPDF from "@react-pdf/renderer";
+import ReactPDF, { pdf } from "@react-pdf/renderer";
 import { useParams } from "next/navigation";
-import { MutableRefObject, useEffect, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type Props = {
@@ -11,6 +12,8 @@ type Props = {
 };
 
 export const useDownloadPDF = ({ type, id }: Props) => {
+
+
   const [quotation, setQuotation] = useState<
     | (Quotation & {
         contact:
@@ -57,6 +60,32 @@ export const useDownloadPDF = ({ type, id }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const params = useParams<{ companySlug: string }>();
+  const companyInfo: {
+    logo: string | null | undefined;
+    address: string | null | undefined;
+    cocNumber: string | null | undefined;
+    vatNumber: string | null | undefined;
+    IBAN: string |null | undefined;
+    country: string |null | undefined;
+    name: string |null | undefined;
+    zipcode: string |null | undefined;
+    city: string |null | undefined;
+    companyEmail:string |null | undefined
+  } = {
+  logo:quotation?.company?.logo,
+  address:quotation?.company?.address,
+  city:quotation?.company?.city,
+  cocNumber:quotation?.company?.cocNumber,
+  companyEmail:quotation?.company?.companyEmail,
+  country:quotation?.company?.country,
+  IBAN:quotation?.company?.IBAN,
+  name:quotation?.company?.name,
+  vatNumber:quotation?.company?.vatNumber,
+  zipcode:quotation?.company?.zipcode
+  
+  
+  
+  }
 
   const fetchData = async () => {
     let res;
@@ -71,6 +100,17 @@ export const useDownloadPDF = ({ type, id }: Props) => {
       if (!res.success) return toast.error(res.error);
 
       setQuotation(res.quotation!);
+      const doc = <QuotationPdfGenerator quotation={res.quotation} companyInfo={companyInfo}/>;
+      const asBlob = await pdf(doc).toBlob();
+      const url = URL.createObjectURL(asBlob);
+
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `${quotation?.subject || 'quotation'}.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
     } catch (error) {
       console.error(error);
       toast.error("something went wrong");
@@ -79,5 +119,5 @@ export const useDownloadPDF = ({ type, id }: Props) => {
     }
   };
 
-  return { quotation, loading, fetchData };
+  return { quotation, loading, fetchData ,companyInfo};
 };
