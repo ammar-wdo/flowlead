@@ -90,14 +90,39 @@ const FetchButon = ({ id }: { id: string }) => {
     loading: loadingFetching,
     fetchData,
   } = useDownloadPDF({ id, type: "quotation"});
+const companyInfo: {
+  logo: string | null | undefined;
+  address: string | null | undefined;
+  cocNumber: string | null | undefined;
+  vatNumber: string | null | undefined;
+  IBAN: string |null | undefined;
+  country: string |null | undefined;
+  name: string |null | undefined;
+  zipcode: string |null | undefined;
+  city: string |null | undefined;
+  companyEmail:string |null | undefined
+} = {
+logo:quotation?.company?.logo,
+address:quotation?.company?.address,
+city:quotation?.company?.city,
+cocNumber:quotation?.company?.cocNumber,
+companyEmail:quotation?.company?.companyEmail,
+country:quotation?.company?.country,
+IBAN:quotation?.company?.IBAN,
+name:quotation?.company?.name,
+vatNumber:quotation?.company?.vatNumber,
+zipcode:quotation?.company?.zipcode
 
+
+
+}
  
   return (
     <div>
       {quotation ? (
         <PDFDownloadLink
        
-          document={<QuotationPdfGenerator quotation={quotation} />}
+          document={<QuotationPdfGenerator quotation={quotation} companyInfo={companyInfo} />}
           fileName={`${quotation.subject || "quotation"}.pdf`}
         >
           {({ loading }) =>

@@ -1,5 +1,5 @@
 import { formatWithLeadingZeros, replacePlaceholders } from "@/lib/utils";
-import { Quotation } from "@prisma/client";
+import { $Enums, Quotation } from "@prisma/client";
 import {
   Document,
   Page,
@@ -11,17 +11,42 @@ import {
 import { format } from "date-fns";
 
 type Props = {
-  quotation: Quotation | undefined | null;
+  quotation:
+    | (Quotation & {
+        contact:
+          | {
+              address: string | null;
+              zipcode: string | null;
+              city: string | null;
+              country: string | null;
+              contactType: $Enums.ContactType;
+              contactName: string;
+              emailAddress: string;
+              companyName: string | null;
+            }
+          | null
+          | undefined;
+        contactPerson:
+          | {
+              emailAddress: string;
+              contactName: string;
+            }
+          | null
+          | undefined;
+      })
+    | undefined
+    | null;
   companyInfo: {
-    logo: string | null;
-    address: string;
-    cocNumber: string | null;
-    vatNumber: string;
-    IBAN: string;
-    country: string;
-    name: string;
-    zipcode: string;
-    city: string;
+    logo: string | null | undefined;
+  address: string | null | undefined;
+  cocNumber: string | null | undefined;
+  vatNumber: string | null | undefined;
+  IBAN: string |null | undefined;
+  country: string |null | undefined;
+  name: string |null | undefined;
+  zipcode: string |null | undefined;
+  city: string |null | undefined;
+  companyEmail:string |null | undefined
   };
 };
 
@@ -53,6 +78,7 @@ const QuotationPdfGenerator = ({ quotation, companyInfo }: Props) => {
               </View>
 
               <Text style={styles.companyInfoLine}>{companyInfo.country}</Text>
+              <Text style={[styles.companyInfoLine,{marginTop:15}]}>{companyInfo.companyEmail}</Text>
               <View style={{ marginTop: 15 }}>
                 {companyInfo.cocNumber && (
                   <Text style={styles.companyInfoLine}>
@@ -69,10 +95,33 @@ const QuotationPdfGenerator = ({ quotation, companyInfo }: Props) => {
             </View>
           </View>
           <View style={styles.contactDetails}>
-            <Text style={styles.companyInfoLine}>Contact Details</Text>
-            <Text style={styles.companyInfoLine}>Company/Contact Name</Text>
-            <Text style={styles.companyInfoLine}>Contact Person</Text>
-            <Text style={styles.companyInfoLine}>Address</Text>
+            <Text style={styles.companyInfoLine}>
+              {quotation?.contact?.contactType === "BUSINESS"
+                ? quotation.contact.companyName
+                : quotation?.contact?.contactName}
+            </Text>
+            {quotation?.contactPerson?.contactName && (
+              <Text style={styles.companyInfoLine}>
+                {quotation?.contactPerson?.contactName}
+              </Text>
+            )}
+            <Text style={styles.companyInfoLine}>
+              {quotation?.contact?.address}
+            </Text>
+            {quotation?.contact?.zipcode ||
+              (quotation?.contact?.city && (
+                <View style={{ flexDirection: "row", columnGap: 12 }}>
+                  <Text style={styles.companyInfoLine}>
+                    {quotation?.contact?.zipcode}
+                  </Text>
+                  <Text style={styles.companyInfoLine}>
+                    {quotation?.contact?.city}
+                  </Text>
+                </View>
+              ))}
+            <Text style={styles.companyInfoLine}>
+              {quotation?.contact?.country}
+            </Text>
           </View>
           <View style={styles.quotationInfo}>
             <View>
@@ -97,6 +146,11 @@ const QuotationPdfGenerator = ({ quotation, companyInfo }: Props) => {
             </View>
           </View>
         </View>
+        {/* Subject */}
+        <View style={styles.subjectContainer}>
+          <Text style={styles.subjectText}>{quotation?.subject}</Text>
+        </View>
+
         {/* Table */}
         <View style={styles.table}>
           {/* Table Header */}
@@ -254,6 +308,12 @@ const QuotationPdfGenerator = ({ quotation, companyInfo }: Props) => {
             </View>
           </View>
         </View>
+        {/* Footnote */}
+        <View style={styles.footNoteContainer}>
+          <Text style={styles.footNoteText}>
+            {quotation?.footNote}
+          </Text>
+        </View>
       </Page>
     </Document>
   );
@@ -310,6 +370,13 @@ const styles = StyleSheet.create({
   quotationDateText: {
     fontSize: 10,
     fontWeight: "light",
+  },
+  subjectContainer:{
+marginTop:30
+  },
+  subjectText:{
+    fontSize:12,
+    fontWeight:'light'
   },
   table: {
     width: "100%",
@@ -369,6 +436,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#000",
   },
+  footNoteContainer:{
+    paddingTop:12,
+    borderTop:1,
+    borderTopColor:'#000',
+    marginTop:'auto'
+  },
+  footNoteText:{
+    fontSize:12,
+    fontWeight:'light'
+  }
 });
 
 export default QuotationPdfGenerator;

@@ -47,7 +47,27 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
               userId,
             },
             
-          },
+          },include:{
+            contact:{
+              select:{
+                contactType:true,
+                contactName:true,
+                companyName:true,
+                address:true,
+                zipcode:true,
+                city:true,
+                country:true,
+                emailAddress:true
+
+              }
+            },
+            contactPerson:{
+              select:{
+                emailAddress:true,
+                contactName:true
+              }
+            }
+          }
 
         })
       : null;
@@ -68,6 +88,7 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
       name:true,
       zipcode:true,
       city:true,
+      companyEmail:true,
       
       quotesSettings: {
         select: {
@@ -95,7 +116,8 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
     country:company.country,
     name:company.name,
     zipcode:company.zipcode,
-    city:company.city
+    city:company.city,
+    companyEmail:company.companyEmail
     
   }
 

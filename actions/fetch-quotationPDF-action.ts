@@ -1,47 +1,97 @@
-'use server'
+"use server";
 
-import { CustomError } from "@/custom-error"
-import prisma from "@/lib/prisma"
-import { auth } from "@clerk/nextjs/server"
+import { CustomError } from "@/custom-error";
+import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
-export const fetchQuotationPDF = async({quotationId,companySlug}:{quotationId:string,companySlug:string})=>{
-try {
+export const fetchQuotationPDF = async ({
+  quotationId,
+  companySlug,
+}: {
+  quotationId: string;
+  companySlug: string;
+}) => {
+  try {
+    const { userId } = auth();
+    if (!userId) throw new CustomError(" Unauthorized");
 
-    const {userId} = auth()
-    if(!userId) throw new CustomError(" Unauthorized")
+    if (!quotationId || !companySlug)
+      throw new CustomError("quotationId or company slug is missing");
 
-        if(!quotationId || !companySlug) throw new CustomError("quotationId or company slug is missing")
+    const account = await prisma.account.findUnique({
+      where: {
+        userId,
+      },
+    });
 
-            const account = await prisma.account.findUnique({
-                where:{
-                    userId
-                }
-            })
+    if (!account) throw new CustomError("account not found");
 
-            if(!account) throw new CustomError("account not found")
+    const quotation = await prisma.quotation.findUnique({
+      where: {
+        id: quotationId,
+        userId,
+        company: {
+          slug: companySlug,
+        },
+      },
+      include: {
+        contact: {
+          select: {
+            contactType: true,
+            contactName: true,
+            companyName: true,
+            address: true,
+            zipcode: true,
+            city: true,
+            country: true,
+            emailAddress: true,
+          },
+        },
+        contactPerson: {
+          select: {
+            emailAddress: true,
+            contactName: true,
+          },
+        },
+        company:{
+            select:{
+                id: true,
+                logo:true,
+                address:true,
+                cocNumber:true,
+                vatNumber:true,
+                IBAN:true,
+                country:true,
+                name:true,
+                zipcode:true,
+                city:true,
+                companyEmail:true,
+                
+                quotesSettings: {
+                  select: {
+                    id: true,
+                    nextNumber: true,
+                    prefix: true,
+                    dueDays:true,
+                    attatchments:true,
+                    footNote:true,
+                    
+                  },
+                },
+            }
+        }
+      },
+    });
 
-                const quotation = await prisma.quotation.findUnique({
-                    where:{
-                        id:quotationId,
-                        userId,
-                        company:{
-                            slug:companySlug
-                        }
-                    }
-                })
+    return { success: true, quotation };
+  } catch (error) {
+    console.error(error);
+    let message = "Internal server error";
 
-                return {success:true,quotation}
-    
-} catch (error) {
-    console.error(error)
-    let message = "Internal server error"
-
-    if(error instanceof CustomError){
-        message = error.message
-
+    if (error instanceof CustomError) {
+      message = error.message;
     }
 
-    return {success:false,error:message}
-}
-
-}
+    return { success: false, error: message };
+  }
+};

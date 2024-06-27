@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuotation, useSendEmail } from "@/hooks/quotation-hook";
-import { Contact, DiscountType, Quotation } from "@prisma/client";
+import { $Enums, Contact, DiscountType, Quotation } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -121,7 +121,23 @@ import {
 } from "@dnd-kit/core";
 
 type Props = {
-  quotation: Quotation | undefined | null;
+  quotation: Quotation & { 
+    contact: {
+      address: string | null;
+      zipcode: string | null;
+      city: string | null;
+      country: string | null;
+    contactType: $Enums.ContactType;
+    contactName: string;
+    emailAddress: string;
+    companyName: string | null;
+} | null | undefined,
+contactPerson:{
+  emailAddress: string;
+  contactName: string
+} | null | undefined
+
+} | undefined | null;
   options: {
     id: string;
     name: string;
@@ -160,6 +176,7 @@ type Props = {
     name: string;
     zipcode: string;
     city: string;
+    companyEmail:string
 }
 };
 
