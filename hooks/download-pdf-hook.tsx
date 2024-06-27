@@ -1,5 +1,6 @@
 import { fetchQuotationPDF } from "@/actions/fetch-quotationPDF-action";
 import QuotationPdfGenerator from "@/components/quotaions/quotation-pdf-generator";
+import { formatWithLeadingZeros, replacePlaceholders } from "@/lib/utils";
 import { $Enums, Quotation } from "@prisma/client";
 import ReactPDF, { pdf } from "@react-pdf/renderer";
 import { useParams } from "next/navigation";
@@ -106,7 +107,7 @@ export const useDownloadPDF = ({ type, id }: Props) => {
 
       const anchor = document.createElement('a');
       anchor.href = url;
-      anchor.download = `${quotation?.subject || 'quotation'}.pdf`;
+      anchor.download = `${replacePlaceholders(res.quotation?.quotationString)} ${formatWithLeadingZeros(res.quotation?.quotationNumber!,4)}`;
       document.body.appendChild(anchor);
       anchor.click();
       document.body.removeChild(anchor);
