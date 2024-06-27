@@ -23,11 +23,12 @@ model Account {
   lastName  String
   email     String @unique
 
-  image     String?
-  companies Company[]
-  services  Service[]
-  forms     Form[]
+  image      String?
+  companies  Company[]
+  services   Service[]
+  forms      Form[]
   quotations Quotation[]
+  Invoice    Invoice[]
 }
 
 model Company {
@@ -64,8 +65,9 @@ model Company {
   contacts    Contact[]
   quotations  Quotation[]
 
-  accountId String  @db.ObjectId
-  account   Account @relation(fields: [accountId], references: [id])
+  accountId String    @db.ObjectId
+  account   Account   @relation(fields: [accountId], references: [id])
+  Invoice   Invoice[]
 }
 
 model Quotation {
@@ -73,7 +75,7 @@ model Quotation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId   String
+  userId String
 
   quotationNumber Int
   quotationString String
@@ -82,9 +84,9 @@ model Quotation {
   expiryDate    DateTime
 
   subject   String?
-  lineItems LineItem[] 
+  lineItems LineItem[]
 
-  attatchments      attatchment[]
+  attatchments attatchment[]
 
   footNote String?
 
@@ -105,16 +107,60 @@ model Quotation {
   quotationSettingsId String         @db.ObjectId
   quotationSettings   QoutesSettings @relation(fields: [quotationSettingsId], references: [id])
 
-
-  contactPersonId String? @db.ObjectId
-  contactPerson ContactPerson? @relation(fields: [contactPersonId],references: [id])
+  contactPersonId String?        @db.ObjectId
+  contactPerson   ContactPerson? @relation(fields: [contactPersonId], references: [id])
 
   contactId String  @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
   companyId String  @db.ObjectId
   company   Company @relation(fields: [companyId], references: [id])
-  accountId String @db.ObjectId
-  account Account @relation(fields: [accountId],references: [id])
+  accountId String  @db.ObjectId
+  account   Account @relation(fields: [accountId], references: [id])
+}
+
+model Invoice {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+
+  quotationNumber Int
+  quotationString String
+
+  quotationDate DateTime @default(now())
+  expiryDate    DateTime
+
+  subject   String?
+  lineItems LineItem[]
+
+  attatchments attatchment[]
+
+  footNote String?
+
+  discount       QuotationDiscount?
+  discountAmount Float?
+
+  totalAmount Float
+
+  totalTax Float?
+  isSeen   Boolean @default(false)
+
+  status InvoiceStatus @default(CONCEPT)
+
+  invoiceSettingsId String          @db.ObjectId
+  invoiceSettings   InvoiceSettings @relation(fields: [invoiceSettingsId], references: [id])
+
+  contactPersonId String?        @db.ObjectId
+  contactPerson   ContactPerson? @relation(fields: [contactPersonId], references: [id])
+
+  contactId       String          @db.ObjectId
+  contact         Contact         @relation(fields: [contactId], references: [id])
+  companyId       String          @db.ObjectId
+  company         Company         @relation(fields: [companyId], references: [id])
+  accountId       String          @db.ObjectId
+  account         Account         @relation(fields: [accountId], references: [id])
+
 }
 
 model Submission {
@@ -140,10 +186,11 @@ model ContactPerson {
   emailAddress String
   phoneNumber  String?
 
-  contactId String   @db.ObjectId
+  contactId String  @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
 
   quotations Quotation[]
+  Invoice    Invoice[]
 }
 
 model Contact {
@@ -173,12 +220,10 @@ model Contact {
   quotations     Quotation[]
   contactPersons ContactPerson[]
 
-  companyId String  @db.ObjectId
-  company   Company @relation(fields: [companyId], references: [id])
+  companyId String    @db.ObjectId
+  company   Company   @relation(fields: [companyId], references: [id])
+  Invoice   Invoice[]
 }
-
-
-
 
 model QoutesSettings {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
@@ -195,7 +240,7 @@ model QoutesSettings {
 
   quotations Quotation[]
 
-  company   Company  @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id])
   companyId String  @unique @db.ObjectId
 }
 
@@ -211,6 +256,8 @@ model InvoiceSettings {
   footNote     String?
   subject      String?
   body         String?
+
+  invoices Invoice[]
 
   company   Company @relation(fields: [companyId], references: [id])
   companyId String  @unique @db.ObjectId
@@ -510,4 +557,12 @@ enum QuotationStatus {
   DECLINED
   EXPIRED
   INVOICED
+}
+
+enum InvoiceStatus {
+  CONCEPT
+  OPEN
+  PAID
+  EXPIRED
+  UNCOLLECTABLE
 }
