@@ -159,6 +159,7 @@ type Props = {
     country: string;
     name: string;
     zipcode: string;
+    city: string;
 }
 };
 
@@ -997,9 +998,9 @@ const QuotationsForm = ({
       </form>
 
       {/* PDF Veiwer */}
-      <PDFViewer width="100%" height="1200">
+     { quotation && <PDFViewer width="100%" height="1200">
         <QuotationPdfGenerator quotation={quotation} companyInfo={companyInfo} />
-      </PDFViewer>
+      </PDFViewer>}
     </Form>
   );
 };

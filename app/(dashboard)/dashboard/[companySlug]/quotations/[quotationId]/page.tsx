@@ -67,6 +67,7 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
       country:true,
       name:true,
       zipcode:true,
+      city:true,
       
       quotesSettings: {
         select: {
@@ -93,7 +94,8 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
     IBAN:company.IBAN,
     country:company.country,
     name:company.name,
-    zipcode:company.zipcode
+    zipcode:company.zipcode,
+    city:company.city
     
   }
 

@@ -21,63 +21,81 @@ type Props = {
     country: string;
     name: string;
     zipcode: string;
+    city: string;
   };
 };
 
 const QuotationPdfGenerator = ({ quotation, companyInfo }: Props) => {
+  const subTotalAmount =
+    quotation?.lineItems.reduce(
+      (acc, val) => acc + val.price * val.quantity,
+      0
+    ) || 0;
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.contentContainer}>
-        <View style={styles.header}>
-          {!!companyInfo.logo ? (
-            <Image src={companyInfo.logo} style={styles.logo} />
-          ) : (
-            <View style={styles.companyLetter}>
-              <Text>{companyInfo.name.charAt(0).toUpperCase()}</Text>
-            </View>
-          )}
-          <View>
-            <Text style={styles.companyName}>{companyInfo.name}</Text>
-            <Text style={styles.companyInfoLine}>{companyInfo.address}</Text>
-            <Text style={styles.companyInfoLine}>{companyInfo.zipcode}</Text>
-            <Text style={styles.companyInfoLine}>{companyInfo.country}</Text>
+          <View style={styles.header}>
+            {!!companyInfo.logo ? (
+              <Image src={companyInfo.logo} style={styles.logo} />
+            ) : (
+              <View style={{ padding: 12 }}></View>
+            )}
+            <View>
+              <Text style={styles.companyName}>{companyInfo.name}</Text>
+              <Text style={styles.companyInfoLine}>{companyInfo.address}</Text>
+              <View style={{ flexDirection: "row", columnGap: 12 }}>
+                <Text style={styles.companyInfoLine}>
+                  {companyInfo.zipcode}
+                </Text>
+                <Text style={styles.companyInfoLine}>{companyInfo.city}</Text>
+              </View>
 
-            <Text style={[styles.companyInfoLine, { marginTop: 15 }]}>
-              {companyInfo.cocNumber}
-            </Text>
-            <Text style={styles.companyInfoLine}>{companyInfo.vatNumber}</Text>
-            <Text style={styles.companyInfoLine}>{companyInfo.IBAN}</Text>
-          </View>
-        </View>
-        <View style={styles.contactDetails}>
-          <Text style={styles.companyInfoLine}>Contact Details</Text>
-          <Text style={styles.companyInfoLine}>Company/Contact Name</Text>
-          <Text style={styles.companyInfoLine}>Contact Person</Text>
-          <Text style={styles.companyInfoLine}>Address</Text>
-        </View>
-        <View style={styles.quotationInfo}>
-          <View>
-            <Text style={styles.quotationNumber}>
-              {replacePlaceholders(quotation?.quotationString)}
-              {formatWithLeadingZeros(quotation?.quotationNumber!, 4)}
-            </Text>
-          </View>
-          <View>
-            <View style={styles.quotationDates}>
-              <Text style={styles.quotationDateText}>Quotation Date: </Text>
-              <Text style={styles.quotationDateText}>
-                {format(quotation?.quotationDate || "", "dd-MM-yyy")}
-              </Text>
-            </View>
-            <View style={[styles.quotationDates, { marginTop: 2 }]}>
-              <Text style={styles.quotationDateText}>Expiry Date: </Text>
-              <Text style={styles.quotationDateText}>
-                {format(quotation?.expiryDate || "", "dd-MM-yyy")}
-              </Text>
+              <Text style={styles.companyInfoLine}>{companyInfo.country}</Text>
+              <View style={{ marginTop: 15 }}>
+                {companyInfo.cocNumber && (
+                  <Text style={styles.companyInfoLine}>
+                    CoC: {companyInfo.cocNumber}
+                  </Text>
+                )}
+                <Text style={styles.companyInfoLine}>
+                  VAT: {companyInfo.vatNumber}
+                </Text>
+                <Text style={styles.companyInfoLine}>
+                  IBAN: {companyInfo.IBAN}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
+          <View style={styles.contactDetails}>
+            <Text style={styles.companyInfoLine}>Contact Details</Text>
+            <Text style={styles.companyInfoLine}>Company/Contact Name</Text>
+            <Text style={styles.companyInfoLine}>Contact Person</Text>
+            <Text style={styles.companyInfoLine}>Address</Text>
+          </View>
+          <View style={styles.quotationInfo}>
+            <View>
+              <Text style={styles.quotationNumber}>
+                {replacePlaceholders(quotation?.quotationString)}
+                {formatWithLeadingZeros(quotation?.quotationNumber!, 4)}
+              </Text>
+            </View>
+            <View>
+              <View style={styles.quotationDates}>
+                <Text style={styles.quotationDateText}>Quotation Date: </Text>
+                <Text style={styles.quotationDateText}>
+                  {format(quotation?.quotationDate || "", "dd-MM-yyy")}
+                </Text>
+              </View>
+              <View style={[styles.quotationDates, { marginTop: 2 }]}>
+                <Text style={styles.quotationDateText}>Expiry Date: </Text>
+                <Text style={styles.quotationDateText}>
+                  {format(quotation?.expiryDate || "", "dd-MM-yyy")}
+                </Text>
+              </View>
+            </View>
+          </View>
         </View>
         {/* Table */}
         <View style={styles.table}>
@@ -90,13 +108,19 @@ const QuotationPdfGenerator = ({ quotation, companyInfo }: Props) => {
               <Text style={styles.tableCellHeader}>Description</Text>
             </View>
             <View style={[styles.tableColHeader, styles.tableColAmount]}>
-              <Text style={[styles.tableCellHeader,{textAlign:'right'}]}>Amount</Text>
+              <Text style={[styles.tableCellHeader, { textAlign: "right" }]}>
+                Amount
+              </Text>
             </View>
             <View style={[styles.tableColHeader, styles.tableColTotal]}>
-              <Text style={[styles.tableCellHeader,{textAlign:'right'}]}>Total</Text>
+              <Text style={[styles.tableCellHeader, { textAlign: "right" }]}>
+                Total
+              </Text>
             </View>
             <View style={[styles.tableColHeader, styles.tableColVAT]}>
-              <Text style={[styles.tableCellHeader,{textAlign:'right'}]}>VAT</Text>
+              <Text style={[styles.tableCellHeader, { textAlign: "right" }]}>
+                VAT
+              </Text>
             </View>
           </View>
           {/* Table Content */}
@@ -130,13 +154,19 @@ const QuotationPdfGenerator = ({ quotation, companyInfo }: Props) => {
                 </View>
               </View>
               <View style={styles.tableColAmount}>
-                <Text style={[styles.tableCell,{textAlign:'right'}]}>€ {item.price}</Text>
+                <Text style={[styles.tableCell, { textAlign: "right" }]}>
+                  € {item.price}
+                </Text>
               </View>
               <View style={styles.tableColTotal}>
-                <Text style={[styles.tableCell,{textAlign:'right'}]}>€ {item.totalPrice}</Text>
+                <Text style={[styles.tableCell, { textAlign: "right" }]}>
+                  € {item.totalPrice}
+                </Text>
               </View>
               <View style={styles.tableColVAT}>
-                <Text style={[styles.tableCell,{textAlign:'right'}]}>{item.taxPercentage}</Text>
+                <Text style={[styles.tableCell, { textAlign: "right" }]}>
+                  {item.taxPercentage} %
+                </Text>
               </View>
             </View>
           ))}
@@ -144,15 +174,83 @@ const QuotationPdfGenerator = ({ quotation, companyInfo }: Props) => {
             <View style={styles.tableColQuantity}></View>
             <View style={styles.tableColDescription}></View>
             <View style={styles.tableColAmount}>
-              <Text style={[styles.tableDiscount,{textAlign:'right'}]}>
+              <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
                 {quotation?.discount?.type === "PERCENTAGE"
                   ? `% ${quotation.discount.percentageValue}`
                   : `€ ${quotation?.discount?.fixedValue}`}{" "}
                 Discount
               </Text>
             </View>
-            <View>
-              <Text></Text>
+            <View style={styles.tableColTotal}>
+              <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
+                - € {quotation?.discountAmount}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.tableRowNoBorder}>
+            <View style={styles.tableColQuantity}></View>
+            <View style={styles.tableColDescription}></View>
+            <View style={styles.tableColAmount}>
+              <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
+                Subtotal
+              </Text>
+            </View>
+            <View style={styles.tableColTotal}>
+              <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
+                € {subTotalAmount - (quotation?.discountAmount || 0)}
+              </Text>
+            </View>
+          </View>
+          {quotation?.lineItems.map((item, index) => (
+            <View key={`VAT-${item.id}`} style={styles.tableRowNoBorder}>
+              <View style={styles.tableColQuantity}></View>
+              <View style={styles.tableColDescription}></View>
+              <View
+                style={
+                  index === quotation.lineItems.length - 1
+                    ? styles.tableColAmountBorder
+                    : styles.tableColAmount
+                }
+              >
+                <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
+                  % {item.taxPercentage} VAT
+                </Text>
+              </View>
+              <View
+                style={
+                  index === quotation.lineItems.length - 1
+                    ? styles.tableColTotalBorder
+                    : styles.tableColTotal
+                }
+              >
+                <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
+                  € {item.taxAmount}
+                </Text>
+              </View>
+            </View>
+          ))}
+          <View style={styles.tableRowNoBorder}>
+            <View style={styles.tableColQuantity}></View>
+            <View style={styles.tableColDescription}></View>
+            <View style={styles.tableColAmount}>
+              <Text
+                style={[
+                  styles.tableDiscount,
+                  { textAlign: "right", fontWeight: "semibold", fontSize: 14 },
+                ]}
+              >
+                Total
+              </Text>
+            </View>
+            <View style={styles.tableColTotal}>
+              <Text
+                style={[
+                  styles.tableDiscount,
+                  { textAlign: "right", fontWeight: "semibold", fontSize: 14 },
+                ]}
+              >
+                € {quotation?.totalAmount}
+              </Text>
             </View>
           </View>
         </View>
@@ -163,8 +261,8 @@ const QuotationPdfGenerator = ({ quotation, companyInfo }: Props) => {
 
 const styles = StyleSheet.create({
   page: { paddingHorizontal: 40, paddingVertical: 50 },
-  contentContainer:{
-    paddingHorizontal:40
+  contentContainer: {
+    paddingHorizontal: 40,
   },
 
   header: {
@@ -221,7 +319,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderColor: "#000",
-   
   },
   tableRowNoBorder: {
     flexDirection: "row",
@@ -256,10 +353,22 @@ const styles = StyleSheet.create({
   tableCell: {
     fontSize: 10,
   },
-  tableDiscount:{
-    fontSize:10,
-    fontWeight:'bold'
-  }
+  tableDiscount: {
+    fontSize: 10,
+    fontWeight: "bold",
+  },
+  tableColTotalBorder: {
+    width: "15%",
+    padding: 5,
+    borderBottomWidth: 1,
+    borderColor: "#000",
+  },
+  tableColAmountBorder: {
+    width: "15%",
+    padding: 5,
+    borderBottomWidth: 1,
+    borderColor: "#000",
+  },
 });
 
 export default QuotationPdfGenerator;
