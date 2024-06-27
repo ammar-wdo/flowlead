@@ -59,6 +59,15 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
     },
     select: {
       id: true,
+      logo:true,
+      address:true,
+      cocNumber:true,
+      vatNumber:true,
+      IBAN:true,
+      country:true,
+      name:true,
+      zipcode:true,
+      
       quotesSettings: {
         select: {
           id: true,
@@ -67,6 +76,7 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
           dueDays:true,
           attatchments:true,
           footNote:true,
+          
         },
       },
     },
@@ -74,6 +84,18 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
 
   if (!company || !company.quotesSettings)
     throw new CustomError("company or quotations settings not found");
+
+  const companyInfo = {
+    logo:company.logo,
+    address:company.address,
+    cocNumber:company.cocNumber,
+    vatNumber:company.vatNumber,
+    IBAN:company.IBAN,
+    country:company.country,
+    name:company.name,
+    zipcode:company.zipcode
+    
+  }
 
   const contactsRes = prisma.contact.findMany({
     where: {
@@ -138,6 +160,7 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
           options={options}
           quotation={quotation}
           quotationSettings={company?.quotesSettings}
+          companyInfo={companyInfo}
         />
       </div>
     </div>

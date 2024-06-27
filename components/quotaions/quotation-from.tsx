@@ -150,6 +150,16 @@ type Props = {
     nextNumber: number;
   };
   refactoredContacts: RefactoredContacts;
+  companyInfo: {
+    logo: string | null;
+    address: string;
+    cocNumber: string | null;
+    vatNumber: string;
+    IBAN: string;
+    country: string;
+    name: string;
+    zipcode: string;
+}
 };
 
 const QuotationsForm = ({
@@ -158,6 +168,7 @@ const QuotationsForm = ({
   options,
   quotationSettings,
   refactoredContacts,
+  companyInfo
 }: Props) => {
   const {
     form,
@@ -987,7 +998,7 @@ const QuotationsForm = ({
 
       {/* PDF Veiwer */}
       <PDFViewer width="100%" height="1200">
-        <QuotationPdfGenerator quotation={quotation} />
+        <QuotationPdfGenerator quotation={quotation} companyInfo={companyInfo} />
       </PDFViewer>
     </Form>
   );

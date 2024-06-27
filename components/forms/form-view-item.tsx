@@ -95,7 +95,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
         ref={setNodeRef}
         className={cn(
           " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px]  mb-4",
-          isDragging && "z-10 opacity-20 relative ",
+          isDragging && "z-10 opacity-30 relative ",
           selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
       
@@ -144,7 +144,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
         ref={setNodeRef}
         className={cn(
           " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px] mb-4 ",
-          isDragging && "z-10 opacity-20 relative ",
+          isDragging && "z-10 opacity-30 relative ",
           selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
      
