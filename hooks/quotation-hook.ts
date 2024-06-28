@@ -3,7 +3,7 @@ import { DiscountType, Quotation } from "@prisma/client";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { emailSendSchema, quotationSchema } from "@/schemas";
+import { invoiceEmailSendSchema, quotationEmailSendSchema, quotationSchema } from "@/schemas";
 import { useEffect, useState, useTransition } from "react";
 import { v4 as uuid4 } from "uuid";
 import { useEdgeStore } from "@/lib/edgestore";
@@ -39,7 +39,7 @@ export const useQuotation = ({
   const [contactOpen, setContactOpen] = useState(false);
 
   const [emailData, setEmailData] = useState<z.infer<
-    typeof emailSendSchema
+    typeof quotationEmailSendSchema
   > | null>(null);
 
   const quotationExpiryDate =
@@ -346,7 +346,7 @@ export const useQuotation = ({
 
 
 
-export const useSendEmail = ({emailData}:{emailData:z.infer<typeof emailSendSchema> | null})=>{
+export const useSendEmail = ({emailData}:{emailData:z.infer<typeof quotationEmailSendSchema> | z.infer<typeof invoiceEmailSendSchema> | null})=>{
 
 
 
@@ -356,15 +356,15 @@ export const useSendEmail = ({emailData}:{emailData:z.infer<typeof emailSendSche
 
 
 
-  const form = useForm<z.infer<typeof emailSendSchema>>({
-    resolver: zodResolver(emailSendSchema),
+  const form = useForm<z.infer<typeof quotationEmailSendSchema>>({
+    resolver: zodResolver(quotationEmailSendSchema),
     defaultValues: {
 ...emailData
     },
   })
  
 
-  function onSubmit(values: z.infer<typeof emailSendSchema>) {
+  function onSubmit(values: z.infer<typeof quotationEmailSendSchema>) {
   
    console.log(JSON.stringify(values,undefined,2))
   }

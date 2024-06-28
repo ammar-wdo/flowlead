@@ -3,7 +3,7 @@ import { DiscountType, Invoice, Quotation } from "@prisma/client";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { emailSendSchema, invoiceSchema } from "@/schemas";
+import { invoiceEmailSendSchema, invoiceSchema } from "@/schemas";
 import { useEffect, useState, useTransition } from "react";
 import { v4 as uuid4 } from "uuid";
 import { useEdgeStore } from "@/lib/edgestore";
@@ -12,6 +12,7 @@ import { addQuotation, editQuotation } from "@/actions/quotation-actions";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { replaceDates } from "@/lib/utils";
+import { addInvoice, editInvoice } from "@/actions/invoice-actions";
 
 export const useInvoice = ({
   invoice,
@@ -39,8 +40,8 @@ export const useInvoice = ({
   const [contactOpen, setContactOpen] = useState(false);
 
   const [emailData, setEmailData] = useState<z.infer<
-    typeof emailSendSchema
-  > | null>(null);
+    typeof invoiceEmailSendSchema
+  >  | null>(null);
 
   const invoiceExpiryDate =
     invoice?.expiryDate ||
@@ -244,9 +245,9 @@ export const useInvoice = ({
     try {
       let res;
       if (invoice) {
-        res = await editQuotation(values, params.companySlug, invoice.id);
+        res = await editInvoice(values, params.companySlug, invoice.id);
       } else {
-        res = await addQuotation(values, params.companySlug);
+        res = await addInvoice(values, params.companySlug);
       }
 
       if (!res.success) {
@@ -255,17 +256,17 @@ export const useInvoice = ({
         return;
       }
 
-      const returnedQuotation = res.data;
+      const returnedInvoice= res.data;
       setEmailData({
-        quotationId: returnedQuotation?.id!,
-        content: returnedQuotation?.quotationSettings!.body!,
-        subject: returnedQuotation?.quotationSettings.subject!,
+        invoiceId: returnedInvoice?.id!,
+        content: returnedInvoice?.invoiceSettings!.body!,
+        subject: returnedInvoice?.invoiceSettings.subject!,
         receiverEmail:
-          returnedQuotation?.contactPerson?.emailAddress ||
-          returnedQuotation?.contact.emailAddress!,
-        senderEmail: returnedQuotation?.company.companyEmail!,
-        senderName:returnedQuotation?.company.name!,
-        attatchments:returnedQuotation?.attatchments
+          returnedInvoice?.contactPerson?.emailAddress ||
+          returnedInvoice?.contact.emailAddress!,
+        senderEmail: returnedInvoice?.company.companyEmail!,
+        senderName:returnedInvoice?.company.name!,
+        attatchments:returnedInvoice?.attatchments
       });
 
  
@@ -344,7 +345,7 @@ export const useInvoice = ({
 
 
 
-export const useSendEmail = ({emailData}:{emailData:z.infer<typeof emailSendSchema> | null})=>{
+export const useSendEmail = ({emailData}:{emailData:z.infer<typeof invoiceEmailSendSchema> | null})=>{
 
 
 
@@ -354,15 +355,15 @@ export const useSendEmail = ({emailData}:{emailData:z.infer<typeof emailSendSche
 
 
 
-  const form = useForm<z.infer<typeof emailSendSchema>>({
-    resolver: zodResolver(emailSendSchema),
+  const form = useForm<z.infer<typeof invoiceEmailSendSchema>>({
+    resolver: zodResolver(invoiceEmailSendSchema),
     defaultValues: {
 ...emailData
     },
   })
  
 
-  function onSubmit(values: z.infer<typeof emailSendSchema>) {
+  function onSubmit(values: z.infer<typeof invoiceEmailSendSchema>) {
   
    console.log(JSON.stringify(values,undefined,2))
   }

@@ -81,7 +81,7 @@ import {
 import { Calendar } from "../ui/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { Textarea } from "../ui/textarea";
-import { VARIABLES, emailSendSchema } from "@/schemas";
+import { VARIABLES, invoiceEmailSendSchema } from "@/schemas";
 import { MultiFileDropzone } from "../MultiFileDropzone";
 
 import { v4 as uuidv4 } from "uuid";
@@ -193,10 +193,7 @@ const InvoicesForm = ({
   const {
     form,
     onSubmit,
-    openQuotDate,
-    setOpenQuotDate,
-    openExpiryQuotDate,
-    setOpenExpiryQuotDate,
+  openExpiryInvoiceDate,openInvoiceDate,setOpenExpiryInvoiceDate,setOpenInvoiceDate,
     calculate,
     addLineItem,
     deleteLineItem,
@@ -429,19 +426,19 @@ const InvoicesForm = ({
         <div className="h-px bg-gray-200" />
         <FormField
           control={form.control}
-          name="quotationNumber"
+          name="invoiceNumber"
           render={({ field }) => (
             <FormItem>
               <SettingsFormWrapper>
-                <FormLabel>Quotation Number</FormLabel>
+                <FormLabel>Invoice Number</FormLabel>
                 <FormControl>
                   <div className="flex items-center gap-4 md:col-span-2  max-w-[450px]">
                     <span className="border rounded-lg h-full px-4 py-2 min-w-[50px] pointer-events-none select-none text-slate-500 bg-muted text-sm">
-                      {replacePlaceholders(form.watch("quotationString"))}
+                      {replacePlaceholders(form.watch("invoiceString"))}
                     </span>
                     <Input
                       className="flex-[1]"
-                      placeholder="Quotation Number"
+                      placeholder="Invoice Number"
                       {...field}
                       type="number"
                       value={
@@ -461,7 +458,7 @@ const InvoicesForm = ({
                       }
                     />
                     <span className="text-gray-500 text-sm">
-                      {replacePlaceholders(form.watch("quotationString"))}
+                      {replacePlaceholders(form.watch("invoiceString"))}
                       {formatWithLeadingZeros(Number(field.value || 1), 4)}
                     </span>
                   </div>
@@ -476,13 +473,13 @@ const InvoicesForm = ({
         <div className="h-px bg-gray-200" />
         <FormField
           control={form.control}
-          name="quotationDate"
+          name="invoiceDate"
           render={({ field }) => (
             <FormItem>
               <SettingsFormWrapper>
-                <FormLabel>Quotation Date</FormLabel>
+                <FormLabel>Invoice Date</FormLabel>
                 <FormControl>
-                  <Popover open={openQuotDate} onOpenChange={setOpenQuotDate}>
+                  <Popover open={openInvoiceDate} onOpenChange={setOpenInvoiceDate}>
                     <PopoverTrigger
                       asChild
                       className="md:col-span-2 max-w-[450px]"
@@ -510,7 +507,7 @@ const InvoicesForm = ({
                         selected={field.value}
                         onSelect={(date) => {
                           field.onChange(date);
-                          setOpenQuotDate(false);
+                          setOpenInvoiceDate(false);
                         }}
                         disabled={(date) =>
                           date < new Date(new Date().setHours(0, 0, 0, 0))
@@ -537,8 +534,8 @@ const InvoicesForm = ({
                 <FormLabel>Expiry Date</FormLabel>
                 <FormControl>
                   <Popover
-                    open={openExpiryQuotDate}
-                    onOpenChange={setOpenExpiryQuotDate}
+                    open={openExpiryInvoiceDate}
+                    onOpenChange={setOpenExpiryInvoiceDate}
                   >
                     <PopoverTrigger
                       asChild
@@ -567,7 +564,7 @@ const InvoicesForm = ({
                         selected={field.value}
                         onSelect={(date) => {
                           field.onChange(date);
-                          setOpenExpiryQuotDate(false);
+                          setOpenExpiryInvoiceDate(false);
                         }}
                         disabled={(date) =>
                           date < new Date(new Date().setHours(0, 0, 0, 0))
@@ -1517,7 +1514,7 @@ const SendEmailModal = ({
   emailData,
   handleResetEmailData,
 }: {
-  emailData: z.infer<typeof emailSendSchema> | null;
+  emailData: z.infer<typeof invoiceEmailSendSchema> | null;
   handleResetEmailData: (val: boolean) => void;
 }) => {
   const { form, onSubmit } = useSendEmail({ emailData });

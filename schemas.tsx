@@ -481,9 +481,20 @@ export const invoiceSchema= z.object({
 });
 
 //email send schema 
-export const emailSendSchema = z.object({
+export const quotationEmailSendSchema = z.object({
 
     quotationId:requiredString,
+    senderEmail:requiredString.email(),
+    senderName:requiredString,
+    receiverEmail:requiredString.email(),
+    subject:requiredString,
+    content:requiredString,
+    attatchments:z.array(attatchmentSchema).optional()
+  
+})
+export const invoiceEmailSendSchema = z.object({
+
+    invoiceId:requiredString,
     senderEmail:requiredString.email(),
     senderName:requiredString,
     receiverEmail:requiredString.email(),
