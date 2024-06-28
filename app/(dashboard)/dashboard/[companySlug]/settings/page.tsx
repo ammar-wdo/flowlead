@@ -12,28 +12,32 @@ const page = ({params}: Props) => {
     {
       label: "Company",
       icon: <Building2 />,
+      description:"Manage your company settings",
       pathname: `/dashboard/${params.companySlug}/settings/company`,
     },
     {
       label: "Team Members",
       icon: <UsersRound />,
+      description:"Manage your team members",
       pathname: `/dashboard/${params.companySlug}/settings/team-members`,
     },
     {
       label: "Quotations",
       icon: <BsExclamationSquareFill />,
+      description:"Manage your Quotations Settings",
       pathname: `/dashboard/${params.companySlug}/settings/quotations`,
     },
     {
       label: "Invoices",
       icon: <ReceiptText />,
+      description:"Manage your Invoices Settings",
       pathname: `/dashboard/${params.companySlug}/settings/invoices`,
     },
   ];
   return (
     <div>
       <Heading title="Settings" />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 mt-20">
         {settingsLinks.map((link) => (
           <article
             key={link.label}
@@ -43,11 +47,12 @@ const page = ({params}: Props) => {
               {link.icon}
             </span>
             <p className="font-semibold">{link.label}</p>
+            <p className=" text-muted-foreground text-sm">{link.description}</p>
           
               {" "}
               <Button
               asChild
-                className="bg-gray-200 hover:bg-gray-200/80"
+                className="bg-gray-200 hover:bg-gray-200/80 mt-auto"
                 variant={"secondary"}
               >
               <Link  href={link.pathname}>View</Link>

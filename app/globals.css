@@ -159,6 +159,7 @@
 
 .scroll::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 .scroll::-webkit-scrollbar-button {

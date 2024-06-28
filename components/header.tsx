@@ -6,7 +6,7 @@ type Props = {}
 
 const Header = (props: Props) => {
   return (
-    <header className='h-[64px] sticky top-0 bg-white border-b z-10'>
+    <header className='h-[64px] sticky top-0   border-b z-10 min-w-[1100px] bg-white' >
     
     </header>
   )
