@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuotation, useSendEmail } from "@/hooks/quotation-hook";
-import { $Enums, Contact, DiscountType, Invoice, } from "@prisma/client";
+import { $Enums, Contact, DiscountType, Invoice } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -65,6 +65,7 @@ import {
   CalendarIcon,
   Check,
   ChevronsUpDown,
+  Edit,
   Euro,
   FileIcon,
   GripVertical,
@@ -75,6 +76,7 @@ import {
   PlusIcon,
   Star,
   Trash,
+  TriangleAlert,
   User,
   XIcon,
 } from "lucide-react";
@@ -121,25 +123,35 @@ import {
 } from "@dnd-kit/core";
 import InvoicePdfGenerator from "./invoice-pdf-generator";
 import { useInvoice } from "@/hooks/invoice-hook";
+import { MdOutlineEditOff } from "react-icons/md";
+import Tip from "../tip";
 
 type Props = {
-  invoice: Invoice & { 
-    contact: {
-      address: string | null;
-      zipcode: string | null;
-      city: string | null;
-      country: string | null;
-    contactType: $Enums.ContactType;
-    contactName: string;
-    emailAddress: string;
-    companyName: string | null;
-} | null | undefined,
-contactPerson:{
-  emailAddress: string;
-  contactName: string
-} | null | undefined
-
-} | undefined | null;
+  invoice:
+    | (Invoice & {
+        contact:
+          | {
+              address: string | null;
+              zipcode: string | null;
+              city: string | null;
+              country: string | null;
+              contactType: $Enums.ContactType;
+              contactName: string;
+              emailAddress: string;
+              companyName: string | null;
+            }
+          | null
+          | undefined;
+        contactPerson:
+          | {
+              emailAddress: string;
+              contactName: string;
+            }
+          | null
+          | undefined;
+      })
+    | undefined
+    | null;
   options: {
     id: string;
     name: string;
@@ -154,7 +166,7 @@ contactPerson:{
     }[];
   }[];
   contacts: Contact[];
- invoiceSettings: {
+  invoiceSettings: {
     id: string;
     attatchments: {
       name: string | null;
@@ -178,8 +190,8 @@ contactPerson:{
     name: string;
     zipcode: string;
     city: string;
-    companyEmail:string
-}
+    companyEmail: string;
+  };
 };
 
 const InvoicesForm = ({
@@ -188,12 +200,15 @@ const InvoicesForm = ({
   options,
   invoiceSettings,
   refactoredContacts,
-  companyInfo
+  companyInfo,
 }: Props) => {
   const {
     form,
     onSubmit,
-  openExpiryInvoiceDate,openInvoiceDate,setOpenExpiryInvoiceDate,setOpenInvoiceDate,
+    openExpiryInvoiceDate,
+    openInvoiceDate,
+    setOpenExpiryInvoiceDate,
+    setOpenInvoiceDate,
     calculate,
     addLineItem,
     deleteLineItem,
@@ -219,6 +234,8 @@ const InvoicesForm = ({
     total,
     pending,
     emailData,
+    edit,
+    setEdit,
     handleResetEmailData,
   } = useInvoice({ invoice, invoiceSettings });
 
@@ -227,21 +244,21 @@ const InvoicesForm = ({
     setMount(true);
   }, []);
 
- 
-
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(String(event.active.id));
-    const index = form.watch('lineItems').findIndex(el=>el.id===event.active.id)
-    setActiveIndex(index)
+    const index = form
+      .watch("lineItems")
+      .findIndex((el) => el.id === event.active.id);
+    setActiveIndex(index);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
-    setActiveIndex(null)
+    setActiveIndex(null);
     if (over && active.id !== over.id) {
       const items = form.watch("lineItems");
       const oldIndex = items.findIndex((item) => item.id === active.id);
@@ -254,7 +271,7 @@ const InvoicesForm = ({
 
   const handleDragCancel = () => {
     setActiveId(null);
-    setActiveIndex(null)
+    setActiveIndex(null);
   };
   if (!mount) return null;
   return (
@@ -437,7 +454,12 @@ const InvoicesForm = ({
                       {replacePlaceholders(form.watch("invoiceString"))}
                     </span>
                     <Input
-                      className="flex-[1]"
+                      readOnly={!edit}
+                      className={cn(
+                        "flex-[1]",
+                        !edit &&
+                          "text-slate-500  bg-muted pointer-events-none select-none"
+                      )}
                       placeholder="Invoice Number"
                       {...field}
                       type="number"
@@ -457,6 +479,21 @@ const InvoicesForm = ({
                         )
                       }
                     />
+                    {!edit ? (
+                      <Tip title="Enable Editing">
+                        <EditInvoiceModal setEdit={() => setEdit(true)} />
+                      </Tip>
+                    ) : (
+                      <Tip title="Disable Editing">
+                        <Button
+                          variant={"secondary"}
+                          type="button"
+                          onClick={() => setEdit(false)}
+                        >
+                          <MdOutlineEditOff size={23} />
+                        </Button>
+                      </Tip>
+                    )}
                     <span className="text-gray-500 text-sm">
                       {replacePlaceholders(form.watch("invoiceString"))}
                       {formatWithLeadingZeros(Number(field.value || 1), 4)}
@@ -479,7 +516,10 @@ const InvoicesForm = ({
               <SettingsFormWrapper>
                 <FormLabel>Invoice Date</FormLabel>
                 <FormControl>
-                  <Popover open={openInvoiceDate} onOpenChange={setOpenInvoiceDate}>
+                  <Popover
+                    open={openInvoiceDate}
+                    onOpenChange={setOpenInvoiceDate}
+                  >
                     <PopoverTrigger
                       asChild
                       className="md:col-span-2 max-w-[450px]"
@@ -613,7 +653,7 @@ const InvoicesForm = ({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                    <TableHead></TableHead>
+                      <TableHead></TableHead>
                       <TableHead className="w-[300px]">Item</TableHead>
                       <TableHead>Quantity</TableHead>
                       <TableHead>Price</TableHead>
@@ -652,19 +692,21 @@ const InvoicesForm = ({
                           />
                         ))}
                       </SortableContext>
-                      <DragOverlay style={{opacity:1}} className="">
+                      <DragOverlay style={{ opacity: 1 }} className="">
                         <div>
-                        <OptionTableRow
-                      
+                          <OptionTableRow
                             key={"any"}
                             calculate={calculate}
                             deleteLineItem={deleteLineItem}
                             form={form}
                             index={activeIndex as number}
-                            lineItem={form.watch('lineItems').find(item=>item.id === activeId)!}
+                            lineItem={
+                              form
+                                .watch("lineItems")
+                                .find((item) => item.id === activeId)!
+                            }
                           />
                         </div>
-                    
                       </DragOverlay>
                     </DndContext>
                   </TableBody>
@@ -1014,9 +1056,11 @@ const InvoicesForm = ({
       </form>
 
       {/* PDF Veiwer */}
-     { invoice && <PDFViewer width="100%" height="1200">
-        <InvoicePdfGenerator invoice={invoice} companyInfo={companyInfo} />
-      </PDFViewer>}
+      {invoice && (
+        <PDFViewer width="100%" height="1200">
+          <InvoicePdfGenerator invoice={invoice} companyInfo={companyInfo} />
+        </PDFViewer>
+      )}
     </Form>
   );
 };
@@ -1059,16 +1103,13 @@ const OptionTableRow = ({
   } = useSortable({ id: lineItem.id });
 
   const style = {
-   
     transition,
-  
   };
 
   return (
     <TableRow
       style={style}
       ref={setNodeRef}
-   
       key={lineItem.id}
       className={cn(
         "w-full border-none border-t-0 relative group !h-6 p-0  bg-white hover:!opacity-100 hover:bg-muted/80",
@@ -1076,7 +1117,7 @@ const OptionTableRow = ({
       )}
     >
       <TableCell className="self-start">
-      <Button
+        <Button
           {...attributes}
           {...listeners}
           type="button"
@@ -1703,6 +1744,43 @@ const SendEmailModal = ({
             </DialogFooter>
           </form>
         </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const EditInvoiceModal = ({ setEdit }: { setEdit: () => void }) => {
+  return (
+    <Dialog >
+      <DialogTrigger>
+        <Button type="button" variant={"secondary"}>
+          <Edit />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-[800px]">
+        <DialogHeader>
+          <DialogTitle className="flex justify-center"><TriangleAlert className="text-rose-600 " size={50}/></DialogTitle>
+          <DialogDescription className="text-center max-w-[550px] !my-4 mx-auto w-full">
+          Are you sure you want to set the invoice number yourself? If you allow FlowLead to set the invoice number, it will select the next available number automatically when you send the invoice.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="flex items-center justify-center sm:justify-center w-full  border-t pt-4 ">
+        <DialogClose>
+            <Button
+              onClick={setEdit}
+              className="bg-rose-600 text-white hover:bg-rose-600/80 hover:text-white px-12 !py-2 h-auto rounded-xl "
+              type="button"
+            >
+              Activate manual selection
+            </Button>
+          </DialogClose>
+          <DialogClose>
+            <Button className="rounded-xl !py-2 h-auto" variant={"secondary"} type="button">
+              Cancel
+            </Button>
+          </DialogClose>
+     
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

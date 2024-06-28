@@ -37,6 +37,8 @@ export const useInvoice = ({
   const [openExpiryInvoiceDate, setOpenExpiryInvoiceDate] = useState(false);
   const [pending, startTransitions] = useTransition();
 
+  const [edit, setEdit] = useState(false)
+
   const [contactOpen, setContactOpen] = useState(false);
 
   const [emailData, setEmailData] = useState<z.infer<
@@ -339,7 +341,8 @@ export const useInvoice = ({
     total,
     pending,
     emailData,
-    handleResetEmailData
+    handleResetEmailData,
+    edit,setEdit
   };
 };
 
