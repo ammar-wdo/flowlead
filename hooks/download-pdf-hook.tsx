@@ -3,13 +3,11 @@ import { fetchQuotationPDF } from "@/actions/fetch-quotationPDF-action";
 import InvoicePdfGenerator from "@/components/invoices/invoice-pdf-generator";
 import QuotationPdfGenerator from "@/components/quotaions/quotation-pdf-generator";
 import { formatWithLeadingZeros, replacePlaceholders } from "@/lib/utils";
-import { $Enums, Invoice, Quotation } from "@prisma/client";
-import ReactPDF, { pdf } from "@react-pdf/renderer";
+
+import { pdf } from "@react-pdf/renderer";
 import { useParams } from "next/navigation";
 import {
-  MutableRefObject,
-  useEffect,
-  useRef,
+
   useState,
   useTransition,
 } from "react";
@@ -26,29 +24,7 @@ export const useDownloadPDF = ({ type, id }: Props) => {
   const [invoice, setInvoice] = useState<Awaited<ReturnType<typeof fetchInvoicePDF>>["invoice"] | null>(null);
 
   const params = useParams<{ companySlug: string }>();
-  const companyInfo: {
-    logo: string | null | undefined;
-    address: string | null | undefined;
-    cocNumber: string | null | undefined;
-    vatNumber: string | null | undefined;
-    IBAN: string | null | undefined;
-    country: string | null | undefined;
-    name: string | null | undefined;
-    zipcode: string | null | undefined;
-    city: string | null | undefined;
-    companyEmail: string | null | undefined;
-  } = {
-    logo: quotation?.company?.logo,
-    address: quotation?.company?.address,
-    city: quotation?.company?.city,
-    cocNumber: quotation?.company?.cocNumber,
-    companyEmail: quotation?.company?.companyEmail,
-    country: quotation?.company?.country,
-    IBAN: quotation?.company?.IBAN,
-    name: quotation?.company?.name,
-    vatNumber: quotation?.company?.vatNumber,
-    zipcode: quotation?.company?.zipcode,
-  };
+
 
   const fetchData = async () => {
     if (type === "quotation") {
@@ -152,5 +128,5 @@ export const useDownloadPDF = ({ type, id }: Props) => {
     URL.revokeObjectURL(url);
   };
 
-  return { quotation, pending, fetchData, companyInfo };
+  return { quotation, pending, fetchData,invoice };
 };

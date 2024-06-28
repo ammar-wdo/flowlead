@@ -76,7 +76,7 @@ const FetchButon = ({ id }: { id: string }) => {
     quotation,
 
     fetchData,
-    companyInfo,
+   
     pending,
   } = useDownloadPDF({ id, type: "invoice" });
 
