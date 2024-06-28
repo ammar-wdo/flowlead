@@ -81,7 +81,7 @@ import {
 import { Calendar } from "../ui/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { Textarea } from "../ui/textarea";
-import { VARIABLES, emailSendSchema } from "@/schemas";
+import { VARIABLES, quotationEmailSendSchema } from "@/schemas";
 import { MultiFileDropzone } from "../MultiFileDropzone";
 
 import { v4 as uuidv4 } from "uuid";
@@ -1515,7 +1515,7 @@ const SendEmailModal = ({
   emailData,
   handleResetEmailData,
 }: {
-  emailData: z.infer<typeof emailSendSchema> | null;
+  emailData: z.infer<typeof quotationEmailSendSchema> | null;
   handleResetEmailData: (val: boolean) => void;
 }) => {
   const { form, onSubmit } = useSendEmail({ emailData });
