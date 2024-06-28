@@ -18,6 +18,7 @@ import { useModal } from "@/hooks/modal-hook";
 import { deleteQuotation } from "@/actions/quotation-actions";
 
 import { useDownloadPDF } from "@/hooks/download-pdf-hook";
+import { deleteInvoice } from "@/actions/invoice-actions";
 
 type Props = {
   id: string;
@@ -33,7 +34,7 @@ const InvoiceTableActionDropdown = ({ id }: Props) => {
   const handleDeleteModalOpen = () => {
     setOpen({
       type: "delete",
-      deleteFunction: () => deleteQuotation(params.companySlug, id),
+      deleteFunction: () => deleteInvoice(params.companySlug, id),
     });
   };
 
