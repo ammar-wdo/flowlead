@@ -5,6 +5,7 @@ import {
   DiscountType,
   ElementType,
   FieldType,
+  InvoiceStatus,
   LogicalOperator,
   QuotationStatus,
 } from "@prisma/client";
@@ -454,6 +455,27 @@ export const quotationSchema= z.object({
   dateAccepted:z.date().optional(),
   acceptedBy:optionalString,
   status:z.nativeEnum(QuotationStatus),
+
+
+});
+export const invoiceSchema= z.object({
+  contactId:requiredString,
+  contactPersonId:optionalString,
+  invoiceNumber: z.coerce
+    .number({ invalid_type_error: "Enter valid number " })
+    .min(1, "required"),
+  invoiceString: requiredString,
+  invoiceDate: z.date(),
+  expiryDate: z.date(),
+  subject: optionalString.nullable(),
+  lineItems: z.array(lineItemSchema).min(1,"At least on line item is required"),
+  attatchments: z.array(attatchmentSchema).optional(),
+  footNote: optionalString,
+  discount:quotationDiscountSchema.optional().nullable(),
+  totalTax:z.coerce.number({invalid_type_error:"Enter valid number"}).optional().nullable(),
+  dateAccepted:z.date().optional(),
+  acceptedBy:optionalString,
+  status:z.nativeEnum(InvoiceStatus),
 
 
 });

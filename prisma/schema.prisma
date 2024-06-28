@@ -125,10 +125,10 @@ model Invoice {
 
   userId String
 
-  quotationNumber Int
-  quotationString String
+  invoiceNumber Int
+  invoiceString String
 
-  quotationDate DateTime @default(now())
+  invoiceDate DateTime @default(now())
   expiryDate    DateTime
 
   subject   String?
