@@ -9,7 +9,7 @@ import { useModal } from "./modal-hook";
 import { Form, Rule } from "@prisma/client";
 import { addForm, editForm } from "@/actions/form-actions";
 import { useSelectedElement } from "./selected-element-hook";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export const useFormElements = (fetchedForm: Form | undefined | null) => {
@@ -30,6 +30,23 @@ export const useFormElements = (fetchedForm: Form | undefined | null) => {
   });
 
   const { setSelectedElementNull } = useSelectedElement();
+  const formRef = useRef<HTMLDivElement>(null);
+  const optionRef = useRef<HTMLDivElement>(null);
+
+ 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (formRef.current && !formRef.current.contains(event.target as Node) && optionRef.current && !optionRef.current.contains(event.target as Node)) {
+      setSelectedElementNull();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     setSelectedElementNull();
@@ -65,5 +82,5 @@ export const useFormElements = (fetchedForm: Form | undefined | null) => {
     }
   }
 
-  return { form, onSubmit };
+  return { form, onSubmit,formRef,optionRef };
 };

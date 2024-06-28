@@ -1,6 +1,6 @@
 import { controllerElements, formSchema } from "@/schemas";
 import { Form, Service } from "@prisma/client";
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
+import React, { MouseEvent, RefObject, useEffect, useRef, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import FormItemWrapper from "./form-item-wrapper";
@@ -53,9 +53,11 @@ type Props = {
   ) => Promise<string | number | undefined>;
   services: Service[];
   fetchedForm: Form | null | undefined;
+  formRef:RefObject<HTMLDivElement>
+  optionRef:RefObject<HTMLDivElement>
 };
 
-const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
+const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,optionRef}: Props) => {
   const previousVar = useRef(1);
 
   const { selectedElement, setSelectedElementNull } = useSelectedElement();
@@ -126,7 +128,7 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
   return (
     <section className="flex 2xl:gap-40 gap-20  ">
       {/* left part _canvas_ */}
-      <div className="flex-1 ">
+      <div  className="flex-1 ">
         <div className="max-w-[1100px]">
           <FormComponent {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -172,7 +174,7 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
               {/* Form Elements */}
               <DndContext  onDragEnd={handleDragEnd}   >
                 <SortableContext items={form.watch("elements")}>
-                  <div className="bg-white p-8 space-y-8">
+                  <div ref={formRef}  className="bg-white p-8 space-y-8">
                     <FormField
                       control={form.control}
                       name="elements"
@@ -275,10 +277,10 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
       </div>
 
       {/* right part _controller_ */}
-      <div>
+      <div  >
         <div className="sticky top-40 shrink-0   w-[400px]">
           {!selectedElement ? (
-            <div className="space-y-6">
+            <div  className="space-y-6">
               {controllerElements.map((element) => (
                 <div key={uuidv4()}>
                   <h3 className="text-sm text-muted-foreground">
@@ -297,7 +299,7 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm }: Props) => {
               ))}
             </div>
           ) : (
-            <FormRightController services={services} form={form} />
+            <FormRightController optionRef={optionRef} services={services} form={form} />
           )}
         </div>{" "}
       </div>

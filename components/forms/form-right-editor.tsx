@@ -6,7 +6,7 @@ import {
   serviceSchema,
 } from "@/schemas";
 import { Service } from "@prisma/client";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, RefObject, useState } from "react";
 import { Path, UseFormReturn, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -28,9 +28,10 @@ import { Switch } from "../ui/switch";
 type Props = {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   services: Service[];
+  optionRef:RefObject<HTMLDivElement>
 };
 
-const FormRightController = ({ services, form }: Props) => {
+const FormRightController = ({ services, form ,optionRef}: Props) => {
   const componentsEditorMapper: { [key in ElementTypeMapper]: ReactNode } = {
     SERVICE_ELEMENT: <AddService services={services} form={form} />,
     FIELD: <FieldEditor form={form} />,
@@ -43,7 +44,7 @@ const FormRightController = ({ services, form }: Props) => {
   if (!selectedElement) return;
 
   return (
-    <div className="bg-white  px-12 py-6 w-[400px]">
+    <div ref={optionRef} className="bg-white  px-12 py-6 w-[400px]">
       <div className="flex items-center justify-between mb-4">
         <p className="font-semibold">
           {inputsLabelsMap[elementType!] || "Service"}
