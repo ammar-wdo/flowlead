@@ -161,48 +161,64 @@ export const generateSingleFieldSchema = (
     case "email":
       fieldSchema = z.string().email();
       break;
-    case "number":
-    case "phone":
-      fieldSchema = z.union([
-        z
-          .string()
+      case "number":
+        fieldSchema = z
+          .coerce.number({invalid_type_error:"enter valid number"})
           .refine((val) => !val || !isNaN(Number(val)), {
             message: "Please enter a valid number",
           })
-          .transform((val) => (val ? Number(val) : undefined)),
-        z.number().transform((val) => (val ? val : undefined)),
-      ]);
-
-      if (field.validations) {
-        const { min, max } = field.validations;
-
-        if (!!min) {
-          fieldSchema = fieldSchema.refine(
-            (val) => val === undefined || val >= min,
-            {
-              message: `Value should be greater than or equal to ${min}`,
-            }
-          );
+          .transform((val) => (val ? Number(val) : undefined));
+  
+        if (field.validations) {
+          const { min, max } = field.validations;
+  
+          if (!!min) {
+            fieldSchema = fieldSchema.refine(
+              (val) => val === undefined || val >= min,
+              {
+                message: `Value should be greater than or equal to ${min}`,
+              }
+            );
+          }
+  
+          if (!!max) {
+            fieldSchema = fieldSchema.refine(
+              (val) => val === undefined || val <= max,
+              {
+                message: `Value should be less than or equal to ${max}`,
+              }
+            );
+          }
         }
-
-        if (!!max) {
-          fieldSchema = fieldSchema.refine(
-            (val) => val === undefined || val <= max,
-            {
-              message: `Value should be less than or equal to ${max}`,
-            }
-          );
+  
+        if (!isRequired) {
+          fieldSchema = fieldSchema.optional();
+        } else {
+          fieldSchema = fieldSchema.refine((val) => val !== undefined, {
+            message: "Required",
+          });
         }
-      }
-
-      if (!isRequired) {
-        fieldSchema = fieldSchema.optional();
-      } else {
-        fieldSchema = fieldSchema.refine((val) => val !== undefined, {
-          message: "Required",
-        });
-      }
-      break;
+        break;
+  
+      case "phone":
+        fieldSchema = z
+          .string()
+          .refine((value) => {
+  const phoneRegex = /^(?:[0-9]){1,3}(?:[ -]*[0-9]){6,14}$/;
+  return phoneRegex.test(value);
+}, "Invalid phone number").or(z.literal(undefined)).or(z.literal(''));;
+  
+        if (!isRequired) {
+          fieldSchema = fieldSchema.optional();
+        } else {
+          fieldSchema = fieldSchema.refine((val) => val !== undefined, {
+            message: "Required",
+          }).refine(val=>val !=='', {
+            message: "Required",
+          });
+        }
+        break;
+  
 
     case "text":
     case "radio":
