@@ -47,10 +47,10 @@ const QuillEditor = forwardRef<Quill | null, QuillEditorProps>(({ value, onChang
       quillInstanceRef.current.root.innerHTML = value;
     }
   }, [value, onChange, onFocus]);
-
+ 
   return (
-    <div className='w-full'>
-      <div className='' ref={quillRef} />
+    <div className='w-full    '>
+      <div className='' ref={quillRef}  />
     </div>
   );
 });
