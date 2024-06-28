@@ -1757,7 +1757,7 @@ const EditInvoiceModal = ({ setEdit }: { setEdit: () => void }) => {
           <Edit />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[800px]">
+      <DialogContent className="max-w-[650px] rounded-xl">
         <DialogHeader>
           <DialogTitle className="flex justify-center"><TriangleAlert className="text-rose-600 " size={50}/></DialogTitle>
           <DialogDescription className="text-center max-w-[550px] !my-4 mx-auto w-full">
@@ -1768,14 +1768,14 @@ const EditInvoiceModal = ({ setEdit }: { setEdit: () => void }) => {
         <DialogClose>
             <Button
               onClick={setEdit}
-              className="bg-rose-600 text-white hover:bg-rose-600/80 hover:text-white px-12 !py-2 h-auto rounded-xl "
+              className="bg-rose-600 text-white hover:bg-rose-600/80 hover:text-white px-12 !py-2 h-auto rounded-xl font-semibold"
               type="button"
             >
               Activate manual selection
             </Button>
           </DialogClose>
           <DialogClose>
-            <Button className="rounded-xl !py-2 h-auto" variant={"secondary"} type="button">
+            <Button className="rounded-xl !py-2 h-auto font-semibold" variant={"secondary"} type="button">
               Cancel
             </Button>
           </DialogClose>
