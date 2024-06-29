@@ -29,22 +29,20 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      
       <html lang="en">
-      
-      <Script
+        <Script
           type="text/javascript"
           src="https://cdn.weglot.com/weglot.min.js"
+          strategy="afterInteractive"
         ></Script>
-        <Script>
+        <Script id="weglot-init" strategy="afterInteractive">
           {`
               Weglot.initialize({
                 api_key: 'wg_7feb4815fb5c361da19061e921d6ab622'
               });
             `}
         </Script>
-    
-      
+
         <body className={cn(poppins.className, "scroll")}>
           <EdgeStoreProvider>
             <NextTopLoader height={4} color="#111725" />
