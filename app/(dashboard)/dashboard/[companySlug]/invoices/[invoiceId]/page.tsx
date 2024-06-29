@@ -140,6 +140,10 @@ const page = async ({ params: { companySlug, invoiceId } }: Props) => {
       emailAddress: contact.emailAddress,
       phoneNumber: contact.phoneNumber,
       contactType: contact.contactType,
+      companyName:contact.companyName,
+      contactCategory:contact.contactCategory
+      
+
     };
 
     // Map contact persons to include company name and person icon
@@ -149,8 +153,9 @@ const page = async ({ params: { companySlug, invoiceId } }: Props) => {
       contactName: person.contactName,
       emailAddress: person.emailAddress,
       phoneNumber: person.phoneNumber,
-      companyName: contact.contactName,
+      companyName: contact.companyName!,
       contactPerson: true,
+      contactCategory:contact.contactCategory
     }));
 
     // Return a flat array containing the company contact and its contact persons

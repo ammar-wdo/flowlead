@@ -4,7 +4,7 @@ import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
 import { isValidObjectId } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { $Enums } from "@prisma/client";
+import { $Enums, ContactCategory } from "@prisma/client";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -15,6 +15,8 @@ export type RefactoredContacts = (
       emailAddress: string;
       phoneNumber: string | null;
       contactType: $Enums.ContactType;
+      companyName:string | null
+      contactCategory:$Enums.ContactCategory
     }
   | {
       contactPersonId: string;
@@ -24,6 +26,7 @@ export type RefactoredContacts = (
       phoneNumber: string | null;
       companyName: string;
       contactPerson: boolean;
+      contactCategory:$Enums.ContactCategory
     }
 )[];
 
@@ -155,6 +158,8 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
       emailAddress: contact.emailAddress,
       phoneNumber: contact.phoneNumber,
       contactType: contact.contactType,
+      companyName:contact.companyName,
+      contactCategory:contact.contactCategory
     };
 
     // Map contact persons to include company name and person icon
@@ -164,8 +169,9 @@ const page = async ({ params: { companySlug, quotationId } }: Props) => {
       contactName: person.contactName,
       emailAddress: person.emailAddress,
       phoneNumber: person.phoneNumber,
-      companyName: contact.contactName,
+      companyName: contact.companyName!,
       contactPerson: true,
+      contactCategory:contact.contactCategory
     }));
 
     // Return a flat array containing the company contact and its contact persons

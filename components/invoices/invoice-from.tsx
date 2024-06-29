@@ -184,8 +184,8 @@ type Props = {
     logo: string | null;
     address: string;
     cocNumber: string | null;
-    vatNumber: string;
-    IBAN: string;
+    vatNumber: string | null;
+    IBAN: string | null;
     country: string;
     name: string;
     zipcode: string;
@@ -298,7 +298,7 @@ const InvoicesForm = ({
                           !field.value && "text-muted-foreground"
                         )}
                       >
-                        {form.watch("contactPersonId")
+                       {form.watch("contactPersonId")
                           ? `${
                               refactoredContacts.find((contact) => {
                                 if (!("contactPerson" in contact)) return;
@@ -335,6 +335,8 @@ const InvoicesForm = ({
                           : field.value
                           ? refactoredContacts.find(
                               (contact) => contact.companyId === field.value
+                            )?.companyName || refactoredContacts.find(
+                              (contact) => contact.companyId === field.value
                             )?.contactName
                           : "Select Contact"}
                         {}
@@ -352,7 +354,7 @@ const InvoicesForm = ({
                           <CommandList>
                             {refactoredContacts.map((contact, index) => (
                               <CommandItem
-                                className=" cursor-pointer"
+                                className=" cursor-pointer group"
                                 value={
                                   "contactPerson" in contact
                                     ? contact.contactName +
@@ -397,28 +399,31 @@ const InvoicesForm = ({
                                       </span>
                                       <div>
                                         <p className="capitalize">
-                                          {contact.companyName} -{" "}
-                                          {contact.contactName}
+                                          {contact.contactName} -{" "}
+                                          <span className="text-xs bg-muted p-1 rounded-md group-hover:bg-white border">{contact.companyName}</span>
                                         </p>
-                                        <p className="text-muted-foreground text-xs ">
+                                        <p className="text-muted-foreground text-xs mt-2">
                                           {contact.emailAddress}
                                         </p>
                                       </div>
                                     </div>
                                   ) : (
                                     <div className="flex items-center gap-5 ">
-                                      <span>
-                                        {contact.contactType ===
-                                        "INDIVIDUAL" ? (
-                                          <MagnetIcon />
-                                        ) : (
-                                          <Building />
-                                        )}
-                                      </span>
+                                        <span>
+                                     
+                                     {contact.contactType ===
+                                     "INDIVIDUAL"  ? (
+                                      contact.contactCategory==='LEAD' ?  <MagnetIcon /> :   <User />
+                                     ) : (
+                                       <Building />
+                                     )}
+                                   </span>
                                       <div>
-                                        <p className="capitalize">
+                                      {contact.contactType=== 'INDIVIDUAL' ? <p className="capitalize">
                                           {contact.contactName}
-                                        </p>
+                                        </p> : <p className="capitalize">
+                                          {contact.companyName}
+                                        </p>}
                                         <p className="text-muted-foreground text-xs ">
                                           {contact.emailAddress}
                                         </p>

@@ -170,8 +170,8 @@ contactPerson:{
     logo: string | null;
     address: string;
     cocNumber: string | null;
-    vatNumber: string;
-    IBAN: string;
+    vatNumber: string | null;
+    IBAN: string | null;
     country: string;
     name: string;
     zipcode: string;
@@ -319,6 +319,8 @@ const QuotationsForm = ({
                           : field.value
                           ? refactoredContacts.find(
                               (contact) => contact.companyId === field.value
+                            )?.companyName || refactoredContacts.find(
+                              (contact) => contact.companyId === field.value
                             )?.contactName
                           : "Select Contact"}
                         {}
@@ -336,7 +338,7 @@ const QuotationsForm = ({
                           <CommandList>
                             {refactoredContacts.map((contact, index) => (
                               <CommandItem
-                                className=" cursor-pointer"
+                                className=" cursor-pointer group"
                                 value={
                                   "contactPerson" in contact
                                     ? contact.contactName +
@@ -381,10 +383,10 @@ const QuotationsForm = ({
                                       </span>
                                       <div>
                                         <p className="capitalize">
-                                          {contact.companyName} -{" "}
-                                          {contact.contactName}
+                                          {contact.contactName} -{" "}
+                                          <span className="text-xs bg-muted p-1 rounded-md group-hover:bg-white border">{contact.companyName}</span>
                                         </p>
-                                        <p className="text-muted-foreground text-xs ">
+                                        <p className="text-muted-foreground text-xs mt-2">
                                           {contact.emailAddress}
                                         </p>
                                       </div>
@@ -392,17 +394,20 @@ const QuotationsForm = ({
                                   ) : (
                                     <div className="flex items-center gap-5 ">
                                       <span>
+                                     
                                         {contact.contactType ===
-                                        "INDIVIDUAL" ? (
-                                          <MagnetIcon />
+                                        "INDIVIDUAL"  ? (
+                                         contact.contactCategory==='LEAD' ?  <MagnetIcon /> :   <User />
                                         ) : (
                                           <Building />
                                         )}
                                       </span>
                                       <div>
-                                        <p className="capitalize">
+                                      {contact.contactType=== 'INDIVIDUAL' ? <p className="capitalize">
                                           {contact.contactName}
-                                        </p>
+                                        </p> : <p className="capitalize">
+                                          {contact.companyName}
+                                        </p>}
                                         <p className="text-muted-foreground text-xs ">
                                           {contact.emailAddress}
                                         </p>
