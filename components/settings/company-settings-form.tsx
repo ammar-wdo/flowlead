@@ -302,28 +302,7 @@ const CompanySettingsForm = ({ company }: Props) => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="serviceEmail"
-            render={({ field }) => (
-              <FormItem className="mt-8">
-                <SettingsFormWrapper>
-                  <FormLabel>Service Email</FormLabel>
-                  <div className="col-span-1 sm:col-span-2">
-                    <FormControl>
-                      <Input
-                        className="max-w-[450px]"
-                        placeholder="Service Email"
-                        {...field}
-                      />
-                    </FormControl>
-                  </div>
-                </SettingsFormWrapper>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+         
           <FormField
             control={form.control}
             name="industry"
