@@ -81,7 +81,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { Calendar } from "../ui/calendar";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { VARIABLES, invoiceEmailSendSchema } from "@/schemas";
 import { MultiFileDropzone } from "../MultiFileDropzone";
@@ -272,6 +272,14 @@ const InvoicesForm = ({
   const handleDragCancel = () => {
     setActiveId(null);
     setActiveIndex(null);
+  };
+  const numberRef = useRef<HTMLInputElement | null>(null)
+  const setFocus = () => {
+    setTimeout(() => {
+      if (numberRef.current) {
+        numberRef.current.focus();
+      }
+    }, 0); // Using a timeout of 0ms to ensure the modal is closed before focusing
   };
   if (!mount) return null;
   return (
@@ -467,6 +475,7 @@ const InvoicesForm = ({
                       )}
                       placeholder="Invoice Number"
                       {...field}
+                      ref={numberRef}
                       type="number"
                       value={
                         field.value
@@ -486,7 +495,7 @@ const InvoicesForm = ({
                     />
                     {!edit ? (
                       <Tip title="Enable Editing">
-                        <EditInvoiceModal setEdit={() => setEdit(true)} />
+                        <EditInvoiceModal setFocus={setFocus} setEdit={() => setEdit(true)} />
                       </Tip>
                     ) : (
                       <Tip title="Disable Editing">
@@ -1754,7 +1763,7 @@ const SendEmailModal = ({
   );
 };
 
-const EditInvoiceModal = ({ setEdit }: { setEdit: () => void }) => {
+const EditInvoiceModal = ({ setEdit,setFocus }: { setEdit: () => void ,setFocus:()=>void}) => {
   return (
     <Dialog >
       <DialogTrigger>
@@ -1772,7 +1781,7 @@ const EditInvoiceModal = ({ setEdit }: { setEdit: () => void }) => {
         <DialogFooter className="flex items-center justify-center sm:justify-center w-full  border-t pt-4 ">
         <DialogClose>
             <Button
-              onClick={setEdit}
+              onClick={()=>{setEdit();setFocus()}}
               className="bg-rose-600 text-white hover:bg-rose-600/80 hover:text-white px-12 !py-2 h-auto rounded-xl font-semibold"
               type="button"
             >

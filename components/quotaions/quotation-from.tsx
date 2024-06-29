@@ -79,7 +79,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { Calendar } from "../ui/calendar";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { VARIABLES, quotationEmailSendSchema } from "@/schemas";
 import { MultiFileDropzone } from "../MultiFileDropzone";
@@ -258,6 +258,8 @@ const QuotationsForm = ({
     setActiveIndex(null)
   };
   if (!mount) return null;
+
+
   return (
     <Form {...form}>
       <form
@@ -443,9 +445,11 @@ const QuotationsForm = ({
                       {replacePlaceholders(form.watch("quotationString"))}
                     </span>
                     <Input
+                   
                       className="flex-[1]"
                       placeholder="Quotation Number"
                       {...field}
+                     
                       type="number"
                       value={
                         field.value
