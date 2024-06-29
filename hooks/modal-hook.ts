@@ -2,7 +2,8 @@ import { create } from 'zustand'
 
 
 export type ModalInputs = {type:'delete',deleteFunction:()=>Promise<{success:boolean,message?:string,error?:string}>} | {
-  type: 'company-modal'
+  type: 'company-modal',
+  new?:boolean
 } | null
 
 type Modal = {

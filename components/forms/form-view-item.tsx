@@ -1,4 +1,4 @@
-import React, { MouseEvent, useState } from "react";
+import React, { HTMLAttributes, MouseEvent, useState } from "react";
 import {
   FormControl,
   FormField,
@@ -61,9 +61,9 @@ type Props = {
   i: number;
   element: Element;
   handleDelete: (id: string, e: MouseEvent<HTMLButtonElement>) => void;
-};
+}  
 
-const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
+const FormViewItem = ({ form, i, element, handleDelete  }: Props) => {
   const { setSelectedElement, selectedElement } = useSelectedElement();
 
   const handleSelectedElementClick = () => {
@@ -89,6 +89,7 @@ const FormViewItem = ({ form, i, element, handleDelete }: Props) => {
   if (element.type === "SERVICE_ELEMENT")
     return (
       <div
+ 
       data-id={element.id}
       style={style}
         onClick={(e) => handleSelectedElementClick()}

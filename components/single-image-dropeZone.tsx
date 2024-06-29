@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { UploadCloudIcon, X } from 'lucide-react';
 import * as React from 'react';
 import { useDropzone, type DropzoneOptions } from 'react-dropzone';
@@ -17,7 +18,7 @@ const variants = {
 };
 
 type InputProps = {
-  width: number;
+  width?: number;
   height: number;
   className?: string;
   value?: File | string;
@@ -120,15 +121,17 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     }, [fileRejections, dropzoneOptions]);
 
     return (
-      <div>
+      <div className=''>
         <div
           {...getRootProps({
-            className: dropZoneClassName,
+            className: cn('  !min-h-[auto]',dropZoneClassName),
             style: {
-              width,
+              width:width ? width : '100%',
               height,
             },
           })}
+
+         
         >
           {/* Main File Input */}
           <input ref={ref} {...getInputProps()} />

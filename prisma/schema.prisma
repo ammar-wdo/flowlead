@@ -47,12 +47,12 @@ model Company {
   logo          String?
   phone         String
   companyEmail  String  @unique
-  serviceEmail  String?
+
   cocNumber     String?
   industry      String?
-  vatNumber     String
+  vatNumber     String?
   contactPerson String
-  IBAN          String
+  IBAN          String?
   termsUrl      String?
 
   quotesSettings QoutesSettings?

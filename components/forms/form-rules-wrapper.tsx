@@ -22,7 +22,7 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
   const [activeComponent, setActiveComponent] = useState<"fields" | "rules">(
     "fields"
   );
-  const { form, onSubmit,formRef,optionRef } = useFormElements(fetchedForm);
+  const { form, onSubmit,formRef,optionRef} = useFormElements(fetchedForm);
 
   const router = useRouter();
   const params = useParams<{ companySlug: string; formSlug: string }>();
@@ -84,6 +84,7 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
             form={form}
             formRef={formRef}
             optionRef={optionRef}
+          
           />
         ) : (
           <RulesComponent

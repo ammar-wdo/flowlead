@@ -1,6 +1,6 @@
 import { controllerElements, formSchema } from "@/schemas";
 import { Form, Service } from "@prisma/client";
-import React, { MouseEvent, RefObject, useEffect, useRef, useState } from "react";
+import React, { MouseEvent, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import FormItemWrapper from "./form-item-wrapper";
@@ -55,9 +55,10 @@ type Props = {
   fetchedForm: Form | null | undefined;
   formRef:RefObject<HTMLDivElement>
   optionRef:RefObject<HTMLDivElement>
+ 
 };
 
-const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,optionRef}: Props) => {
+const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,optionRef }: Props) => {
   const previousVar = useRef(1);
 
   const { selectedElement, setSelectedElementNull } = useSelectedElement();
@@ -193,7 +194,7 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
                                    
                                   >
                                     <FormViewItem
-                                    
+                                     
                                       handleDelete={(
                                         id: string,
                                         e: MouseEvent<HTMLButtonElement>

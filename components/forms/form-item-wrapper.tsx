@@ -22,7 +22,7 @@ const FormItemWrapper = ({elementComponent,form}: Props) => {
         form.setValue('elements',[...elements,element])
     }
   return (
-    <div onClick={addFormItem} className='py-4 px-6 bg-white flex items-center cursor-pointer hover:text-second transition'>{component}</div>
+    <div onClick={addFormItem} className='py-4 px-6 bg-white flex items-center cursor-pointer border border-transparent hover:border-second hover:text-second transition'>{component}</div>
   )
 }
 

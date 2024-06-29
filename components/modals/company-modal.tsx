@@ -24,9 +24,9 @@ const CompanyModal = (props: Props) => {
 
     <DialogContent className="2xl:max-w-[55%] max-w-[95%] w-full max-h-[98%] overflow-y-scroll">
       <DialogHeader>
-        <DialogTitle>First company registration</DialogTitle>
+      <DialogTitle className="pb-8 border-b">Create New Company</DialogTitle>
         <DialogDescription>
-          Please complete your first company registration in order to start your journey with us.
+     
         </DialogDescription>
       </DialogHeader>
       <CompanyForm/>

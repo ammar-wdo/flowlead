@@ -82,34 +82,24 @@ export const invoicesSettings = z.object({
   subject: optionalString.nullable(),
   body: optionalString.nullable(),
 });
-
+const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/.*)?$/
 export const companySchema = z.object({
   name: requiredString,
   address: requiredString,
   zipcode: requiredString,
   city: requiredString,
   country: requiredString,
-  websiteUrl: optionalString,
+  websiteUrl: z.string().regex(urlRegex, "Invalid URL").optional().or(z.literal(undefined)).or(z.literal('')),
   logo: optionalString,
   phone: phoneReg,
   companyEmail: requiredString.email(),
-  serviceEmail: z
-    .string()
-    .email()
-    .optional()
-    .refine(
-      (data) =>
-        data === undefined || z.string().email().safeParse(data).success,
-      {
-        message: "Service Email must be a valid email or undefined",
-      }
-    ),
+
   cocNumber: optionalString,
   industry: optionalString,
-  vatNumber: requiredString,
+  vatNumber: optionalString,
   contactPerson: requiredString,
-  IBAN: requiredString,
-  termsUrl: optionalString,
+  IBAN: optionalString,
+  termsUrl: z.string().regex(urlRegex, "Invalid URL").optional().or(z.literal(undefined)).or(z.literal('')),
 });
 
 //SERVICE SCHEMA

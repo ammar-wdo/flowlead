@@ -37,11 +37,11 @@ type Props = {}
       return (
         <Dialog open={openModal} onOpenChange={setOpenModal} >
     
-        <DialogContent className="2xl:max-w-[55%] max-w-[95%] w-full max-h-[98%] overflow-y-scroll">
+        <DialogContent className="2xl:max-w-[35%] sm:maxw-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%]  max-w-[95%] w-full max-h-[98%] overflow-y-scroll">
           <DialogHeader>
-            <DialogTitle>First company registration</DialogTitle>
+            <DialogTitle className="pb-8 border-b">Create Your Company</DialogTitle>
             <DialogDescription>
-              Please complete your first company registration in order to start your journey with us.
+           
             </DialogDescription>
           </DialogHeader>
           <CompanyForm/>

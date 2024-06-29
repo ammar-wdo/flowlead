@@ -22,14 +22,14 @@ type Props = {}
 
 const CompanyForm = (props: Props) => {
 
-  const { form, onSubmit, file, setFile, uploadImage, ImagePlaceholder } = useComapany({company:null})
+  const { form, onSubmit, file, setFile, uploadImage, ImagePlaceholder ,step,validatingArray,handleNext,handleBack} = useComapany({company:null})
   const isLoading = form.formState.isSubmitting
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
-        <SectionsWrapper title='General Information'>
-          <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-3'>
+       {step===0 &&  
+          <div className='grid md:grid-cols-2  gap-3'>
             <FormField
               control={form.control}
               name="name"
@@ -37,7 +37,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Company Name*</FormLabel>
                   <FormControl>
-                    <Input placeholder="Company Name" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -51,7 +51,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Company Address*</FormLabel>
                   <FormControl>
-                    <Input placeholder="Company Address" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -65,7 +65,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Company Country*</FormLabel>
                   <FormControl>
-                    <Input placeholder="Company Country" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -79,7 +79,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Company City*</FormLabel>
                   <FormControl>
-                    <Input placeholder="Company City" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -93,7 +93,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Company Zipcode*</FormLabel>
                   <FormControl>
-                    <Input placeholder="Company Zipcode" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -137,7 +137,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Website URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="Website URL" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -151,7 +151,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Company Email*</FormLabel>
                   <FormControl>
-                    <Input placeholder="Company Email" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -166,8 +166,9 @@ const CompanyForm = (props: Props) => {
                   <FormLabel>Logo</FormLabel>
                   <FormControl>
                     <SingleImageDropzone
-                      width={200}
-                      height={200}
+                    className=''
+                    
+                      height={100}
                       value={file}
                       onChange={(file) => {
                         setFile(file);
@@ -192,23 +193,10 @@ const CompanyForm = (props: Props) => {
           </div>
 
 
-        </SectionsWrapper>
-        <SectionsWrapper title='Business Information'>
-          <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-3'>
-            <FormField
-              control={form.control}
-              name="serviceEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Service Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Service Email" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    }
+    {  step===1 &&  
+          <div className='grid md:grid-cols-2  gap-3'>
+        
             <FormField
               control={form.control}
               name="cocNumber"
@@ -216,7 +204,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Chumber of Commerce</FormLabel>
                   <FormControl>
-                    <Input placeholder="Chumber of Commerce" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -230,7 +218,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Indusry</FormLabel>
                   <FormControl>
-                    <Input placeholder="Industry" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -242,9 +230,9 @@ const CompanyForm = (props: Props) => {
               name="vatNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>VAT Number*</FormLabel>
+                  <FormLabel>VAT Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="VAT Number" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -258,7 +246,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Contact Person*</FormLabel>
                   <FormControl>
-                    <Input placeholder="Contact Person" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -270,9 +258,9 @@ const CompanyForm = (props: Props) => {
               name="IBAN"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>IBAN*</FormLabel>
+                  <FormLabel>IBAN</FormLabel>
                   <FormControl>
-                    <Input placeholder="IBAN" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -286,7 +274,7 @@ const CompanyForm = (props: Props) => {
                 <FormItem>
                   <FormLabel>Terms & Conditions URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="Terms & Conditions URL" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -295,9 +283,17 @@ const CompanyForm = (props: Props) => {
             />
           </div>
 
-        </SectionsWrapper>
+   }
+        <div className='flex items-center justify-between'>
+          <Button type='button' variant={'secondary'} disabled={step===0} onClick={handleBack}>Back</Button>
+          <div>
+            {step===0 && <Button type='button' onClick={handleNext} className='bg-second hover:bg-second/80 text-white hoer;text-white'>Next</Button>}
+            {step===1 &&   <Button disabled={isLoading} className='bg-second hover:bg-second/80 text-white hoer;text-white' type="submit">Submit {isLoading && <Loader className='animate-spin ml-3' />}</Button>}
+          </div>
 
-        <Button disabled={isLoading} type="submit">Submit {isLoading && <Loader className='animate-spin ml-3' />}</Button>
+        </div>
+
+      
       </form>
     </Form>
   )
