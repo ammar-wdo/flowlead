@@ -6,6 +6,7 @@ import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
 
 type Props = {
@@ -15,7 +16,7 @@ type Props = {
 export const revalidate = 0
 const page = async ({ params: { companySlug } }: Props) => {
 const {userId} = auth()
-if(!userId) throw new CustomError("Unauthorized")
+if(!userId) redirect('/sign-in')
 
     const contacts = await prisma.contact.findMany({
         where:{
@@ -34,7 +35,7 @@ if(!userId) throw new CustomError("Unauthorized")
   return <div>
     <div className="flex items-center justify-between">
     <Heading title="Contacts"/>
-    <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${companySlug}/contacts/new`} className="py-2 px-4 bg-second hover:bg-second/80 text-white rounded-lg">Create Contact</Link>
+    <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/${companySlug}/contacts/new`} className="py-2 px-4 bg-second hover:bg-second/80 text-white rounded-lg">Create Contact</Link>
     </div>
   
 

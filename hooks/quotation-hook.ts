@@ -282,7 +282,7 @@ export const useQuotation = ({
     if(val===true) return 
     setEmailData(null)
     router.refresh()
-    router.push(`/dashboard/${params.companySlug}/quotations`)
+    router.push(`/${params.companySlug}/quotations`)
   }
 
   const handleSetDiscount = (value: DiscountType) => {

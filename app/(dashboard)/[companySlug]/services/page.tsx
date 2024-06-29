@@ -26,7 +26,7 @@ const page = async({params:{companySlug}}: Props) => {
       <Heading title='services'/>
       <Link
       className='bg-second text-white py-2 px-4 rounded-md '
-      href={process.env.NEXT_PUBLIC_BASE_URL + '/dashboard/' + companySlug +  '/services/new'}>Add Service</Link>
+      href={process.env.NEXT_PUBLIC_BASE_URL + '/' + companySlug +  '/services/new'}>Add Service</Link>
       </div>
 
       <div className="mt-12 bg-white ">

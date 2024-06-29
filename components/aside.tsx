@@ -2,12 +2,13 @@ import React from 'react'
 import Logo from './logo'
 import CompanyAccordion from './company/company-accordion'
 import AsideLinks from './aside-links'
+import { SignOutButton } from './signout-button'
 
 type Props = {companySlug:string}
 
 const Aside = ({companySlug}: Props) => {
   return (
-    <aside className='w-[240px] flex flex-col bg-prime fixed left-0 h-full overflow-y-auto scroll z-50'>
+    <aside className='w-[240px] flex flex-col bg-prime fixed left-0 h-full overflow-y-auto scroll z-50 pb-8'>
   <Logo companySlug={companySlug}/>
 
   {/* aside content */}
@@ -19,6 +20,11 @@ const Aside = ({companySlug}: Props) => {
 <AsideLinks/>
 </div>
   </div>
+  <div className='mt-auto px-[20px] '>
+      <SignOutButton/>
+  </div>
+
+
   </aside>
   )
 }

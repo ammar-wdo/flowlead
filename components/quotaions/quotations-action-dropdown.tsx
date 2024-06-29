@@ -39,7 +39,7 @@ type Props = {
 const QuotationTableActionDropdown = ({ id }: Props) => {
   const params = useParams<{ companySlug: string }>();
 
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/quotations/${id}`;
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${params.companySlug}/quotations/${id}`;
 
   const { setOpen } = useModal();
 

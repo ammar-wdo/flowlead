@@ -46,7 +46,7 @@ const page = async ({ params: { companySlug } }: Props) => {
       <div className="flex items-center justify-between">
         <Heading title="Invoices" />
         <Link
-          href={`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${companySlug}/invoices/new`}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}/${companySlug}/invoices/new`}
           className="py-2 px-4 bg-second hover:bg-second/80 text-white rounded-lg"
         >
           Create Invoice

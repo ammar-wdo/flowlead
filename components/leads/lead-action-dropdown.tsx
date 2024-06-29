@@ -27,7 +27,7 @@ type Props = {
 const LeadTableActionDropdown = ({id}: Props) => {
     const params = useParams<{companySlug:string}>()
 
-   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/leads/${id}`
+   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${params.companySlug}/leads/${id}`
 
    const {setOpen} = useModal()
 

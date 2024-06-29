@@ -26,7 +26,7 @@ type Props = {
 const FormTableActionDropdown = ({formSlug}: Props) => {
     const params = useParams()
 
-   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/forms/${formSlug}`
+   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${params.companySlug}/forms/${formSlug}`
 
    const {setOpen} = useModal()
 

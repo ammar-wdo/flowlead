@@ -24,7 +24,7 @@ if(!userId) throw new CustomError("Unauthorized")
       <Heading title='Forms' />
       <Link
       className='bg-second text-white py-2 px-4 rounded-md '
-      href={process.env.NEXT_PUBLIC_BASE_URL + '/dashboard/' + companySlug +  '/forms/new'}>Add Form</Link>
+      href={process.env.NEXT_PUBLIC_BASE_URL + '/' + companySlug +  '/forms/new'}>Add Form</Link>
       </div>
 
 

@@ -64,7 +64,7 @@ export async function prepareUser() {
 
   if (!company) return;
 
-  redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${company.slug}`);
+  redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/${company.slug}`);
 }
 
 export function generateRandomSlug() {

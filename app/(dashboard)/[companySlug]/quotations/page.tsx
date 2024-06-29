@@ -44,7 +44,7 @@ const page = async ({ params: { companySlug } }: Props) => {
       <div className="flex items-center justify-between">
         <Heading title="Quotations" />
         <Link
-          href={`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${companySlug}/quotations/new`}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}/${companySlug}/quotations/new`}
           className="py-2 px-4 bg-second hover:bg-second/80 text-white rounded-lg"
         >
           Create Quotation

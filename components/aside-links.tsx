@@ -30,20 +30,20 @@ const AsideLinks = (props: Props) => {
                 {
                     title: 'Dashboard',
                     icon: <MdDashboard size={18} />,
-                    href: `/dashboard/${params.companySlug}`,
-                    active: pathname === `/dashboard/${params.companySlug}`
+                    href: `/${params.companySlug}`,
+                    active: pathname === `/${params.companySlug}`
                 },
                 {
                     title: 'Leads',
                     icon: <CgMagnet size={18} />,
-                    href: `/dashboard/${params.companySlug}/leads`,
-                    active: pathname.split('/')[3] === 'leads'
+                    href: `/${params.companySlug}/leads`,
+                    active: pathname.split('/')[2] === 'leads'
                 },
                 {
                     title: 'Contacts',
                     icon: <GoPersonFill size={18} />,
-                    href: `/dashboard/${params.companySlug}/contacts`,
-                    active: pathname.split('/')[3] === 'contacts'
+                    href: `/${params.companySlug}/contacts`,
+                    active: pathname.split('/')[2] === 'contacts'
                 },
             ]
         },
@@ -53,26 +53,26 @@ const AsideLinks = (props: Props) => {
                 {
                     title: 'Services',
                     icon: <FaBoxArchive size={18} />,
-                    href: `/dashboard/${params.companySlug}/services`,
-                    active: pathname === `/dashboard/${params.companySlug}/services`
+                    href: `/${params.companySlug}/services`,
+                    active: pathname === `/${params.companySlug}/services`
                 },
                 {
                     title: 'Forms',
                     icon: <FaThList size={18} />,
-                    href: `/dashboard/${params.companySlug}/forms`,
-                    active: pathname === `/dashboard/${params.companySlug}/forms`
+                    href: `/${params.companySlug}/forms`,
+                    active: pathname === `/${params.companySlug}/forms`
                 },
                 {
                     title: 'Invoices',
                     icon: <FaReceipt size={18} />,
-                    href: `/dashboard/${params.companySlug}/invoices`,
-                    active:pathname.split('/')[3] === 'invoices'
+                    href: `/${params.companySlug}/invoices`,
+                    active:pathname.split('/')[2] === 'invoices'
                 },
                 {
                     title: 'Quotations',
                     icon: <BsExclamationSquareFill size={18} />,
-                    href: `/dashboard/${params.companySlug}/quotations`,
-                    active: pathname.split('/')[3] === 'quotations'
+                    href: `/${params.companySlug}/quotations`,
+                    active: pathname.split('/')[2] === 'quotations'
                 },
             ]
         },
@@ -82,14 +82,14 @@ const AsideLinks = (props: Props) => {
                 {
                     title: 'Settings',
                     icon: <RiSettings3Fill size={18} />,
-                    href: `/dashboard/${params.companySlug}/settings`,
-                    active: pathname.split('/')[3] === 'settings'
+                    href: `/${params.companySlug}/settings`,
+                    active: pathname.split('/')[2] === 'settings'
                 },
                 {
                     title: 'Upgrade',
                     icon: <FaBolt size={18} />,
-                    href: `/dashboard/${params.companySlug}/upgrade`,
-                    active: pathname === `/dashboard/${params.companySlug}/upgrade`
+                    href: `/${params.companySlug}/upgrade`,
+                    active: pathname === `/${params.companySlug}/upgrade`
                 },
             ]
         },

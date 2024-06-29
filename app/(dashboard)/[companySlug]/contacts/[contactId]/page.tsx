@@ -8,7 +8,7 @@ import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
 import { isValidObjectId } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import React, { Suspense } from "react";
 
 type Props = {
@@ -19,7 +19,7 @@ const page = async ({ params: { contactId, companySlug } }: Props) => {
   const { userId } = auth();
 
   if (!isValidObjectId(contactId) && contactId !== "new") notFound();
-  if (!userId) throw new CustomError("Unauthorized");
+  if(!userId) redirect('/sign-in')
 
   let contact =
     contactId !== "new"

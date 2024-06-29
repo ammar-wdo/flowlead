@@ -23,7 +23,7 @@ type Props = {
 const ServiceTableActionsDropdown = ({serviceId}: Props) => {
     const params = useParams()
 
-   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/services/${serviceId}`
+   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${params.companySlug}/services/${serviceId}`
 
    const {setOpen} = useModal()
 

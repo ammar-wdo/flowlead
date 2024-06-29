@@ -64,7 +64,7 @@ export const useFormElements = (fetchedForm: Form | undefined | null) => {
         res = await addForm(values, params.companySlug);
         if (!res.success) return toast.error(res.error);
         router.push(
-          `${process.env.NEXT_PUBLIC_BASE_URL!}/dashboard/${
+          `${process.env.NEXT_PUBLIC_BASE_URL!}/${
             params.companySlug
           }/forms/${res.formSlug}`
         );

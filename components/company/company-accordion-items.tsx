@@ -26,7 +26,7 @@ const CompanyAccordionItem = ({logo,name,trigger,slug}: Props) => {
   const handleClick = ()=>{
     if(trigger) return 
 
-    router.push(`/dashboard/${slug}`)
+    router.push(`/${slug}`)
 
   }
   return (

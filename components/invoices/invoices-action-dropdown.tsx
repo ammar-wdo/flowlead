@@ -27,7 +27,7 @@ type Props = {
 const InvoiceTableActionDropdown = ({ id }: Props) => {
   const params = useParams<{ companySlug: string }>();
 
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/${params.companySlug}/invoices/${id}`;
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${params.companySlug}/invoices/${id}`;
 
   const { setOpen } = useModal();
 

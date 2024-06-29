@@ -26,7 +26,7 @@ export const columns: ColumnDef<PartialService>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    cell:({row})=><PushButton className="hover:bg-transparent hover:underline" href={`/dashboard/${row.original.company.slug}/services/${row.original.id}`}><p className=" capitalize font-semibold">{row.getValue('name')}</p></PushButton>
+    cell:({row})=><PushButton className="hover:bg-transparent hover:underline" href={`/${row.original.company.slug}/services/${row.original.id}`}><p className=" capitalize font-semibold">{row.getValue('name')}</p></PushButton>
   },
   {
     accessorKey: "createdAt",

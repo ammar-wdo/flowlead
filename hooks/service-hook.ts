@@ -42,7 +42,7 @@ let res
           if (!res.success) return toast.error(res.error)
 
           toast.success(res.message)
-        // router.push(`/dashboard/${params.companySlug}/services`)
+        router.push(`/${params.companySlug}/services`)
         router.refresh()
     
        

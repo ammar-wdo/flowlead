@@ -88,7 +88,7 @@ import { MultiFileDropzone } from "../MultiFileDropzone";
 
 import { v4 as uuidv4 } from "uuid";
 import LoadingButton from "../loading-button";
-import { RefactoredContacts } from "@/app/(dashboard)/dashboard/[companySlug]/quotations/[quotationId]/page";
+import { RefactoredContacts } from "@/app/(dashboard)/[companySlug]/quotations/[quotationId]/page";
 import {
   Command,
   CommandEmpty,

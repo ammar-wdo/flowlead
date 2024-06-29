@@ -13,25 +13,25 @@ const page = ({params}: Props) => {
       label: "Company",
       icon: <Building2 />,
       description:"Manage your company settings",
-      pathname: `/dashboard/${params.companySlug}/settings/company`,
+      pathname: `/${params.companySlug}/settings/company`,
     },
     {
       label: "Team Members",
       icon: <UsersRound />,
       description:"Manage your team members",
-      pathname: `/dashboard/${params.companySlug}/settings/team-members`,
+      pathname: `/${params.companySlug}/settings/team-members`,
     },
     {
       label: "Quotations",
       icon: <BsExclamationSquareFill />,
       description:"Manage your Quotations Settings",
-      pathname: `/dashboard/${params.companySlug}/settings/quotations`,
+      pathname: `/${params.companySlug}/settings/quotations`,
     },
     {
       label: "Invoices",
       icon: <ReceiptText />,
       description:"Manage your Invoices Settings",
-      pathname: `/dashboard/${params.companySlug}/settings/invoices`,
+      pathname: `/${params.companySlug}/settings/invoices`,
     },
   ];
   return (

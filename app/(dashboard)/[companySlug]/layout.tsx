@@ -13,7 +13,7 @@ const layout = async({ children,params:{companySlug} }: Props) => {
 
 
   const {userId} = auth()
-  if(!userId) throw new CustomError("Unauthorized")
+  if(!userId) redirect('/sign-in')
 
   const company = await prisma.company.findUnique({
     where:{
@@ -22,7 +22,7 @@ const layout = async({ children,params:{companySlug} }: Props) => {
     }
   })
 
-  if(!company) redirect(process.env.NEXT_PUBLIC_BASE_URL + '/dashboard')
+  if(!company) redirect(process.env.NEXT_PUBLIC_BASE_URL + '/')
   return (
     <div className=' h-full overflow-x-auto scroll  '>
 

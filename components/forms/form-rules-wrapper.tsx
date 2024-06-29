@@ -60,7 +60,7 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
             onClick={() =>
               startTransition(() =>
                 router.push(
-                  `/dashboard/${params.companySlug}/preview/${params.formSlug}`
+                  `/${params.companySlug}/preview/${params.formSlug}`
                 )
               )
             }
