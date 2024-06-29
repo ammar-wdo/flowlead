@@ -283,7 +283,7 @@ export const useInvoice = ({
     if(val===true) return 
     setEmailData(null)
     router.refresh()
-    router.push(`/dashboard/${params.companySlug}/quotations`)
+    router.push(`/dashboard/${params.companySlug}/invoices`)
   }
 
   const handleSetDiscount = (value: DiscountType) => {
