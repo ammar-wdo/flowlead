@@ -454,7 +454,7 @@ const QuotationsForm = ({
                       value={
                         field.value
                           ? formatWithLeadingZeros(Number(field.value), 4)
-                          : formatWithLeadingZeros(1, 4)
+                          : formatWithLeadingZeros(0, 4)
                       }
                       onChange={(e) =>
                         field.onChange(
