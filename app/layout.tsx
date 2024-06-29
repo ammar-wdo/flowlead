@@ -30,22 +30,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <head>
-
-        <Script
-          type="text/javascript"
-          src="https://cdn.weglot.com/weglot.min.js"
-          strategy="afterInteractive"
-        ></Script>
-        <Script id="weglot-init" strategy="afterInteractive">
-          {`
-              Weglot.initialize({
-                api_key: 'wg_7feb4815fb5c361da19061e921d6ab622'
-              });
-            `}
-        </Script>
-          </head>
-      
+       
 
         <body className={cn(poppins.className, "scroll")}>
           <EdgeStoreProvider>
@@ -54,6 +39,18 @@ export default function RootLayout({
             <ModalsProvider />
           </EdgeStoreProvider>
           <Toaster position="top-center" richColors />
+          <Script
+          type="text/javascript"
+          src="https://cdn.weglot.com/weglot.min.js"
+           strategy="beforeInteractive"
+        ></Script>
+        <Script id="weglot-init"  strategy="beforeInteractive">
+          {`
+              Weglot.initialize({
+                api_key: 'wg_7feb4815fb5c361da19061e921d6ab622'
+              });
+            `}
+        </Script>
         </body>
       </html>
     </ClerkProvider>
