@@ -107,7 +107,7 @@ export const useDownloadPDF = ({ type, id }: Props) => {
           />,
           `${replacePlaceholders(
             res.invoice?.invoiceString
-          )} ${formatWithLeadingZeros(res.invoice?.invoiceNumber!, 4)}`
+          )}${formatWithLeadingZeros(res.invoice?.invoiceNumber!, 4)}`
         );
       });
     } catch (error) {
