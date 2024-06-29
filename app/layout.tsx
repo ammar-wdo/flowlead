@@ -30,6 +30,8 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+
         <Script
           type="text/javascript"
           src="https://cdn.weglot.com/weglot.min.js"
@@ -42,6 +44,8 @@ export default function RootLayout({
               });
             `}
         </Script>
+          </head>
+      
 
         <body className={cn(poppins.className, "scroll")}>
           <EdgeStoreProvider>
