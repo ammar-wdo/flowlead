@@ -445,7 +445,7 @@ const QuotationsForm = ({
                       {replacePlaceholders(form.watch("quotationString"))}
                     </span>
                     <Input
-                   
+                   min={1}
                       className="flex-[1]"
                       placeholder="Quotation Number"
                       {...field}
@@ -460,7 +460,7 @@ const QuotationsForm = ({
                         field.onChange(
                           +formatWithLeadingZeros(
                             Number(
-                              !!(+e.target.value === 0) ? 1 : +e.target.value
+                               +e.target.value
                             ),
                             4
                           )
@@ -469,7 +469,7 @@ const QuotationsForm = ({
                     />
                     <span className="text-gray-500 text-sm">
                       {replacePlaceholders(form.watch("quotationString"))}
-                      {formatWithLeadingZeros(Number(field.value || 1), 4)}
+                      {formatWithLeadingZeros(Number(field.value), 4)}
                     </span>
                   </div>
                 </FormControl>

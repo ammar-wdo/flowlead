@@ -467,6 +467,7 @@ const InvoicesForm = ({
                       {replacePlaceholders(form.watch("invoiceString"))}
                     </span>
                     <Input
+                    min={1}
                       readOnly={!edit}
                       className={cn(
                         "flex-[1]",
@@ -486,7 +487,7 @@ const InvoicesForm = ({
                         field.onChange(
                           +formatWithLeadingZeros(
                             Number(
-                              !!(+e.target.value === 0) ? 1 : +e.target.value
+                              +e.target.value
                             ),
                             4
                           )
@@ -510,7 +511,7 @@ const InvoicesForm = ({
                     )}
                     <span className="text-gray-500 text-sm">
                       {replacePlaceholders(form.watch("invoiceString"))}
-                      {formatWithLeadingZeros(Number(field.value || 1), 4)}
+                      {formatWithLeadingZeros(Number(field.value), 4)}
                     </span>
                   </div>
                 </FormControl>
