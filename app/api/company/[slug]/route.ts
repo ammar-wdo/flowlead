@@ -12,16 +12,11 @@ export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
 }
 
-export const GET = async (
+export async function GET(
   req: Request,
   { params }: { params: { slug: string } }
-) => {
-  headers().set("Access-Control-Allow-Origin", "*");
-  headers().set(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
-  );
-  headers().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+) {
+ 
   console.log("done");
   if (!params.slug)
     return NextResponse.json(
@@ -49,4 +44,4 @@ export const GET = async (
       { status: 500, headers: corsHeaders }
     );
   }
-};
+}
