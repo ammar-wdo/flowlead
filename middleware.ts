@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 
 const isProtectedRoute = createRouteMatcher([
-  '/((?!sign-in|sign-up).*)',
+  '/((?!sign-in|sign-up|api/company).*)',
 
 ]);
 
