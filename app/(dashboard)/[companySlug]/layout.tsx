@@ -1,10 +1,11 @@
 import Aside from '@/components/aside'
 import Header from '@/components/header'
-import { CustomError } from '@/custom-error'
+ 
 import prisma from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import React, { ReactNode } from 'react'
+
 
 
 type Props = { children: ReactNode,params:{companySlug:string} }
@@ -21,7 +22,7 @@ const layout = async({ children,params:{companySlug} }: Props) => {
       userId
     }
   })
-
+ 
   if(!company) redirect(process.env.NEXT_PUBLIC_BASE_URL + '/')
   return (
     <div className=' h-full overflow-x-auto scroll  '>
@@ -31,7 +32,10 @@ const layout = async({ children,params:{companySlug} }: Props) => {
       <div className=' flex flex-col pl-[240px]'>
       <Header />
         <main className=' flex-1 p-12 min-h-[calc(100vh-64px)]  bg-[#384EB7]/5 min-w-[1100px]'>
+
           {children}
+
+ 
         </main>
       </div>
 
