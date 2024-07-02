@@ -36,16 +36,33 @@ export const useFormElements = (fetchedForm: Form | undefined | null) => {
 
  
   const handleClickOutside = (event: MouseEvent) => {
-    if (formRef.current && !formRef.current.contains(event.target as Node) && optionRef.current && !optionRef.current.contains(event.target as Node)) {
+    //check if we click inside select also not to set selected to null
+    const isClickInsideCustomSelect = (node: Node | null): boolean => {
+      while (node) {
+        if (node instanceof HTMLElement && node.classList.contains('custom-select')) {
+          return true;
+        }
+        node = node.parentElement;
+      }
+      return false;
+    };
+
+    if (
+      formRef.current &&
+      !formRef.current.contains(event.target as Node) &&
+      optionRef.current &&
+      !optionRef.current.contains(event.target as Node) &&
+      !isClickInsideCustomSelect(event.target as Node)
+    ) {
       setSelectedElementNull();
     }
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 

@@ -25,7 +25,7 @@ const layout = async({ children,params:{companySlug} }: Props) => {
  
   if(!company) redirect(process.env.NEXT_PUBLIC_BASE_URL + '/')
   return (
-    <div className=' h-full overflow-x-auto scroll  '>
+    <div className=' h-full    '>
 
 
       <Aside companySlug={companySlug}/>

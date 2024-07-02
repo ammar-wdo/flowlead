@@ -909,7 +909,7 @@ const AddService = ({
     <div>
       <h3 className="text-sm text-muted-foreground">Add Service</h3>
 
-      <Select open={open} onOpenChange={setOpen}>
+      <Select open={open} onOpenChange={setOpen} >
         <SelectTrigger className="w-full capitalize font-semibold">
           <SelectValue
             className=""
