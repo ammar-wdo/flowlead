@@ -25,6 +25,7 @@ export const createSubmission = async ({
 const schema = generateZodSchema(elements,rules,formValues)
 
 const validData = schema.safeParse(values)
+console.log(JSON.stringify(values,undefined,2))
 if(!validData.success){ 
   console.error(JSON.stringify(validData.error.flatten().fieldErrors,undefined,2))
 
