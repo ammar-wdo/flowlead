@@ -61,6 +61,7 @@ export const useFormPreview = (form: Form) => {
     try {
       
   const formValues = formPreview.watch();
+  alert(JSON.stringify(formValues,null,2))
       const res = await createSubmission({values,companyId:form.companyId,elements:form.elements,formValues:formValues,rules:form.rules})
 if(!res.success) return toast.error(res.error)
 

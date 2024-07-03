@@ -357,6 +357,7 @@ export const generateSingleServiceSchema = (
     image: z.string().optional(),
     serviceName: z.string().min(1),
     serviceId: z.string().min(1),
+    taxPercentage:z.coerce.number(),
   });
   switch (service?.pricingType) {
     case "CHECKBOX_GROUP":
