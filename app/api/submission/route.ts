@@ -29,8 +29,7 @@ console.log('Submission')
         elements: Element[];
         rules: Rule[];
         formValues: { [key: string]: any };}
-        console.log("OBJECT BFORE PARSING",JSON.stringify(Object.entries(body.values),null,2))
-        // console.log("Form Vakues",JSON.stringify(body.formValues,undefined,2))
+   
  
 
  const {companyId,elements,formValues,rules,values} = body
@@ -38,10 +37,18 @@ console.log('Submission')
  const company = await prisma.company.findUnique({
     where:{
         id:companyId
+    },include:{
+        quotesSettings:{
+        select:{
+            id:true,
+            nextNumber:true
+        }
+        }
     }
  })
 
- if(!companyId || !company) throw new CustomError("Company Id is required")
+ if(!companyId || !company  ) throw new CustomError("Company Id is required")
+    if(!company.quotesSettings) throw new CustomError("Quotation Settings is missing")
 
 
 
@@ -88,15 +95,25 @@ console.log('Submission')
       .filter(([key, value], index) => key.endsWith('-service'))
       .map(([key, value]) => ({ [key]: value }));
 
-      console.log("OBJECT",JSON.stringify(Object.entries(validData.data),null,2))
+ console.log("Available Services",JSON.stringify(availableServices))
 
-    // console.log("AVAILABLE SERVICES", JSON.stringify(availableServices, undefined, 2));
-
-    if (!availableServices.length) {
+ //check if chosen services is emty array or null or empty object then dont send quotation
+    if (availableServices.every(item => {
+        return Object.entries(item).every(([key, value]) => {
+          if (Array.isArray(value)) {
+            return value.length === 0;
+          } else if (value === null) {
+            return true;
+          } else if (typeof value === 'object' && Object.keys(value).length === 0) {
+            return true;
+          }
+          return false;
+        });
+      })) {
       return NextResponse.json({ success: true, message: "Form Submitted Successfully" }, { status: 200, headers: corsHeaders });
     }
 
-    // Calculate services total
+    // Calculate services total and convert chosen services into line items
     let lineItems: LineItem[] = [];
     const totalAmount = availableServices.reduce((prev: number, item) => {
       const [key, value] = Object.entries(item)[0];
@@ -114,7 +131,7 @@ console.log('Submission')
           totalPrice:value.price * value.quantity
 
         } as LineItem);
-        prev += (+(value.price as number)) * (+(value.quantity as number));
+        prev += (+(value.price as number)) * (+(value.quantity as number)) + (value.price * value.taxPercentage) / 100;
       } else if (Array.isArray(value)) {
         value.forEach(el => {
           if (typeof el === 'object' && el !== null && 'price' in el && 'quantity' in el && !isNaN(+(el.price as number))) {
@@ -130,7 +147,7 @@ console.log('Submission')
                  totalPrice:el.price * el.quantity
        
                }  as LineItem);
-            prev += (+(el.price as number)) * (+(el.quantity as number));
+            prev += (+(el.price as number)) * (+(el.quantity as number)) + (el.price * el.taxPercentage) / 100;
           }
         });
       }
@@ -138,8 +155,7 @@ console.log('Submission')
       return prev;
     }, 0);
 
-//   console.log("TOTAL AMOUNT",totalAmount)
-//   console.log("LINE ITEMS",lineItems.length)
+
 
 
 
@@ -177,7 +193,7 @@ console.log('Submission')
     
 // Create Quotation
 
-    const quotation = await prisma.quotation.create({
+    const quotationRes =  prisma.quotation.create({
         data:{
 userId:company.userId,
 lineItems:lineItems,
@@ -198,7 +214,17 @@ totalAmount
         }
     })
 
-    //create quotation
+    //update quotation settings
+  const quotationSettingsUpdateRes =    prisma.qoutesSettings.update({
+        where: {
+          id: company.quotesSettings.id,
+        },
+        data: {
+          nextNumber: company.quotesSettings.nextNumber + 1,
+        },
+      });
+
+      await prisma.$transaction([quotationRes,quotationSettingsUpdateRes])
 
     return NextResponse.json({ success: true, message: "Form Submitted Successfully" },{status:200,headers:corsHeaders});
   } catch (error) {
