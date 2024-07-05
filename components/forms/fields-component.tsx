@@ -45,6 +45,7 @@ import { useSelectedElement } from "@/hooks/selected-element-hook";
 import FormRightController from "./form-right-editor";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { SingleImageDropzone } from "../single-image-dropeZone";
 
 type Props = {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -55,10 +56,14 @@ type Props = {
   fetchedForm: Form | null | undefined;
   formRef:RefObject<HTMLDivElement>
   optionRef:RefObject<HTMLDivElement>
+  ImagePlaceholder: () => React.JSX.Element | undefined
+  file: File | undefined
+  setFile: React.Dispatch<React.SetStateAction<File | undefined>>
+  uploadImage: () => Promise<void>
  
 };
 
-const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,optionRef }: Props) => {
+const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,optionRef,ImagePlaceholder,file,setFile,uploadImage }: Props) => {
   const previousVar = useRef(1);
 
   const { selectedElement, setSelectedElementNull } = useSelectedElement();
@@ -170,6 +175,45 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+                    <FormField
+                    control={form.control}
+                    name={`logo`}
+                    render={({ field }) => (
+                        <FormItem className="">
+                            <FormLabel>Image <span className="text-xs text-muted-foreground">(optional)</span></FormLabel>
+                            <FormControl>
+                                <div className="flex items-start gap-3">
+                                    <div>
+                                        <SingleImageDropzone
+                                            width={200}
+                                            height={200}
+                                            value={file}
+                                            onChange={(file) => {
+                                                setFile(file);
+                                            }}
+                                        />
+
+                                        <Button
+                                            className={`${(!file || !!form.watch(`logo`)) && 'hidden'}`}
+
+                                            type="button"
+                                            onClick={uploadImage}
+                                        >
+                                            Upload
+                                        </Button>
+                                    </div>
+
+                                    <ImagePlaceholder />
+                                </div>
+
+                            </FormControl>
+
+
+
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
               </div>
               {/* Form Elements */}

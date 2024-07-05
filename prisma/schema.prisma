@@ -283,6 +283,8 @@ model Form {
 
   services String[] @db.ObjectId
 
+  logo String?
+
   accountId String  @db.ObjectId
   account   Account @relation(fields: [accountId], references: [id])
 

@@ -342,6 +342,7 @@ export const formSchema = z
     description: optionalString,
     isPublished: z.boolean().default(false),
     isWidjet: z.boolean().default(false),
+    logo:optionalString,
     elements: z.array(elementSchema).min(1, "At least one field or service"),
     rules: z.array(ruleSchema).optional(),
   })

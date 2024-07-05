@@ -22,7 +22,7 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
   const [activeComponent, setActiveComponent] = useState<"fields" | "rules">(
     "fields"
   );
-  const { form, onSubmit,formRef,optionRef} = useFormElements(fetchedForm);
+  const { form, onSubmit,formRef,optionRef,ImagePlaceholder,file,setFile,uploadImage} = useFormElements(fetchedForm);
 
   const router = useRouter();
   const params = useParams<{ companySlug: string; formSlug: string }>();
@@ -78,6 +78,11 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
       <div className="mt-8">
         {activeComponent === "fields" ? (
           <FieldsComponent
+          ImagePlaceholder={ImagePlaceholder}
+          file={file}
+          setFile={setFile}
+          uploadImage={uploadImage}
+          
             fetchedForm={fetchedForm}
             services={services}
             onSubmit={onSubmit}

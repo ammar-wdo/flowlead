@@ -11,6 +11,7 @@ import { addForm, editForm } from "@/actions/form-actions";
 import { useSelectedElement } from "./selected-element-hook";
 import { useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useLogo } from "./logo-hook";
 
 export const useFormElements = (fetchedForm: Form | undefined | null) => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -19,6 +20,7 @@ export const useFormElements = (fetchedForm: Form | undefined | null) => {
       name: fetchedForm?.name || "",
       description: fetchedForm?.description || "",
       isPublished: fetchedForm?.isPublished || false,
+      logo:fetchedForm?.logo || "",
       isWidjet: fetchedForm?.isWidjet || false,
       elements: fetchedForm?.elements || [
         { id: uuidv4(), type: "FIELD", field: { type: "name",id:uuidv4(),placeholder:"Naam",label:"Naam", validations:{required:true},options:[]} },
@@ -100,5 +102,7 @@ export const useFormElements = (fetchedForm: Form | undefined | null) => {
     }
   }
 
-  return { form, onSubmit,formRef,optionRef  };
+  const {ImagePlaceholder,file,setFile,uploadImage} = useLogo({form })
+
+  return { form, onSubmit,formRef,optionRef,ImagePlaceholder,file,setFile,uploadImage  };
 };
