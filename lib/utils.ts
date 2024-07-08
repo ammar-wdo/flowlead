@@ -799,3 +799,25 @@ export const parseDates = (data: any) => {
   }
   return data;
 };
+
+
+export function checkFreeTrial(createdDate: Date): { valid: boolean, message: string } {
+  const currentDate = new Date();
+  const startDate =  createdDate;
+
+  // Calculate the end date which is 7 days from the start date
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + 7);
+
+  // Calculate the difference in time
+  const timeDifference = endDate.getTime() - currentDate.getTime();
+
+  // Calculate the difference in days
+  const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+  if (daysDifference > 0) {
+    return { valid: true, message: `Expires on ${format(endDate,"dd-MM-yyyy")}` };
+  } else {
+    return { valid: false, message: "Free trial finished" };
+  }
+}

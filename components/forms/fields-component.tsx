@@ -1,6 +1,13 @@
 import { controllerElements, formSchema } from "@/schemas";
 import { Form, Service } from "@prisma/client";
-import React, { MouseEvent, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
+import React, {
+  MouseEvent,
+  MutableRefObject,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import FormItemWrapper from "./form-item-wrapper";
@@ -54,16 +61,26 @@ type Props = {
   ) => Promise<string | number | undefined>;
   services: Service[];
   fetchedForm: Form | null | undefined;
-  formRef:RefObject<HTMLDivElement>
-  optionRef:RefObject<HTMLDivElement>
-  ImagePlaceholder: () => React.JSX.Element | undefined
-  file: File | undefined
-  setFile: React.Dispatch<React.SetStateAction<File | undefined>>
-  uploadImage: () => Promise<void>
- 
+  formRef: RefObject<HTMLDivElement>;
+  optionRef: RefObject<HTMLDivElement>;
+  ImagePlaceholder: () => React.JSX.Element | undefined;
+  file: File | undefined;
+  setFile: React.Dispatch<React.SetStateAction<File | undefined>>;
+  uploadImage: () => Promise<void>;
 };
 
-const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,optionRef,ImagePlaceholder,file,setFile,uploadImage }: Props) => {
+const FieldsComponent = ({
+  form,
+  onSubmit,
+  services,
+  fetchedForm,
+  formRef,
+  optionRef,
+  ImagePlaceholder,
+  file,
+  setFile,
+  uploadImage,
+}: Props) => {
   const previousVar = useRef(1);
 
   const { selectedElement, setSelectedElementNull } = useSelectedElement();
@@ -104,11 +121,6 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
   };
   const isLoading = form.formState.isSubmitting;
 
- 
-
-
- 
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -123,8 +135,6 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
     }
   };
 
- 
-
   const labels = form
     .watch("elements")
     .filter((element) => element.field !== undefined && element.field !== null)
@@ -134,7 +144,7 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
   return (
     <section className="flex 2xl:gap-40 gap-20  ">
       {/* left part _canvas_ */}
-      <div  className="flex-1 ">
+      <div className="flex-1 ">
         <div className="max-w-[1100px]">
           <FormComponent {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -176,50 +186,53 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
                     </FormItem>
                   )}
                 />
-                    <FormField
-                    control={form.control}
-                    name={`logo`}
-                    render={({ field }) => (
-                        <FormItem className="">
-                            <FormLabel>Image <span className="text-xs text-muted-foreground">(optional)</span></FormLabel>
-                            <FormControl>
-                                <div className="flex items-start gap-3">
-                                    <div>
-                                        <SingleImageDropzone
-                                            width={200}
-                                            height={200}
-                                            value={file}
-                                            onChange={(file) => {
-                                                setFile(file);
-                                            }}
-                                        />
+                <FormField
+                  control={form.control}
+                  name={`logo`}
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <FormLabel>
+                        Image{" "}
+                        <span className="text-xs text-muted-foreground">
+                          (optional)
+                        </span>
+                      </FormLabel>
+                      <FormControl>
+                        <div className="flex items-start gap-3">
+                          <div>
+                            <SingleImageDropzone
+                              width={200}
+                              height={200}
+                              value={file}
+                              onChange={(file) => {
+                                setFile(file);
+                              }}
+                            />
 
-                                        <Button
-                                            className={`${(!file || !!form.watch(`logo`)) && 'hidden'}`}
+                            <Button
+                              className={`${
+                                (!file || !!form.watch(`logo`)) && "hidden"
+                              }`}
+                              type="button"
+                              onClick={uploadImage}
+                            >
+                              Upload
+                            </Button>
+                          </div>
 
-                                            type="button"
-                                            onClick={uploadImage}
-                                        >
-                                            Upload
-                                        </Button>
-                                    </div>
+                          <ImagePlaceholder />
+                        </div>
+                      </FormControl>
 
-                                    <ImagePlaceholder />
-                                </div>
-
-                            </FormControl>
-
-
-
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
               {/* Form Elements */}
-              <DndContext  onDragEnd={handleDragEnd}   >
+              <DndContext onDragEnd={handleDragEnd}>
                 <SortableContext items={form.watch("elements")}>
-                  <div ref={formRef}  className="bg-white p-8 space-y-8">
+                  <div ref={formRef} className="bg-white p-8 space-y-8">
                     <FormField
                       control={form.control}
                       name="elements"
@@ -233,12 +246,8 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
                                 </div>
                               ) : (
                                 field.value.map((element, i) => (
-                                  <div
-                                    key={element.id}
-                                   
-                                  >
+                                  <div key={element.id}>
                                     <FormViewItem
-                                     
                                       handleDelete={(
                                         id: string,
                                         e: MouseEvent<HTMLButtonElement>
@@ -294,14 +303,9 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
                     />
                   </div>
                 </SortableContext>
-                <DragOverlay
-             
-                  className="  w-fit "
-                >
+                <DragOverlay className="  w-fit ">
                   {
-                    <div
-                 
-                    className=" ring-[1px] rounded-lg bg-white w-[200px] p-12 flex items-center justify-center text-xl font-bold text-gray-500 ">
+                    <div className=" ring-[1px] rounded-lg bg-white w-[200px] p-12 flex items-center justify-center text-xl font-bold text-gray-500 ">
                       Drop Field
                     </div>
                   }
@@ -322,10 +326,10 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
       </div>
 
       {/* right part _controller_ */}
-      <div  >
+      <div>
         <div className="sticky top-40 shrink-0   w-[400px]">
           {!selectedElement ? (
-            <div  className="space-y-6">
+            <div className="space-y-6">
               {controllerElements.map((element) => (
                 <div key={uuidv4()}>
                   <h3 className="text-sm text-muted-foreground">
@@ -344,7 +348,11 @@ const FieldsComponent = ({ form, onSubmit, services, fetchedForm ,formRef,option
               ))}
             </div>
           ) : (
-            <FormRightController optionRef={optionRef} services={services} form={form} />
+            <FormRightController
+              optionRef={optionRef}
+              services={services}
+              form={form}
+            />
           )}
         </div>{" "}
       </div>
