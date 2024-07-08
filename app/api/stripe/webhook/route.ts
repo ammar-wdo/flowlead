@@ -28,8 +28,8 @@ export const POST = async (req: Request) => {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (error: any) {
-    console.log(error);
-    return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
+    console.error(error);
+    return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 ,headers:corsHeaders});
   }
 
   const subscription = event.data.object as Stripe.Subscription;
@@ -60,8 +60,20 @@ export const POST = async (req: Request) => {
     return new NextResponse(`Internal server error`, { status: 500 });
   }
 
-  return new NextResponse(null, { status: 200 });
+  return new NextResponse(null, { status: 200 ,headers:corsHeaders});
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function updateCompanyStatus(
   subscription: Stripe.Subscription,
