@@ -15,6 +15,7 @@ export async function OPTIONS() {
 }
 
 export const POST = async (req: Request) => {
+    console.log('webhook')
   const body = await req.text();
 
   const signature = headers().get("Stripe-Signature") as string;
