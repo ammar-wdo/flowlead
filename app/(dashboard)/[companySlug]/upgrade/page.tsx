@@ -45,7 +45,7 @@ const page = async ({ params: { companySlug } }: Props) => {
           <span>€99/mo</span>
           </div>
           <p>Upgrade now and get all the Premium features.</p>
-        <SubscriptionButton className="mt-3 w-full"  priceId="price_1PaAisGCtCU5E3PPssBSfxEd" title="Continue to payment"/>
+        <SubscriptionButton className="mt-3 w-full"  priceId="price_1PaCOEEFg0p7Lz0aFPOR9WQe" title="Continue to payment"/>
         
 
         </article>
