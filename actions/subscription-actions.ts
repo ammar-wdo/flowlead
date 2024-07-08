@@ -56,6 +56,7 @@ export const subscribe = async ({
 
     return { success: true, url: session.url };
   } catch (error) {
+    console.error(error)
     let message = "Internal server error";
     if (error instanceof CustomError) message = error.message;
 
