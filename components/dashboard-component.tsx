@@ -12,7 +12,7 @@ const DashboardComponent = (props: Props) => {
       {/* right */}
       <div className="col-span-1 flex flex-col justify-between border-r pr-2">
         {STEPS.map((el, i) => (
-          <span className="flex items-center gap-3 p-2 hover:bg-muted cursor-pointer transition">
+          <span className="flex items-center gap-3 p-2 hover:bg-muted rounded-lg cursor-pointer transition">
             <span className="w-10 h-10 bg-white flex items-center justify-center rounded-full border ">
               {i + 1}
             </span>
