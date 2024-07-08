@@ -55,7 +55,7 @@ model Company {
   IBAN          String?
   termsUrl      String?
 
-  customerStripeId String?
+  customerStripeId String? @unique
   plan  Plan @default(FREE)
 
 
