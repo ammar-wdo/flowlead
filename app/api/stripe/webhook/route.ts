@@ -83,23 +83,29 @@ export const POST = async (req: Request) => {
 
 
 async function updateCompanyStatus(
-  subscription: Stripe.Subscription,
-  deleted?: boolean
-) {
-  const customerId = subscription.customer as string;
-
-  const company = await prisma.company.findUnique({
-    where: { customerStripeId: customerId },
-  });
-
-  if (!company) {
-    throw new Error("Company not found");
+    subscription: Stripe.Subscription,
+    deleted?: boolean
+  ) {
+    const customerId = subscription.customer as string;
+  
+    const company = await prisma.company.findUnique({
+      where: { customerStripeId: customerId },
+    });
+  
+    if (!company) {
+      console.error("Company not found for customer ID:", customerId);
+      throw new Error("Company not found");
+    }
+  
+    const newPlan = deleted ? "FREE" : "PREMIUM";
+  
+    console.log(`Updating company ${company.id} to ${newPlan} plan`);
+  
+    await prisma.company.update({
+      where: { id: company.id },
+      data: {
+        plan: newPlan,
+      },
+    });
+    console.log(`Company ${company.id} updated to ${newPlan} plan`);
   }
-
-  await prisma.company.update({
-    where: { id: company.id },
-    data: {
-      plan: deleted ? "FREE" : "PREMIUM",
-    },
-  });
-}
