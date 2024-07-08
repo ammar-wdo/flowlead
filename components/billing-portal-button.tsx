@@ -8,7 +8,7 @@ import { Loader } from 'lucide-react'
 import { useBiilingPortal } from '@/hooks/billing-portal-hook'
 
 type Props = {
-    priceId:string
+  
     title:string
 } & HTMLAttributes<HTMLButtonElement>
 

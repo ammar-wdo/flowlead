@@ -1,3 +1,4 @@
+import BillingPortalButton from "@/components/billing-portal-button";
 import Heading from "@/components/heading";
 import SubscriptionButton from "@/components/subscription-button";
 import { Button } from "@/components/ui/button";
@@ -64,7 +65,7 @@ const page = async ({ params: { companySlug } }: Props) => {
         {/* current plan  */}
       <Heading title="Manage Billing" />
         <article className="p-4 bg-white mt-4  gap-4 font-semibold flex items-center justify-between"><h3>Premium Plan </h3>
-        
+        <BillingPortalButton title="Manage Your Subscription"/>
         </article>
         {/* Upgrade to plan */}
         
