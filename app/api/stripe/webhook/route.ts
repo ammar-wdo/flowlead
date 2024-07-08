@@ -15,9 +15,8 @@ export async function OPTIONS() {
 }
 
 export const POST = async (req: Request) => {
-    console.log('webhook')
+  console.log('Webhook received');
   const body = await req.text();
-
   const signature = headers().get("Stripe-Signature") as string;
 
   let event: Stripe.Event;
@@ -29,8 +28,8 @@ export const POST = async (req: Request) => {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (error: any) {
-    console.error(error);
-    return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 ,headers:corsHeaders});
+    console.error("Webhook signature verification failed.", error.message);
+    return new NextResponse(`Webhook Error: ${error.message}`, { status: 400, headers: corsHeaders });
   }
 
   const subscription = event.data.object as Stripe.Subscription;
@@ -38,25 +37,24 @@ export const POST = async (req: Request) => {
   try {
     switch (event.type) {
       case "customer.subscription.created":
-        await updateCompanyStatus(subscription);
+        await updateCompanyStatus(subscription, "PREMIUM");
         console.log("Subscription Created", subscription.customer);
         break;
       case "customer.subscription.deleted":
-        await updateCompanyStatus(subscription, true);
+        await updateCompanyStatus(subscription, "FREE");
         console.log("Subscription Deleted", subscription.customer);
         break;
       case "customer.subscription.updated":
         if (subscription.status === "canceled") {
-            await updateCompanyStatus(subscription, true);
-            console.log("Subscription Canceled", subscription.customer);
-          } else {
-            await updateCompanyStatus(subscription);
-            console.log("Subscription Updated", subscription.customer);
-          }
-        console.log("Subscription Updated", subscription.customer);
+          await updateCompanyStatus(subscription, "FREE");
+          console.log("Subscription Canceled", subscription.customer);
+        } else {
+          await updateCompanyStatus(subscription, "PREMIUM");
+          console.log("Subscription Updated", subscription.customer);
+        }
         break;
       case "invoice.payment_failed":
-        await updateCompanyStatus(subscription, true);
+        await updateCompanyStatus(subscription, "FREE");
         console.log("Payment Failed", subscription.customer);
         break;
       default:
@@ -64,48 +62,35 @@ export const POST = async (req: Request) => {
     }
   } catch (error) {
     console.error("Error updating company status:", error);
-    return new NextResponse(`Internal server error`, { status: 500 });
+    return new NextResponse(`Internal server error`, { status: 500, headers: corsHeaders });
   }
 
-  return new NextResponse(null, { status: 200 ,headers:corsHeaders});
+  return new NextResponse(null, { status: 200, headers: corsHeaders });
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 async function updateCompanyStatus(
-    subscription: Stripe.Subscription,
-    deleted?: boolean
-  ) {
-    const customerId = subscription.customer as string;
-  
-    const company = await prisma.company.findUnique({
-      where: { customerStripeId: customerId },
-    });
-  
-    if (!company) {
-      console.error("Company not found for customer ID:", customerId);
-      throw new Error("Company not found");
-    }
-  
-    const newPlan = deleted ? "FREE" : "PREMIUM";
-  
-    console.log(`Updating company ${company.id} to ${newPlan} plan`);
-  
-    await prisma.company.update({
-      where: { id: company.id },
-      data: {
-        plan: newPlan,
-      },
-    });
-    console.log(`Company ${company.id} updated to ${newPlan} plan`);
+  subscription: Stripe.Subscription,
+  newPlan: 'FREE' | 'PREMIUM'
+) {
+  const customerId = subscription.customer as string;
+
+  const company = await prisma.company.findUnique({
+    where: { customerStripeId: customerId },
+  });
+
+  if (!company) {
+    console.error("Company not found for customer ID:", customerId);
+    throw new Error("Company not found");
   }
+
+  console.log(`Updating company ${company.id} to ${newPlan} plan`);
+
+  await prisma.company.update({
+    where: { id: company.id },
+    data: {
+      plan: newPlan,
+    },
+  });
+
+  console.log(`Company ${company.id} updated to ${newPlan} plan`);
+}
