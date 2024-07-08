@@ -3,7 +3,7 @@ import { useState } from "react"
 export const useDashboard = ()=>{
 
 
-    const STEPS = ["edit company","add service","add form","create contact","create quotation"]
+    const STEPS = ["Edit company details","add a service","add a form","create a contact","create a quotation"]
 
     const [step, setStep] = useState(0)
 
