@@ -4,6 +4,7 @@ import Heading from "@/components/heading";
 
 import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
+import { checkCompanySubscription } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -18,6 +19,7 @@ const page = async ({ params: { companySlug } }: Props) => {
 const {userId} = auth()
 if(!userId) redirect('/sign-in')
 
+  await checkCompanySubscription({userId,companySlug})
     const contacts = await prisma.contact.findMany({
         where:{
             company:{

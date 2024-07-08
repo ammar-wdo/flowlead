@@ -3,10 +3,14 @@ import { FormDataTable } from '@/components/forms/data-table'
 import FormsForm from '@/components/forms/forms-form'
 import Heading from '@/components/heading'
 import { CustomError } from '@/custom-error'
-import { getForms } from '@/lib/utils'
+import prisma from '@/lib/prisma'
+import { checkCompanySubscription, checkFreeTrial, getForms } from '@/lib/utils'
 import { auth } from '@clerk/nextjs/server'
+ 
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import React from 'react'
+
 
 type Props = {
   params:{companySlug:string}
@@ -17,6 +21,9 @@ const page = async({params:{companySlug}}: Props) => {
 const {userId} = auth()
 
 if(!userId) throw new CustomError("Unauthorized")
+
+ await checkCompanySubscription({userId,companySlug})
+ 
   const forms = await getForms(companySlug,userId)
   return (
     <div>

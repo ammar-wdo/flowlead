@@ -2,7 +2,7 @@ import Heading from '@/components/heading'
 import { columns } from '@/components/services/col-table'
 import { DataTable } from '@/components/services/data-table'
 import { CustomError } from '@/custom-error'
-import { getServices } from '@/lib/utils'
+import { checkCompanySubscription, getServices } from '@/lib/utils'
 import { auth } from '@clerk/nextjs/server'
 import Link from 'next/link'
 import React from 'react'
@@ -17,6 +17,7 @@ const page = async({params:{companySlug}}: Props) => {
   const {userId} = auth()
   if(!userId) throw new CustomError("Not Authorized")
 
+    await checkCompanySubscription({userId,companySlug})
     const services = await getServices(companySlug,userId)
 
 

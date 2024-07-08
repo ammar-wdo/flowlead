@@ -5,6 +5,7 @@ import { columns } from "@/components/invoices/invoices-col";
 
 import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
+import { checkCompanySubscription } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import React from "react";
@@ -15,6 +16,7 @@ const page = async ({ params: { companySlug } }: Props) => {
   const { userId } = auth();
   if (!userId) throw new CustomError("Unauthorized");
 
+  await checkCompanySubscription({userId,companySlug})
   const invoices = await prisma.invoice.findMany({
     where: {
       company: {

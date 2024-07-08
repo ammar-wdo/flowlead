@@ -3,6 +3,7 @@ import { columns } from "@/components/leads/leads-col";
 import { DataTable } from "@/components/leads/leads-table";
 import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
+import { checkCompanySubscription } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import React from "react";
 
@@ -15,6 +16,9 @@ const page = async ({ params: { companySlug } }: Props) => {
 const {userId} = auth()
 if(!userId) throw new CustomError("Unauthorized")
 
+  await checkCompanySubscription({userId,companySlug})
+
+  
     const leads = await prisma.contact.findMany({
         where:{
             company:{

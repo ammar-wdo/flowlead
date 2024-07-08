@@ -821,3 +821,21 @@ export function checkFreeTrial(createdDate: Date): { valid: boolean, message: st
     return { valid: false, message: "Free trial finished" };
   }
 }
+
+export const checkCompanySubscription = async ({userId,companySlug}:{userId:string,companySlug:string})=>{
+  const company = await prisma.company.findUnique({
+    where:{
+      slug:companySlug,
+      userId
+    },
+    select:{
+      plan:true,
+      createdAt:true,
+      slug:true
+    }
+  })
+  if(!company) redirect('/')
+  const {valid} = checkFreeTrial(company.createdAt)
+
+  if(!valid && company.plan !=='PREMIUM') redirect(process.env.NEXT_PUBLIC_BASE_URL + `/${company.slug}/upgrade`)
+}

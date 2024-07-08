@@ -2,6 +2,7 @@ import Aside from '@/components/aside'
 import Header from '@/components/header'
  
 import prisma from '@/lib/prisma'
+import { checkFreeTrial } from '@/lib/utils'
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import React, { ReactNode } from 'react'
@@ -24,6 +25,8 @@ const layout = async({ children,params:{companySlug} }: Props) => {
   })
  
   if(!company) redirect(process.env.NEXT_PUBLIC_BASE_URL + '/')
+
+
   return (
     <div className=' h-full    '>
 

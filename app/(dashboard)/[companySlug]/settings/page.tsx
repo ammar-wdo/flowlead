@@ -1,37 +1,46 @@
 import Heading from "@/components/heading";
 import { Button } from "@/components/ui/button";
+import { checkCompanySubscription } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { Building2, ReceiptText, UsersRound } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
 import { BsExclamationSquareFill } from "react-icons/bs";
 
 type Props = {params:{companySlug:string}};
 
-const page = ({params}: Props) => {
+const page = async({params:{companySlug}}: Props) => {
+
+const {userId} = auth()
+if(!userId) redirect('/sign-up')
+
+  await checkCompanySubscription({userId,companySlug})
+
   const settingsLinks = [
     {
       label: "Company",
       icon: <Building2 />,
       description:"Manage your company settings",
-      pathname: `/${params.companySlug}/settings/company`,
+      pathname: `/${companySlug}/settings/company`,
     },
     {
       label: "Team Members",
       icon: <UsersRound />,
       description:"Manage your team members",
-      pathname: `/${params.companySlug}/settings/team-members`,
+      pathname: `/${companySlug}/settings/team-members`,
     },
     {
       label: "Quotations",
       icon: <BsExclamationSquareFill />,
       description:"Manage your Quotations Settings",
-      pathname: `/${params.companySlug}/settings/quotations`,
+      pathname: `/${companySlug}/settings/quotations`,
     },
     {
       label: "Invoices",
       icon: <ReceiptText />,
       description:"Manage your Invoices Settings",
-      pathname: `/${params.companySlug}/settings/invoices`,
+      pathname: `/${companySlug}/settings/invoices`,
     },
   ];
   return (

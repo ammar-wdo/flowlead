@@ -1,7 +1,7 @@
 import FormPreview from '@/components/forms/form-preview'
 import { CustomError } from '@/custom-error'
 import prisma from '@/lib/prisma'
-import { generateZodSchema } from '@/lib/utils'
+import { checkCompanySubscription, generateZodSchema } from '@/lib/utils'
 import { auth } from '@clerk/nextjs/server'
 import { notFound } from 'next/navigation'
 import React from 'react'
@@ -18,6 +18,7 @@ const page = async({params:{formSlug,companySlug}}: Props) => {
   const {userId} = auth()
 if(!userId) throw new CustomError("Unauthorized")
 
+  await checkCompanySubscription({userId,companySlug})
 
   
    const   form = await prisma.form.findUnique({
