@@ -30,7 +30,8 @@ export const billingPortal = async ({
     // create session
     const session = await stripe.billingPortal.sessions.create({
       customer: company.customerStripeId,
-      return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/${company.slug}/update`
+      return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/${company.slug}/update`,
+      
     });
 
     return { success: true, url: session.url };

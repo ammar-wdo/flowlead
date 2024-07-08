@@ -46,7 +46,13 @@ export const POST = async (req: Request) => {
         console.log("Subscription Deleted", subscription.customer);
         break;
       case "customer.subscription.updated":
-        await updateCompanyStatus(subscription);
+        if (subscription.status === "canceled") {
+            await updateCompanyStatus(subscription, true);
+            console.log("Subscription Canceled", subscription.customer);
+          } else {
+            await updateCompanyStatus(subscription);
+            console.log("Subscription Updated", subscription.customer);
+          }
         console.log("Subscription Updated", subscription.customer);
         break;
       case "invoice.payment_failed":

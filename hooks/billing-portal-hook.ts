@@ -16,7 +16,7 @@ const router = useRouter()
 
 const handleBillingPortal = async ()=>{
     try {
-
+setLoading(true)
         const res = await billingPortal({companySlug})
 
         if(!res.success) return toast.error(res.error)
@@ -25,6 +25,8 @@ const handleBillingPortal = async ()=>{
     } catch (error) {
         console.error(error)
         toast.error('Something went wrong')
+    }finally{
+        setLoading(false)
     }
 }
 
