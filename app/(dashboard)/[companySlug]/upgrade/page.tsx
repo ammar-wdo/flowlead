@@ -63,21 +63,11 @@ const page = async ({ params: { companySlug } }: Props) => {
           <div className="max-w-[800px]">
         {/* current plan  */}
       <Heading title="Manage Billing" />
-        <article className="p-4 bg-white mt-4 flex items-center gap-4 font-semibold">Premium Plan </article>
-        {/* Upgrade to plan */}
-        <div className="mt-12">
-        <Heading title="Subscription settings" />
-        <article className="p-4 bg-white mt-4">
-          <div className="flex items-center justify-between">
-          <h3 className="font-semibold">PRO</h3>
-          <span>€99/mo</span>
-          </div>
-          <p>Upgrade now and get all the Premium features.</p>
-        <SubscriptionButton className="mt-3 w-full"  priceId="price_1PaCOEEFg0p7Lz0aFPOR9WQe" title="Continue to payment"/>
+        <article className="p-4 bg-white mt-4  gap-4 font-semibold flex items-center justify-between"><h3>Premium Plan </h3>
         
-
         </article>
-        </div>
+        {/* Upgrade to plan */}
+        
     
       </div>
     </div>
