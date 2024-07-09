@@ -46,7 +46,7 @@ if(!userId) redirect('/sign-up')
   return (
     <div>
       <Heading title="Settings" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 mt-20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 mt-8">
         {settingsLinks.map((link) => (
           <article
             key={link.label}
