@@ -30,7 +30,7 @@ const page = async({params:{companySlug}}: Props) => {
       href={process.env.NEXT_PUBLIC_BASE_URL + '/' + companySlug +  '/services/new'}>Add Service</Link>
       </div>
 
-      <div className="mt-12 bg-white border rounded-md overflow-hidden">
+      <div className="mt-8 bg-white border rounded-md overflow-hidden">
       <DataTable columns={columns} data={services} />
     </div>
 
