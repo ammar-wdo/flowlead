@@ -66,7 +66,7 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
                 <span className="absolute -bottom-[100%] w-px h-full bg-gray-200 z-10" />
               )}
             </span>
-            <span className="capitalize text-muted-foreground">{el}</span>
+            <span className="first-letter:capitalize text-muted-foreground">{el}</span>
           </span>
         ))}
       </div>
@@ -138,10 +138,10 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
           animate="animate"
           exit={'exit'}
           >
-            <AddQuotation nextStep={()=>setStep('create invoice')} companySlug={companySlug} />
+            <AddQuotation nextStep={()=>setStep('create an invoice')} companySlug={companySlug} />
           </motion.div>
         )}
-          {step === "create invoice" && (
+          {step === "create an invoice" && (
           <motion.div
           key={'6-step'}
           variants={sectionVariants}

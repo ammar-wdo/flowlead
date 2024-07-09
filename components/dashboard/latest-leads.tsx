@@ -40,7 +40,7 @@ const LatestLeads = async ({ companySlug }: Props) => {
 
   return (
     <div>
-      <h3 className="text-gray-400 font-semibold">Latest Leads</h3>
+      <h3 className="text-gray-400 text-lg">Latest Leads</h3>
       <div className="mt-3">
         {!!latestLeads.length ? (
           <Table>
