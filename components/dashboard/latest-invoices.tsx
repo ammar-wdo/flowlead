@@ -59,12 +59,12 @@ const LatestInvoices = async({companySlug}: Props) => {
   </TableHeader>
   <TableBody>
  { latestInvoices.map(data=><TableRow key={data.id}>
-      <TableCell className=" ">{data.invoiceNumber}</TableCell>
+      <TableCell className=" ">#{data.invoiceNumber}</TableCell>
       <TableCell>{format(data.createdAt,"dd-MM-yyyy")}</TableCell>
       <TableCell>{data.contact.companyName || data.contact.contactName}</TableCell>
       <TableCell className=" ">{data.contact.emailAddress}</TableCell>
       <TableCell className=" ">{data.status}</TableCell>
-      <TableCell className=" ">{data.totalAmount}</TableCell>
+      <TableCell className=" ">€ {data.totalAmount}</TableCell>
     </TableRow>)  }
   </TableBody>
 </Table> : <p className='text-lg font-semibold text-gray-300 text-center'>No Invoices</p>}
