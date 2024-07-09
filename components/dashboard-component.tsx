@@ -138,7 +138,18 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
           animate="animate"
           exit={'exit'}
           >
-            <AddQuotation companySlug={companySlug} />
+            <AddQuotation nextStep={()=>setStep('create invoice')} companySlug={companySlug} />
+          </motion.div>
+        )}
+          {step === "create invoice" && (
+          <motion.div
+          key={'6-step'}
+          variants={sectionVariants}
+          initial="initial"
+          animate="animate"
+          exit={'exit'}
+          >
+            <AddInvoice nextStep={()=>setHide(true)} companySlug={companySlug} />
           </motion.div>
         )}
         </AnimatePresence>
@@ -287,7 +298,13 @@ const AddContact = ({
     </article>
   );
 };
-const AddQuotation = ({ companySlug }: { companySlug: string }) => {
+const AddQuotation = ({
+  nextStep,
+  companySlug,
+}: {
+  nextStep: () => void;
+  companySlug: string;
+}) => {
   return (
     <article>
       <h3 className="font-semibold text-lg">Create a quotation</h3>
@@ -299,6 +316,42 @@ const AddQuotation = ({ companySlug }: { companySlug: string }) => {
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
           <Link href={`/${companySlug}/contacts`}>Add Quotation</Link>
+        </Button>
+        <Button
+          onClick={nextStep}
+          className="text-second border-second  border bg-white  rounded-lg w-40 hover:bg-white"
+        >
+          Next Step <ArrowRight size={20} className="ml-1" />
+        </Button>
+      </div>
+    </article>
+  );
+};
+
+const AddInvoice = ({
+  nextStep,
+  companySlug,
+}: {
+  nextStep: () => void;
+  companySlug: string;
+}) => {
+  return (
+    <article>
+      <h3 className="font-semibold text-lg">Create Invoice</h3>
+      <p className="text-sm text-zinc-500  w-[450px]">Create new Invoice.</p>
+      <div className="flex items-center gap-8 mt-4">
+        {" "}
+        <Button
+          asChild
+          className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
+        >
+          <Link href={`/${companySlug}/contacts`}>Add Invoice</Link>
+        </Button>
+        <Button
+          onClick={nextStep}
+          className="text-second border-second  border bg-white  rounded-lg w-40 hover:bg-white"
+        >
+          Hide  
         </Button>
       </div>
     </article>
