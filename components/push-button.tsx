@@ -16,7 +16,7 @@ const PushButton = ({href,className,children }: Props) => {
       router.push(href)
     }
   return (
-   <Button onClick={handlePush} className={cn(className)} variant={'ghost'}>{children}</Button>
+   <Button onClick={handlePush} className={cn(className)}  variant={'ghost'}>{children}</Button>
   )
 }
 

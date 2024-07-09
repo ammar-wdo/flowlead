@@ -10,6 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
+import Link from "next/link";
+import ClientRow from "./client-row";
 
 type Props = { companySlug: string };
 
@@ -56,7 +58,7 @@ const LatestLeads = async ({ companySlug }: Props) => {
             </TableHeader>
             <TableBody>
               {latestLeads.map((data) => (
-                <TableRow key={data.id}>
+                 <ClientRow href={`/${companySlug}/leads/${data.id}`} key={data.id}  >
                   <TableCell className=" ">
                     {format(data.createdAt, "dd-MM-yyyy")}
                   </TableCell>
@@ -74,7 +76,7 @@ const LatestLeads = async ({ companySlug }: Props) => {
                   <TableCell className=" ">
              
                   </TableCell>
-                </TableRow>
+                </ClientRow> 
               ))}
             </TableBody>
           </Table>
