@@ -34,7 +34,7 @@ export default function RootLayout({
 
         <body className={cn(poppins.className, "scroll")}>
           <EdgeStoreProvider>
-            <NextTopLoader height={4} color="#111725" />
+            <NextTopLoader height={0} color="#111725"   />
             {children}
             <ModalsProvider />
           </EdgeStoreProvider>

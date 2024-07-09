@@ -174,6 +174,10 @@
 
 }
 
+.spinner-icon {
+  @apply !fixed    !right-1/2 !w-8 !h-8    !z-[99999999] -translate-x-[50%]  
+}
+
 
 
 

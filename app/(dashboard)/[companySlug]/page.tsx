@@ -30,7 +30,7 @@ if(!userId) redirect('/sign-up')
   return (
     <div>
 <span className='text-muted-foreground'>{format(new Date,"EEE, do MMMM")}</span>
-<h3 className='text-5xl font-bold mt-6'>Hello, {company?.contactPerson}.</h3>
+<h3 className='text-5xl font-semibold mt-6'>Hello, {company?.contactPerson}.</h3>
 
 <div className='mt-8'>
   <DashboardComponent/>
