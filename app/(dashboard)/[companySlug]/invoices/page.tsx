@@ -56,7 +56,7 @@ const page = async ({ params: { companySlug } }: Props) => {
       </div>
 
 
-      <div className="mt-8 bg-white ">
+      <div className="mt-8 bg-white border overflow-hidden rounded-lg">
     <DataTable columns={columns} data={invoices} />
     </div>
     </div>

@@ -41,7 +41,7 @@ if(!userId) redirect('/sign-in')
     </div>
   
 
-    <div className="mt-8 bg-white ">
+    <div className="mt-8 bg-white rounded-md border overflow-hidden">
     <DataTable columns={columns} data={contacts} />
     </div>
   </div>;
