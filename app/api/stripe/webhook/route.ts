@@ -76,7 +76,7 @@ async function updateCompanyStatus(
 ) {
   const customerId = subscription.customer as string;
 
-  const company = await prisma.company.findUnique({
+  const company = await prisma.company.findFirst({
     where: { customerStripeId: customerId },
   });
 
