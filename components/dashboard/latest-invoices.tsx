@@ -10,6 +10,7 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { format } from 'date-fns'
+import InvoiceTableActionDropdown from '../invoices/invoices-action-dropdown'
 
 type Props = {companySlug:string}
 
@@ -55,6 +56,7 @@ const LatestInvoices = async({companySlug}: Props) => {
       <TableHead className=" ">Email Address</TableHead>
       <TableHead className=" ">Status</TableHead>
       <TableHead className=" ">Total Amount</TableHead>
+      <TableHead className=" "> </TableHead>
     </TableRow>
   </TableHeader>
   <TableBody>
@@ -65,6 +67,7 @@ const LatestInvoices = async({companySlug}: Props) => {
       <TableCell className=" ">{data.contact.emailAddress}</TableCell>
       <TableCell className=" ">{data.status}</TableCell>
       <TableCell className=" ">€ {data.totalAmount}</TableCell>
+      <TableCell className=" "><InvoiceTableActionDropdown id={data.id} /></TableCell>
     </TableRow>)  }
   </TableBody>
 </Table> : <p className='text-lg font-semibold text-gray-300 text-center'>No Invoices</p>}

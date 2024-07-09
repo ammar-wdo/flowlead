@@ -12,6 +12,7 @@ import {
 import { format } from "date-fns";
 import Link from "next/link";
 import ClientRow from "./client-row";
+import LeadTableActionDropdown from "../leads/lead-action-dropdown";
 
 type Props = { companySlug: string };
 
@@ -74,7 +75,7 @@ const LatestLeads = async ({ companySlug }: Props) => {
                     {data.phoneNumber || '-'}
                   </TableCell>
                   <TableCell className=" ">
-             
+                  <LeadTableActionDropdown id={data.id} />
                   </TableCell>
                 </ClientRow> 
               ))}

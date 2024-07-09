@@ -224,7 +224,7 @@ const InvoicePdfGenerator = ({ invoice, companyInfo }: Props) => {
               </View>
             </View>
           ))}
-          <View style={styles.tableRow}>
+         { invoice?.discount && <View style={styles.tableRow}>
             <View style={styles.tableColQuantity}></View>
             <View style={styles.tableColDescription}></View>
             <View style={styles.tableColAmount}>
@@ -240,7 +240,7 @@ const InvoicePdfGenerator = ({ invoice, companyInfo }: Props) => {
                 - € {invoice?.discountAmount}
               </Text>
             </View>
-          </View>
+          </View>}
           <View style={styles.tableRowNoBorder}>
             <View style={styles.tableColQuantity}></View>
             <View style={styles.tableColDescription}></View>
