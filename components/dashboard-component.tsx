@@ -4,7 +4,7 @@ import { useDashboard } from "@/hooks/dashboard-component-hook";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { Button } from "./ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { AnimatePresence, Variants, motion } from "framer-motion";
 
@@ -34,9 +34,16 @@ const sectionVariants: Variants = {
 }
 
 const DashboardComponent = (props: Props) => {
-  const { STEPS, setStep, step, companySlug } = useDashboard();
-  return (
-    <div className="grid grid-cols-3 gap-4 p-12 bg-white border overflow-x-scroll noScroll ">
+  const { STEPS, setStep, step, companySlug,hide,setHide } = useDashboard();
+  return  <div><AnimatePresence mode="wait">
+
+{!hide ?   <motion.div 
+  variants={sectionVariants}
+  initial="initial"
+  animate="animate"
+  exit={'exit'}
+key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border overflow-x-scroll noScroll relative">
+  <button onClick={()=>setHide(true)} className="absolute top-6 right-6 text-gray-400 ">Hide</button>
       {/* Left */}
       <div className="col-span-1 flex flex-col   border-r pr-2 gap-3">
         {STEPS.map((el, i) => (
@@ -136,8 +143,20 @@ const DashboardComponent = (props: Props) => {
         )}
         </AnimatePresence>
       </div>
-    </div>
-  );
+    </motion.div> : 
+    <motion.div 
+    variants={sectionVariants}
+    initial="initial"
+    animate="animate"
+    exit={'exit'}
+    key={'show-article'} className="   flex items-center gap-2"> 
+      Let's get you set up with Flowlead.  <button onClick={()=>setHide(false)} className="text-indigo-500 flex items-center font-semibold">Get Started{<ChevronRight size={20} className="ml-1"/>}</button>
+    </motion.div>
+    }
+  </AnimatePresence></div>
+
+  
+
 };
 
 export default DashboardComponent;
