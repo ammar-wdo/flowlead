@@ -2,7 +2,6 @@ import DashboardComponent from '@/components/dashboard-component'
 import { CustomError } from '@/custom-error'
 import prisma from '@/lib/prisma'
 import { checkCompanySubscription } from '@/lib/utils'
-import { UserButton } from '@clerk/nextjs'
 import { auth } from '@clerk/nextjs/server'
 import { format } from 'date-fns'
 import { redirect } from 'next/navigation'
@@ -34,6 +33,10 @@ if(!userId) redirect('/sign-up')
 
 <div className='mt-8'>
   <DashboardComponent/>
+</div>
+{/* latest invoices */}
+<div className='mt-8'>
+
 </div>
     </div>
   )

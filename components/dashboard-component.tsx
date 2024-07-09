@@ -41,6 +41,7 @@ const DashboardComponent = (props: Props) => {
       <div className="col-span-1 flex flex-col   border-r pr-2 gap-3">
         {STEPS.map((el, i) => (
           <span
+          key={el}
             onClick={() => setStep(el)}
             className={cn(
               "flex items-center gap-3 p-2 hover:bg-muted rounded-lg cursor-pointer transition relative z-20",
@@ -152,7 +153,7 @@ const EditCompany = ({
     <article>
       <h3 className="font-semibold text-lg">Edit company details</h3>
       <p className="text-sm text-zinc-500 w-[450px]">
-        Add your basic info, logo, and branding. They'll be automatically added
+        Add your basic info, logo, and branding. They&apos;ll be automatically added
         to your contracts, proposals and invoices.
       </p>
       <div className="flex items-center gap-8 mt-4">
