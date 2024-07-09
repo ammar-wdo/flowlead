@@ -1,14 +1,17 @@
+import { useParams } from "next/navigation"
 import { useState } from "react"
 
 export const useDashboard = ()=>{
 
 
-    const STEPS = ["Edit company details","add a service","add a form","create a contact","create a quotation"]
+    const STEPS = ["Edit company details","add a service","add a form","create a contact","create a quotation"] as const
 
-    const [step, setStep] = useState(0)
+    const [step, setStep] = useState<typeof STEPS[number]>('Edit company details')
+
+    const {companySlug} = useParams<{companySlug:string}>()
 
 
 
-    return {STEPS, step , setStep}
+    return {STEPS, step , setStep,companySlug}
 
 }

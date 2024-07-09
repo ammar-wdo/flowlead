@@ -1,27 +1,171 @@
 "use client";
 
 import { useDashboard } from "@/hooks/dashboard-component-hook";
+import { cn } from "@/lib/utils";
 import React from "react";
+import { Button } from "./ui/button";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 type Props = {};
 
 const DashboardComponent = (props: Props) => {
-  const { STEPS, setStep, step } = useDashboard();
+  const { STEPS, setStep, step,companySlug } = useDashboard();
   return (
-    <div className="grid grid-cols-3 gap-4 p-12 bg-white border">
-      {/* right */}
-      <div className="col-span-1 flex flex-col justify-between border-r pr-2">
+    <div className="grid grid-cols-3 gap-4 p-12 bg-white border overflow-x-scroll noScroll ">
+      {/* Left */}
+      <div className="col-span-1 flex flex-col   border-r pr-2 gap-3">
         {STEPS.map((el, i) => (
-          <span className="flex items-center gap-3 p-2 hover:bg-muted rounded-lg cursor-pointer transition">
-            <span className="w-10 h-10 bg-white flex items-center justify-center rounded-full border ">
+          <span
+            onClick={() => setStep(el)}
+            className={cn(
+              "flex items-center gap-3 p-2 hover:bg-muted rounded-lg cursor-pointer transition relative z-20",
+              step === el && "bg-muted"
+            )}
+          >
+            <span
+              className={cn(
+                "w-10 h-10 bg-white flex relative items-center justify-center rounded-full border transition",
+                step === el && "border-second text-second"
+              )}
+            >
               {i + 1}
+              {!!(i !== STEPS.length - 1) && (
+                <span className="absolute -bottom-[100%] w-px h-full bg-gray-200 z-10" />
+              )}
             </span>
             <span className="capitalize text-muted-foreground">{el}</span>
           </span>
         ))}
+      </div>
+      {/* Right */}
+      <div className="w-full flex items-center justify-center col-span-2">
+        {step === "Edit company details" && <EditCompany companySlug={companySlug} nextStep={()=>setStep('add a service')}/>}
+        {step === "add a service" && <AddService companySlug={companySlug} nextStep={()=>setStep('add a form')}/>}
+        {step === "add a form" && <AddForm companySlug={companySlug} nextStep={()=>setStep('create a contact')}/>}
+        {step === "create a contact" && <AddContact companySlug={companySlug} nextStep={()=>setStep('create a quotation')}/>}
+        {step === "create a quotation" && <AddQuotation companySlug={companySlug}  />}
       </div>
     </div>
   );
 };
 
 export default DashboardComponent;
+
+const EditCompany = ({nextStep,companySlug}:{nextStep:()=>void,companySlug:string}) => {
+  return (
+    <article>
+      <h3 className="font-semibold text-lg">Edit company details</h3>
+      <p className="text-sm text-zinc-500 w-[450px]">
+        Add your basic info, logo, and branding. They'll be automatically added
+        to your contracts, proposals and invoices.
+      </p>
+      <div className="flex items-center gap-8 mt-4">
+   
+          {" "}
+          <Button asChild className="bg-second hover:bg-second/90   text-white rounded-lg w-40">
+          <Link href={`/${companySlug}/settings/company`}>
+            Edit Details
+            </Link>
+          </Button>
+  
+        <Button onClick={nextStep} className="text-second border-second  border bg-white  rounded-lg w-40 hover:bg-white">
+          Next Step <ArrowRight size={20} className="ml-1" />
+        </Button>
+      </div>
+    </article>
+  );
+};
+const AddService = ({nextStep,companySlug}:{nextStep:()=>void,companySlug:string}) => {
+  return (
+    <article>
+      <h3 className="font-semibold text-lg">Add a service</h3>
+      <p className="text-sm text-zinc-500  w-[450px]">
+        Add new services and products to illustrate in your forms.
+      </p>
+      <div className="flex items-center gap-8 mt-4">
+   
+          {" "}
+          <Button asChild className="bg-second hover:bg-second/90   text-white rounded-lg w-40">
+          <Link href={`/${companySlug}/services`}>
+            Add Services
+            </Link>
+          </Button>
+  
+        <Button onClick={nextStep} className="text-second border-second  border bg-white  rounded-lg w-40 hover:bg-white">
+          Next Step <ArrowRight size={20} className="ml-1" />
+        </Button>
+      </div>
+    </article>
+  );
+};
+
+const AddForm = ({nextStep,companySlug}:{nextStep:()=>void,companySlug:string}) => {
+  return (
+    <article>
+      <h3 className="font-semibold text-lg">Create a form</h3>
+      <p className="text-sm text-zinc-500  w-[450px]">
+        Create new forms to show to your clients .
+      </p>
+      <div className="flex items-center gap-8 mt-4">
+   
+          {" "}
+          <Button asChild className="bg-second hover:bg-second/90   text-white rounded-lg w-40">
+          <Link href={`/${companySlug}/forms`}>
+            Add Form
+            </Link>
+          </Button>
+  
+        <Button onClick={nextStep} className="text-second border-second  border bg-white  rounded-lg w-40 hover:bg-white">
+          Next Step <ArrowRight size={20} className="ml-1" />
+        </Button>
+      </div>
+    </article>
+  );
+};
+const AddContact = ({nextStep,companySlug}:{nextStep:()=>void,companySlug:string}) => {
+  return (
+    <article>
+      <h3 className="font-semibold text-lg">Create a contact</h3>
+      <p className="text-sm text-zinc-500  w-[450px]">
+        Create new contacts and spread your business.
+      </p>
+      <div className="flex items-center gap-8 mt-4">
+   
+          {" "}
+          <Button asChild className="bg-second hover:bg-second/90   text-white rounded-lg w-40">
+          <Link href={`/${companySlug}/contacts`}>
+            Add Contact
+            </Link>
+          </Button>
+  
+        <Button onClick={nextStep} className="text-second border-second  border bg-white  rounded-lg w-40 hover:bg-white">
+          Next Step <ArrowRight size={20} className="ml-1" />
+        </Button>
+      </div>
+    </article>
+  );
+};
+const AddQuotation = ({ companySlug}:{ companySlug:string}) => {
+  return (
+    <article>
+      <h3 className="font-semibold text-lg">Create a quotation</h3>
+      <p className="text-sm text-zinc-500  w-[450px]">
+        Create new quotation.
+      </p>
+      <div className="flex items-center gap-8 mt-4">
+   
+          {" "}
+          <Button asChild className="bg-second hover:bg-second/90   text-white rounded-lg w-40">
+          <Link href={`/${companySlug}/contacts`}>
+            Add Quotation
+            </Link>
+          </Button>
+  
+  
+      </div>
+    </article>
+  );
+};
+
+
