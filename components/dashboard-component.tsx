@@ -44,7 +44,7 @@ const DashboardComponent = (props: Props) => {
   animate="animate"
   exit={'exit'}
 key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border overflow-x-scroll noScroll relative">
-  <button onClick={()=>setHide(true)} className="absolute top-6 right-6 text-gray-400 ">Hide</button>
+  <button onClick={()=>setHide(true)} className="absolute text-sm top-6 right-6 text-gray-400 ">Hide</button>
       {/* Left */}
       <div className="col-span-1 flex flex-col   border-r pr-2 gap-3">
         {STEPS.map((el, i) => (
@@ -58,8 +58,8 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
           >
             <span
               className={cn(
-                "w-10 h-10 bg-white flex relative items-center justify-center rounded-full border transition",
-                step === el && "border-second text-second"
+                "w-8 h-8 bg-white flex relative items-center justify-center text-xs rounded-full border transition",
+                step === el && "border-second text-second "
               )}
             >
               {i + 1}
@@ -67,7 +67,7 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
                 <span className="absolute -bottom-[100%] w-px h-full bg-gray-200 z-10" />
               )}
             </span>
-            <span className="first-letter:capitalize text-muted-foreground">{el}</span>
+            <span className={cn("first-letter:capitalize text-muted-foreground text-sm",el===step && 'text-prime font-semibold')}>{el}</span>
           </span>
         ))}
       </div>

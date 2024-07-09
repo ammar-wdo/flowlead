@@ -45,8 +45,8 @@ const LatestInvoices = async({companySlug}: Props) => {
   return (
     <div>
 <h3 className=' px-3 text-prime font-semibold'>Latest Invoices</h3>
-<div className='mt-3'>
-{!!latestInvoices.length ? <Table>
+<div className='mt-3 border rounded-lg overflow-hidden'>
+{!!latestInvoices.length ? <Table >
   
   <TableHeader>
     <TableRow className='bg-muted hover:bg-muted'>

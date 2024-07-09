@@ -44,14 +44,14 @@ const LatestLeads = async ({ companySlug }: Props) => {
   return (
     <div>
       <h3 className=" px-3 text-prime font-semibold">Latest Leads</h3>
-      <div className="mt-3">
+      <div className="mt-3 border rounded-lg overflow-hidden">
         {!!latestLeads.length ? (
           <Table>
             <TableHeader>
               <TableRow className="bg-muted hover:bg-muted">
                 <TableHead className=" ">Created At</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Email Adrress</TableHead>
+                <TableHead>Email Address</TableHead>
                 <TableHead className=" ">Phone</TableHead>
 
                
