@@ -161,7 +161,7 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
     animate="animate"
     exit={'exit'}
     key={'show-article'} className="   flex items-center gap-2"> 
-      Let's get you set up with Flowlead.  <button onClick={()=>setHide(false)} className="text-indigo-500 flex items-center font-semibold">Get Started{<ChevronRight size={20} className="ml-1"/>}</button>
+      Let&apos;s get you set up with Flowlead.  <button onClick={()=>setHide(false)} className="text-indigo-500 flex items-center font-semibold">Get Started{<ChevronRight size={20} className="ml-1"/>}</button>
     </motion.div>
     }
   </AnimatePresence></div>
@@ -223,7 +223,7 @@ const AddService = ({
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/services`}>Add Services</Link>
+          <Link href={`/${companySlug}/services/new`}>Add Services</Link>
         </Button>
         <Button
           onClick={nextStep}
@@ -255,7 +255,7 @@ const AddForm = ({
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/forms`}>Add Form</Link>
+          <Link href={`/${companySlug}/forms/new`}>Add Form</Link>
         </Button>
         <Button
           onClick={nextStep}
@@ -286,7 +286,7 @@ const AddContact = ({
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/contacts`}>Add Contact</Link>
+          <Link href={`/${companySlug}/contacts/new`}>Add Contact</Link>
         </Button>
         <Button
           onClick={nextStep}
@@ -315,7 +315,7 @@ const AddQuotation = ({
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/contacts`}>Add Quotation</Link>
+          <Link href={`/${companySlug}/quotations/new`}>Add Quotation</Link>
         </Button>
         <Button
           onClick={nextStep}
@@ -345,7 +345,7 @@ const AddInvoice = ({
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/contacts`}>Add Invoice</Link>
+          <Link href={`/${companySlug}/invoices/new`}>Add Invoice</Link>
         </Button>
         <Button
           onClick={nextStep}
