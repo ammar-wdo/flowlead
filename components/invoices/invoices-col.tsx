@@ -57,6 +57,6 @@ export const columns: ColumnDef<FullInvoice>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell: ({ row }) => <InvoiceTableActionDropdown id={row.original.id} />,
+    cell: ({ row }) =><div className="flex justify-end"><InvoiceTableActionDropdown id={row.original.id} /></div> ,
   },
 ];

@@ -35,7 +35,7 @@ if(!userId) throw new CustomError("Unauthorized")
       </div>
 
 
-      <div className="mt-12 bg-white ">
+      <div className="mt-12 bg-white border overflow-hidden rounded-l ">
       <FormDataTable columns={formColums} data={forms} />
     </div>
   

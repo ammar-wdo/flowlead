@@ -56,6 +56,6 @@ export const columns: ColumnDef<FullQuotation>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell: ({ row }) => <QuotationTableActionDropdown id={row.original.id} />,
+    cell: ({ row }) => <div className="flex justify-end"><QuotationTableActionDropdown id={row.original.id} /></div>,
   },
 ];

@@ -37,7 +37,7 @@ export const columns: ColumnDef<PartialService>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell:({row})=><ServiceTableActionsDropdown serviceId={row.original.id}/>
+    cell:({row})=><div className="flex justify-end"><ServiceTableActionsDropdown serviceId={row.original.id}/></div>
    
   },
 ]

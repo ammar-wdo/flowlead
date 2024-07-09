@@ -26,7 +26,7 @@ export const formColums: ColumnDef<PartialForm>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    cell:({row})=><PushButton className="hover:bg-transparent hover:underline" href={`/${row.original.company.slug}/forms/${row.original.slug}`}><p className=" capitalize font-semibold">{row.getValue('name')}</p></PushButton>
+    cell:({row})=><PushButton className="hover:bg-transparent hover:underline px-0 " href={`/${row.original.company.slug}/forms/${row.original.slug}`}><p className=" capitalize font-semibold">{row.getValue('name')}</p></PushButton>
   },
   {
     accessorKey: "slug",
@@ -42,7 +42,7 @@ export const formColums: ColumnDef<PartialForm>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell:({row})=><FormTableActionDropdown formSlug={row.original.slug} />
+    cell:({row})=><div className="flex justify-end"><FormTableActionDropdown formSlug={row.original.slug} /></div>
    
   },
 ]
