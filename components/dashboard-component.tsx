@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { AnimatePresence, Variants, motion } from "framer-motion";
+import { nl } from 'date-fns/locale'
 
 type Props = {};
 
@@ -19,7 +20,7 @@ const sectionVariants: Variants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
+      duration: 0.2,
       ease: 'easeInOut',
     },
   },
@@ -27,7 +28,7 @@ const sectionVariants: Variants = {
     opacity: 0,
     y: -20,
     transition: {
-      duration: 0.5,
+      duration: 0.2,
       ease: 'easeInOut',
     },
   },
@@ -181,8 +182,8 @@ const EditCompany = ({
 }) => {
   return (
     <article>
-      <h3 className="font-semibold text-lg">Edit company details</h3>
-      <p className="text-sm text-zinc-500 w-[450px]">
+      <h3 className="font-semibold text-prime text-lg">Edit company details</h3>
+      <p className="text-sm text-muted-foreground w-[450px] mt-2">
         Add your basic info, logo, and branding. They&apos;ll be automatically added
         to your contracts, proposals and invoices.
       </p>
@@ -213,8 +214,8 @@ const AddService = ({
 }) => {
   return (
     <article>
-      <h3 className="font-semibold text-lg">Add a service</h3>
-      <p className="text-sm text-zinc-500  w-[450px]">
+      <h3 className="font-semibold text-lg text-prime">Add a service</h3>
+      <p className="text-sm text-muted-foreground mt-2  w-[450px]">
         Add new services and products to illustrate in your forms.
       </p>
       <div className="flex items-center gap-8 mt-4">
@@ -245,8 +246,8 @@ const AddForm = ({
 }) => {
   return (
     <article>
-      <h3 className="font-semibold text-lg">Create a form</h3>
-      <p className="text-sm text-zinc-500  w-[450px]">
+      <h3 className="font-semibold text-lg text-prime">Create a form</h3>
+      <p className="text-sm text-muted-foreground  w-[450px]">
         Create new forms to show to your clients .
       </p>
       <div className="flex items-center gap-8 mt-4">
@@ -276,8 +277,8 @@ const AddContact = ({
 }) => {
   return (
     <article>
-      <h3 className="font-semibold text-lg">Create a contact</h3>
-      <p className="text-sm text-zinc-500  w-[450px]">
+      <h3 className="font-semibold text-ground text-lg">Create a contact</h3>
+      <p className="text-sm text-muted-foreground mt-2  w-[450px]">
         Create new contacts and spread your business.
       </p>
       <div className="flex items-center gap-8 mt-4">
@@ -307,8 +308,8 @@ const AddQuotation = ({
 }) => {
   return (
     <article>
-      <h3 className="font-semibold text-lg">Create a quotation</h3>
-      <p className="text-sm text-zinc-500  w-[450px]">Create new quotation.</p>
+      <h3 className="font-semibold text-lg text-prime ">Create a quotation</h3>
+      <p className="text-sm text-muted-foreground mt-2  w-[450px]">Create new quotation.</p>
       <div className="flex items-center gap-8 mt-4">
         {" "}
         <Button
@@ -337,8 +338,8 @@ const AddInvoice = ({
 }) => {
   return (
     <article>
-      <h3 className="font-semibold text-lg">Create Invoice</h3>
-      <p className="text-sm text-zinc-500  w-[450px]">Create new Invoice.</p>
+      <h3 className="font-semibold text-lg text-prime">Create Invoice</h3>
+      <p className="text-sm text-muted-foreground mt-2  w-[450px]">Create new Invoice.</p>
       <div className="flex items-center gap-8 mt-4">
         {" "}
         <Button

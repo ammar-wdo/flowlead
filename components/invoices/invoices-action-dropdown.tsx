@@ -22,9 +22,10 @@ import { deleteInvoice } from "@/actions/invoice-actions";
 
 type Props = {
   id: string;
+  noDelete?:boolean
 };
 
-const InvoiceTableActionDropdown = ({ id }: Props) => {
+const InvoiceTableActionDropdown = ({ id,noDelete }: Props) => {
   const params = useParams<{ companySlug: string }>();
 
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${params.companySlug}/invoices/${id}`;
@@ -58,12 +59,12 @@ const InvoiceTableActionDropdown = ({ id }: Props) => {
         <DropdownMenuItem asChild className="p-2   cursor-pointer">
           <FetchButon id={id} />
         </DropdownMenuItem>
-        <DropdownMenuItem
+       {!noDelete &&  <DropdownMenuItem
           onClick={handleDeleteModalOpen}
           className="p-2 flex items-center justify-start gap-3  cursor-pointer text-rose-500 hover:!text-rose-500"
         >
           <Delete /> Delete
-        </DropdownMenuItem>
+        </DropdownMenuItem>}
       </DropdownMenuContent>
     </DropdownMenu>
   );

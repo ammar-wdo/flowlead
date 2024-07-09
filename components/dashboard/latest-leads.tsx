@@ -43,18 +43,18 @@ const LatestLeads = async ({ companySlug }: Props) => {
 
   return (
     <div>
-      <h3 className="text-gray-400 text-lg">Latest Leads</h3>
+      <h3 className=" px-3 text-prime font-semibold">Latest Leads</h3>
       <div className="mt-3">
         {!!latestLeads.length ? (
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-muted hover:bg-muted">
                 <TableHead className=" ">Created At</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Email Adrress</TableHead>
                 <TableHead className=" ">Phone</TableHead>
 
-                <TableHead className=" "> </TableHead>
+               
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -74,9 +74,7 @@ const LatestLeads = async ({ companySlug }: Props) => {
                   <TableCell className=" ">
                     {data.phoneNumber || '-'}
                   </TableCell>
-                  <TableCell className=" ">
-                  <LeadTableActionDropdown id={data.id} />
-                  </TableCell>
+            
                 </ClientRow> 
               ))}
             </TableBody>

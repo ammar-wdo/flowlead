@@ -9,7 +9,7 @@ const Heading = ({title}: Props) => {
   return (
     <div>
 
-        <h3 className='capitalize font-semibold tracking-wide text-[#1F384C]'>{title}</h3>
+        <h3 className='capitalize font-semibold  text-prime'>{title}</h3>
      
     
        

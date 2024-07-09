@@ -34,7 +34,7 @@ export const columns: ColumnDef<Contact>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell:({row})=><ContactTableActionDropdown id={row.original.id} />
+    cell:({row})=><div className="justify-end"><ContactTableActionDropdown id={row.original.id} /></div>
    
   },
 ]

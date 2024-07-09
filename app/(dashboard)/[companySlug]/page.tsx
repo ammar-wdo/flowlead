@@ -8,6 +8,7 @@ import { auth } from '@clerk/nextjs/server'
 import { format } from 'date-fns'
 import { redirect } from 'next/navigation'
 import React, { Suspense } from 'react'
+import { nl } from 'date-fns/locale'
 
 type Props = {params:{companySlug:string}}
 
@@ -30,8 +31,8 @@ if(!userId) redirect('/sign-up')
  
   return (
     <div className='h-full  '>
-<span className='text-muted-foreground'>{format(new Date,"EEE, do MMMM")}</span>
-<h3 className='text-5xl font-semibold mt-6'>Hello, {company?.contactPerson}.</h3>
+<span className='text-muted-foreground capitalize'>{format(new Date(), 'EEEE d MMMM', { locale: nl })},</span>
+<h3 className='text-4xl font-semibold mt-6 text-prime'>Hello, {company?.contactPerson}.</h3>
 
 <div className='mt-8'>
   <DashboardComponent/>

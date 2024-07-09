@@ -44,12 +44,12 @@ const LatestInvoices = async({companySlug}: Props) => {
 
   return (
     <div>
-<h3 className='  text-gray-400 text-lg'>Latest Invoices</h3>
+<h3 className=' px-3 text-prime font-semibold'>Latest Invoices</h3>
 <div className='mt-3'>
 {!!latestInvoices.length ? <Table>
   
   <TableHeader>
-    <TableRow>
+    <TableRow className='bg-muted hover:bg-muted'>
       <TableHead className=" ">Invoice Number</TableHead>
       <TableHead>Created At</TableHead>
       <TableHead>Name</TableHead>
@@ -67,7 +67,7 @@ const LatestInvoices = async({companySlug}: Props) => {
       <TableCell className=" ">{data.contact.emailAddress}</TableCell>
       <TableCell className=" ">{data.status}</TableCell>
       <TableCell className=" ">€ {data.totalAmount}</TableCell>
-      <TableCell className=" "><InvoiceTableActionDropdown id={data.id} /></TableCell>
+      <TableCell className=" text-end"><InvoiceTableActionDropdown noDelete={true} id={data.id} /></TableCell>
     </TableRow>)  }
   </TableBody>
 </Table> : <p className='text-lg font-semibold text-gray-300 text-center'>No Invoices</p>}

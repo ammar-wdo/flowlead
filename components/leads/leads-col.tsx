@@ -33,7 +33,7 @@ export const columns: ColumnDef<Contact>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell:({row})=><LeadTableActionDropdown id={row.original.id} />
+    cell:({row})=><div className="flex justify-end"><LeadTableActionDropdown id={row.original.id} /></div>
    
   },
 ]

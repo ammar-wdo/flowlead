@@ -29,14 +29,14 @@ const LeadForm = ({ lead }: Props) => {
   const isLoading = form.formState.isSubmitting;
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <FormField
           control={form.control}
           name="contactType"
           render={({ field }) => (
             <FormItem className="space-y-3">
               <SettingsFormWrapper>
-                <FormLabel>Lead Type</FormLabel>
+                <FormLabel>Type</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -81,7 +81,7 @@ const LeadForm = ({ lead }: Props) => {
           render={({ field }) => (
             <FormItem>
               <SettingsFormWrapper>
-                <FormLabel>Lead name</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl className="md:col-span-2 max-w-[450px]">
                   <Input placeholder="Lead Name" {...field} />
                 </FormControl>
@@ -149,7 +149,7 @@ const LeadForm = ({ lead }: Props) => {
           render={({ field }) => (
             <FormItem>
               <SettingsFormWrapper>
-                <FormLabel className="text-sm text-muted-foreground">
+                <FormLabel className="text-sm  ">
                   Mobile Number
                 </FormLabel>
                 <FormControl className="md:col-span-2 max-w-[450px]">
