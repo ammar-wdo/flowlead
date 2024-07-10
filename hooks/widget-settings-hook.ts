@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { updateWidgetSettings } from "@/actions/widget-settings-actions";
 import { useParams, useRouter } from "next/navigation";
 import { useColor } from "react-color-palette";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   widgetSettings: WidgetSettings | null | undefined;
@@ -46,5 +46,15 @@ export const useWidgetSettings = ({ widgetSettings }: Props) => {
     }
   }
 
-  return { form, onSubmit,color,setColor };
+  const [copied, setCopied] = useState(false)
+  const handleCopy = ()=>{
+    setCopied(true)
+    navigator.clipboard.writeText(`<script src="https://flowlead-widget.vercel.app/widget.js" data-id="${companySlug}"></script>`)
+toast.info("Script Copied")
+    setTimeout(()=>{
+        setCopied(false)
+    },1000)
+  }
+
+  return { form, onSubmit,color,setColor,handleCopy,copied };
 };
