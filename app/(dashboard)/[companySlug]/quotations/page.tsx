@@ -5,6 +5,7 @@ import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
 import { checkCompanySubscription } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -47,9 +48,9 @@ const page = async ({ params: { companySlug } }: Props) => {
         <Heading title="Quotations" />
         <Link
           href={`${process.env.NEXT_PUBLIC_BASE_URL}/${companySlug}/quotations/new`}
-          className="py-2 px-4 bg-second hover:bg-second/80 text-white rounded-lg"
+          className="py-2 px-4 bg-second hover:bg-second/80 text-white rounded-lg flex items-center gap-1 text-sm"
         >
-          Create Quotation
+        <Plus size={16}/>  Add Quotation
         </Link>
       </div>
 

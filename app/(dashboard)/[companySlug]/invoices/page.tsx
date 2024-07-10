@@ -7,6 +7,7 @@ import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
 import { checkCompanySubscription } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -49,9 +50,9 @@ const page = async ({ params: { companySlug } }: Props) => {
         <Heading title="Invoices" />
         <Link
           href={`${process.env.NEXT_PUBLIC_BASE_URL}/${companySlug}/invoices/new`}
-          className="py-2 px-4 bg-second hover:bg-second/80 text-white rounded-lg"
+          className="py-2 px-4 bg-second hover:bg-second/80 text-white rounded-lg text-sm flex items-center gap-1"
         >
-          Create Invoice
+         <Plus size={16}/> Add Invoice
         </Link>
       </div>
 

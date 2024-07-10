@@ -43,7 +43,7 @@ const DashboardComponent = (props: Props) => {
   initial="initial"
   animate="animate"
   exit={'exit'}
-key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border overflow-x-scroll noScroll relative">
+key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border overflow-x-auto noScroll relative">
   <button onClick={()=>setHide(true)} className="absolute text-sm top-6 right-6 text-gray-400 ">Hide</button>
       {/* Left */}
       <div className="col-span-1 flex flex-col   border-r pr-2 gap-3">

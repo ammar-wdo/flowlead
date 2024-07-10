@@ -4,6 +4,7 @@ import { DataTable } from '@/components/services/data-table'
 import { CustomError } from '@/custom-error'
 import { checkCompanySubscription, getServices } from '@/lib/utils'
 import { auth } from '@clerk/nextjs/server'
+import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
@@ -26,8 +27,8 @@ const page = async({params:{companySlug}}: Props) => {
       <div className='flex items-center justify-between'>
       <Heading title='services'/>
       <Link
-      className='bg-second text-white py-2 px-4 rounded-md '
-      href={process.env.NEXT_PUBLIC_BASE_URL + '/' + companySlug +  '/services/new'}>Add Service</Link>
+      className='bg-second text-white py-2 px-4 rounded-md flex items-center text-sm gap-1'
+      href={process.env.NEXT_PUBLIC_BASE_URL + '/' + companySlug +  '/services/new'}><Plus size={16}/>Add Service</Link>
       </div>
 
       <div className="mt-8 bg-white border rounded-md overflow-hidden">

@@ -6,6 +6,7 @@ import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
 import { checkCompanySubscription } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -37,11 +38,11 @@ if(!userId) redirect('/sign-in')
   return <div>
     <div className="flex items-center justify-between">
     <Heading title="Contacts"/>
-    <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/${companySlug}/contacts/new`} className="py-2 px-4 bg-second hover:bg-second/80 text-white rounded-lg">Create Contact</Link>
+    <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/${companySlug}/contacts/new`} className="py-2 px-4 text-sm bg-second hover:bg-second/80 text-white rounded-lg flex items-center gap-1"><Plus size={16}/>Add Contact</Link>
     </div>
   
 
-    <div className="mt-8 bg-white rounded-md border overflow-hidden">
+    <div className="mt-8 bg-white rounded-lg border overflow-hidden">
     <DataTable columns={columns} data={contacts} />
     </div>
   </div>;

@@ -36,7 +36,7 @@ if(!userId) throw new CustomError("Unauthorized")
   return <div>
     <Heading title="Leads"/>
 
-    <div className="mt-8 bg-white rounded-md border overflow-hidden">
+    <div className="mt-8 bg-white rounded-lg border overflow-hidden">
     <DataTable columns={columns} data={leads} />
     </div>
   </div>;

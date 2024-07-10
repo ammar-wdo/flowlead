@@ -6,6 +6,7 @@ import { CustomError } from '@/custom-error'
 import prisma from '@/lib/prisma'
 import { checkCompanySubscription, checkFreeTrial, getForms } from '@/lib/utils'
 import { auth } from '@clerk/nextjs/server'
+import { Plus } from 'lucide-react'
  
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -30,8 +31,8 @@ if(!userId) throw new CustomError("Unauthorized")
       <div className='flex items-center justify-between'> 
       <Heading title='Forms' />
       <Link
-      className='bg-second text-white py-2 px-4 rounded-md '
-      href={process.env.NEXT_PUBLIC_BASE_URL + '/' + companySlug +  '/forms/new'}>Add Form</Link>
+      className='bg-second text-white py-2 px-4 rounded-md flex items-center gap-1 text-sm'
+      href={process.env.NEXT_PUBLIC_BASE_URL + '/' + companySlug +  '/forms/new'}><Plus size={16}/>Add Form</Link>
       </div>
 
 

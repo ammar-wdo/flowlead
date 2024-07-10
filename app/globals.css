@@ -158,6 +158,9 @@
   font-size: 4.25rem !important; /* huge */
 }
 
+.noScroll::-webkit-scrollbar{
+  display: none;
+}
 
 .scroll::-webkit-scrollbar {
   width: 6px;
