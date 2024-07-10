@@ -99,7 +99,11 @@ export const addCompany = async (values: z.infer<typeof companySchema>) => {
                         senderEmail:validData.data.companyEmail,
                         senderName:validData.data.name
                     }
-                },
+                },widgetSettings:{
+                    create:{
+                        
+                    }
+                }
       
       
             },
