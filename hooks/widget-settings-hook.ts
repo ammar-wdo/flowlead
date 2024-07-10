@@ -6,12 +6,16 @@ import { widgetSchema } from "@/schemas";
 import { toast } from "sonner";
 import { updateWidgetSettings } from "@/actions/widget-settings-actions";
 import { useParams, useRouter } from "next/navigation";
+import { useColor } from "react-color-palette";
+import { useEffect } from "react";
 
 type Props = {
   widgetSettings: WidgetSettings | null | undefined;
 };
 
 export const useWidgetSettings = ({ widgetSettings }: Props) => {
+
+
   const form = useForm<z.infer<typeof widgetSchema>>({
     resolver: zodResolver(widgetSchema),
     defaultValues: {
@@ -20,7 +24,11 @@ export const useWidgetSettings = ({ widgetSettings }: Props) => {
       widgetButtonText: widgetSettings?.widgetButtonText || "",
     },
   });
+  const [color, setColor] = useColor(widgetSettings?.color || "")
 
+  useEffect(()=>{
+    form.setValue('color',color.hex)
+  },[color])
   const { companySlug } = useParams<{ companySlug: string }>();
   const router = useRouter();
 
@@ -38,5 +46,5 @@ export const useWidgetSettings = ({ widgetSettings }: Props) => {
     }
   }
 
-  return { form, onSubmit };
+  return { form, onSubmit,color,setColor };
 };
