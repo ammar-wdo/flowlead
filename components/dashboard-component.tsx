@@ -52,7 +52,7 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
           key={el}
             onClick={() => setStep(el)}
             className={cn(
-              "flex items-center gap-3 p-2 hover:bg-muted rounded-lg cursor-pointer transition relative z-20",
+              "flex items-center gap-3 p-2 hover:bg-muted rounded-lg cursor-pointer transition relative  ",
               step === el && "bg-muted"
             )}
           >
@@ -64,7 +64,7 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
             >
               {i + 1}
               {!!(i !== STEPS.length - 1) && (
-                <span className="absolute -bottom-[100%] w-px h-full bg-gray-200 z-10" />
+                <span className="absolute -bottom-[100%] w-px h-full bg-gray-200  " />
               )}
             </span>
             <span className={cn("first-letter:capitalize text-muted-foreground text-sm",el===step && 'text-prime font-semibold')}>{el}</span>
