@@ -2,7 +2,7 @@ import Heading from "@/components/heading";
 import { Button } from "@/components/ui/button";
 import { checkCompanySubscription } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { Building2, ReceiptText, UsersRound } from "lucide-react";
+import { Building2, Code, ReceiptText, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -25,10 +25,10 @@ if(!userId) redirect('/sign-up')
       pathname: `/${companySlug}/settings/company`,
     },
     {
-      label: "Team Members",
-      icon: <UsersRound />,
-      description:"Manage your team members",
-      pathname: `/${companySlug}/settings/team-members`,
+      label: "Widget",
+      icon: <Code />,
+      description:"Manage your widget settings",
+      pathname: `/${companySlug}/settings/widget-settings`,
     },
     {
       label: "Quotations",

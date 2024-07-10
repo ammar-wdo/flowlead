@@ -30,6 +30,13 @@ export async function GET(
       },
       include: {
         forms: true,
+        widgetSettings:{
+          select:{
+            color:true,
+            thankyouText:true,
+            widgetButtonText:true
+          }
+        }
       },
     });
     return NextResponse.json(

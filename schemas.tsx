@@ -496,6 +496,15 @@ export const invoiceEmailSendSchema = z.object({
   
 })
 
+
+//widget schema 
+
+export const widgetSchema = z.object({
+  color:requiredString,
+  widgetButtonText:requiredString,
+  thankyouText:requiredString,
+})
+
 //fields and service elements types
 
 export type ElementComponentType = z.infer<typeof elementSchema> & {
