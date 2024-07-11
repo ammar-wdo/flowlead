@@ -26,7 +26,7 @@ const email = user?.emailAddresses[0].emailAddress
 
    
   return (
-   <div className='min-h-screen flex items-center justify-center'>
+   <div className='min-h-screen flex items-center justify-center bg-[#eee] '>
 
 
 <DashboardPrepare email={email!} />
