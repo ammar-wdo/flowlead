@@ -78,7 +78,35 @@ const CompanyForm = (props: Props) => {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company Address*</FormLabel>
+                  <FormLabel>Address*</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+              <FormField
+              control={form.control}
+              name="zipcode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Zipcode*</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+               <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City*</FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -92,7 +120,7 @@ const CompanyForm = (props: Props) => {
               name="country"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company Country*</FormLabel>
+                  <FormLabel>Country*</FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -101,34 +129,8 @@ const CompanyForm = (props: Props) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company City*</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="zipcode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company Zipcode*</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+         
+          
             <FormField
               control={form.control}
               name="phone"
@@ -137,6 +139,7 @@ const CompanyForm = (props: Props) => {
                   <FormLabel>Phone Number*</FormLabel>
                   <FormControl>
                     <PhoneInput
+                    placeholder=''
                       showDropdown={false}
                       containerClass="phone-input-container"
                       inputClass="phone-input"
