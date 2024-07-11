@@ -8,7 +8,7 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import { Button } from "../ui/button"
-import { Delete, Edit, MoreHorizontal, MoreVertical } from "lucide-react"
+import { Delete, Edit, Eye, MoreHorizontal, MoreVertical } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { useModal } from "@/hooks/modal-hook"
@@ -45,7 +45,7 @@ setOpen({type:'delete',deleteFunction:()=>deleteSubmission({companySlug:params.c
   <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
   <DropdownMenuSeparator />
-  <DropdownMenuItem asChild  className="p-2   cursor-pointer"><Link className="flex items-center justify-start gap-3" href={url}><Edit /> Edit</Link></DropdownMenuItem>
+  <DropdownMenuItem asChild  className="p-2   cursor-pointer"><Link className="flex items-center justify-start gap-3" href={url}><Eye /> View</Link></DropdownMenuItem>
   <DropdownMenuItem onClick={handleDeleteModalOpen} className="p-2 flex items-center justify-start gap-3  cursor-pointer text-rose-500 hover:!text-rose-500"><Delete /> Delete</DropdownMenuItem>
 </DropdownMenuContent>
 </DropdownMenu>
