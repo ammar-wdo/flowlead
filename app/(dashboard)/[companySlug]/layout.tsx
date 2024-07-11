@@ -1,5 +1,6 @@
 import Aside from '@/components/aside'
 import Header from '@/components/header'
+import TraialBar from '@/components/traial-bar'
  
 import prisma from '@/lib/prisma'
 import { checkFreeTrial } from '@/lib/utils'
@@ -34,6 +35,7 @@ const layout = async({ children,params:{companySlug} }: Props) => {
       <Aside companySlug={companySlug}/>
       <div className=' flex flex-col pl-[240px]'>
       <Header />
+      {company?.plan==='FREE' && <TraialBar  date={company?.createdAt!}  />}
         <main className=' flex-1 p-12 min-h-[calc(100vh-64px)]  bg-[#384EB7]/5 min-w-[1100px]'>
 
           {children}
