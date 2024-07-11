@@ -14,7 +14,7 @@ export const columns: ColumnDef<Contact>[] = [
   {
     accessorKey: "createdAt",
     header: "Date Created",
-    cell:({row})=><p className="text-muted-foreground">{format(row.original.createdAt,"dd-MM-yyyy")}</p>
+    cell:({row})=><p className="text-muted-foreground">{format(row.original.createdAt,"dd-MM-yyyy HH:mm")}</p>
   },
   {
     accessorKey: "name",

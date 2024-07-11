@@ -30,7 +30,7 @@ export const columns: ColumnDef<FullQuotation>[] = [
     header: "Date Created",
     cell: ({ row }) => (
       <p className="text-muted-foreground">
-        {format(row.original.createdAt, "dd-MM-yyyy")}
+        {format(row.original.createdAt, "dd-MM-yyyy HH:mm")}
       </p>
     ),
   },

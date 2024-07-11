@@ -1,26 +1,43 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Submission } from "@prisma/client";
+import { Invoice, Quotation, Submission } from "@prisma/client";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { DataTable } from "../submissions/submission-table";
-import { columns } from "../submissions/submission-col";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { format } from "date-fns";
 
 type Props = {
-
+  quotations: (Quotation & {
+    contact: {
+      emailAddress: string;
+      companyName?: string | null;
+      contactName?: string;
+    };
+  })[];
+  invoices: (Invoice & {
+    contact: {
+      emailAddress: string;
+      companyName?: string | null;
+      contactName?: string;
+    };
+  })[];
 };
 
-const ContactTabs = ({  }: Props) => {
-  const [tab, setTab] = useState<"quotations" | "invoices">(
-    "quotations"
-  );
+const ContactTabs = ({ invoices, quotations }: Props) => {
+  const [tab, setTab] = useState<"quotations" | "invoices">("quotations");
   return (
     <div className="pb-20">
       {/* tabs */}
       <div className="flex items-center">
-    
-
         <Button
           onClick={() => setTab("quotations")}
           className={cn(
@@ -44,40 +61,126 @@ const ContactTabs = ({  }: Props) => {
       </div>
       {/* components */}
       <div className="mt-8">
-      <TabsComponents  tab={tab} />
+        <TabsComponents quotations={quotations} invoices={invoices} tab={tab} />
       </div>
-     
     </div>
   );
 };
 
 export default ContactTabs;
 
-
-export type SubmissionDataType = {id:string,name:string,email:string,createdAt:Date,total:number}
+export type SubmissionDataType = {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: Date;
+  total: number;
+};
 const TabsComponents = ({
   tab,
-
+  quotations,
+  invoices,
 }: {
-  tab:"quotations" | "invoices";
-
+  tab: "quotations" | "invoices";
+  quotations: (Quotation & {
+    contact: {
+      emailAddress: string;
+      companyName?: string | null;
+      contactName?: string;
+    };
+  })[];
+  invoices: (Invoice & {
+    contact: {
+      emailAddress: string;
+      companyName?: string | null;
+      contactName?: string;
+    };
+  })[];
 }) => {
+  let data: SubmissionDataType[] = [];
 
-  let data:SubmissionDataType[] = []
-
-
- 
   switch (tab) {
-
-
-    
- 
-
     case "quotations":
-      return <div>Quotations</div>;
+      return (
+        <div className="border rounded-lg bg-white overflow-hidden">
+          {quotations.length ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className=" ">Quotation Number</TableHead>
+                  <TableHead>Created At</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead className=" ">Email Address</TableHead>
+                  <TableHead className=" ">Total Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {quotations.map((quotation) => (
+                  <TableRow key={quotation.id}>
+                    <TableCell className=" ">
+                      {quotation.quotationNumber}
+                    </TableCell>
+                    <TableCell>
+                      {format(quotation.createdAt, "dd-MM-yyyy HH:mm")}
+                    </TableCell>
+                    <TableCell>
+                      {quotation.contact.companyName ||
+                        quotation.contact.contactName}
+                    </TableCell>
+                    <TableCell>{quotation.contact.emailAddress}</TableCell>
+                    <TableCell className=" ">
+                      € {quotation.totalAmount}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="p-12 flex items-center justify-center border">
+              <p className="text-xl font-bold text-muted-foreground">Empty</p>
+            </div>
+          )}
+        </div>
+      );
 
     case "invoices":
-      return <div>invoices</div>;
+      return (
+        <div className="border rounded-lg bg-white overflow-hidden">
+          {invoices.length ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className=" ">Quotation Number</TableHead>
+                  <TableHead>Created At</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead className=" ">Email Address</TableHead>
+                  <TableHead className=" ">Total Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {invoices.map((invoice) => (
+                  <TableRow key={invoice.id}>
+                    <TableCell className=" ">{invoice.invoiceNumber}</TableCell>
+                    <TableCell>
+                      {format(invoice.createdAt, "dd-MM-yyyy HH:mm")}
+                    </TableCell>
+                    <TableCell>
+                      {invoice.contact.companyName ||
+                        invoice.contact.contactName}
+                    </TableCell>
+                    <TableCell>{invoice.contact.emailAddress}</TableCell>
+                    <TableCell className=" ">€ {invoice.totalAmount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="p-12 flex items-center justify-center border">
+              <p className="text-xl font-bold text-muted-foreground">Empty</p>
+            </div>
+          )}
+        </div>
+      );
 
     default:
       return null;

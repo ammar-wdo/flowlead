@@ -1,17 +1,41 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Submission } from "@prisma/client";
+import { Invoice, Quotation, Submission } from "@prisma/client";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { DataTable } from "../submissions/submission-table";
 import { columns } from "../submissions/submission-col";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { format } from "date-fns";
 
 type Props = {
   submissions: Submission[];
+  quotations: (Quotation & {
+    contact: {
+      emailAddress: string;
+      companyName?: string | null;
+      contactName?: string;
+    };
+  })[];
+  invoices: (Invoice & {
+    contact: {
+      emailAddress: string;
+      companyName?: string | null;
+      contactName?: string;
+    };
+  })[];
 };
 
-const LeadTabs = ({ submissions }: Props) => {
+const LeadTabs = ({ submissions, quotations, invoices }: Props) => {
   const [tab, setTab] = useState<"submissions" | "quotations" | "invoices">(
     "submissions"
   );
@@ -53,69 +77,182 @@ const LeadTabs = ({ submissions }: Props) => {
       </div>
       {/* components */}
       <div className="mt-8">
-      <TabsComponents submissions={submissions} tab={tab} />
+        <TabsComponents
+          submissions={submissions}
+          quotations={quotations}
+          invoices={invoices}
+          tab={tab}
+        />
       </div>
-     
     </div>
   );
 };
 
 export default LeadTabs;
 
-
-export type SubmissionDataType = {id:string,name:string,email:string,createdAt:Date,total:number}
+export type SubmissionDataType = {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: Date;
+  total: number;
+};
 const TabsComponents = ({
   tab,
   submissions,
+  quotations,
+  invoices,
 }: {
   tab: "submissions" | "quotations" | "invoices";
   submissions: Submission[];
+  quotations: (Quotation & {
+    contact: {
+      emailAddress: string;
+      companyName?: string | null;
+      contactName?: string;
+    };
+  })[];
+  invoices: (Invoice & {
+    contact: {
+      emailAddress: string;
+      companyName?: string | null;
+      contactName?: string;
+    };
+  })[];
 }) => {
-
-  let data:SubmissionDataType[] = []
-
+  let data: SubmissionDataType[] = [];
 
   //loop over submission to prepare data to table
-  
-  submissions.forEach((el)=>{
-    const content = el.content as any
-    const id = el.id
-    const name = content["Naam-field"]
-    const email = content["Email Adres-field"]
-    const createdAt = el.createdAt
-    const total = Object.entries(content).reduce((prev: number, [key, value]) => {
 
-      if (key.endsWith("-service") ) {
-       if(!Array.isArray(value) && typeof value === 'object' && value !== null && 'price' in value && 'quantity'  in value && !isNaN(+(value.price as number))){
-        prev = prev + (+(value.price as number))*(+(value.quantity as number));
-       }else if(Array.isArray(value)){
-        value.forEach(el=>{
-          if(typeof el === 'object' && el !== null && 'price' in el && 'quantity'  in el && !isNaN(+(el.price as number))){
-            prev = prev + (+(el.price as number))*(+(el.quantity as number));
+  submissions.forEach((el) => {
+    const content = el.content as any;
+    const id = el.id;
+    const name = content["Naam-field"];
+    const email = content["Email Adres-field"];
+    const createdAt = el.createdAt;
+    const total = Object.entries(content).reduce(
+      (prev: number, [key, value]) => {
+        if (key.endsWith("-service")) {
+          if (
+            !Array.isArray(value) &&
+            typeof value === "object" &&
+            value !== null &&
+            "price" in value &&
+            "quantity" in value &&
+            !isNaN(+(value.price as number))
+          ) {
+            prev =
+              prev + +(value.price as number) * +(value.quantity as number);
+          } else if (Array.isArray(value)) {
+            value.forEach((el) => {
+              if (
+                typeof el === "object" &&
+                el !== null &&
+                "price" in el &&
+                "quantity" in el &&
+                !isNaN(+(el.price as number))
+              ) {
+                prev = prev + +(el.price as number) * +(el.quantity as number);
+              }
+            });
           }
-        })
-       }
+        }
+        return prev;
+      },
+      0
+    );
 
-
-      
-      }
-      return prev;
-    }, 0);
-  
-    data.push({id,name,email,total,createdAt})
-  })
+    data.push({ id, name, email, total, createdAt });
+  });
   switch (tab) {
-
-
-    
     case "submissions":
-      return  <div className="bg-white"><DataTable columns={columns} data={data} /></div>;
+      return (
+        <div className="bg-white">
+          <DataTable columns={columns} data={data} />
+        </div>
+      );
 
     case "quotations":
-      return <div>Quotations</div>;
+      return (
+        <div className="border rounded-lg bg-white overflow-hidden">
+          {quotations.length ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className=" ">Quotation Number</TableHead>
+                  <TableHead>Created At</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead className=" ">Email Address</TableHead>
+                  <TableHead className=" ">Total Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {quotations.map((quotation) => (
+                  <TableRow key={quotation.id}>
+                    <TableCell className=" ">
+                      {quotation.quotationNumber}
+                    </TableCell>
+                    <TableCell>
+                      {format(quotation.createdAt, "dd-MM-yyyy HH:mm")}
+                    </TableCell>
+                    <TableCell>
+                      {quotation.contact.companyName ||
+                        quotation.contact.contactName}
+                    </TableCell>
+                    <TableCell>{quotation.contact.emailAddress}</TableCell>
+                    <TableCell className=" ">
+                      € {quotation.totalAmount}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="p-12 flex items-center justify-center border">
+              <p className="text-xl font-bold text-muted-foreground">Empty</p>
+            </div>
+          )}
+        </div>
+      );
 
     case "invoices":
-      return <div>invoices</div>;
+      return (
+        <div className="border rounded-lg bg-white overflow-hidden">
+          {invoices.length ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className=" ">Quotation Number</TableHead>
+                  <TableHead>Created At</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead className=" ">Email Address</TableHead>
+                  <TableHead className=" ">Total Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {invoices.map((invoice) => (
+                  <TableRow key={invoice.id}>
+                    <TableCell className=" ">{invoice.invoiceNumber}</TableCell>
+                    <TableCell>
+                      {format(invoice.createdAt, "dd-MM-yyyy HH:mm")}
+                    </TableCell>
+                    <TableCell>
+                      {invoice.contact.companyName ||
+                        invoice.contact.contactName}
+                    </TableCell>
+                    <TableCell>{invoice.contact.emailAddress}</TableCell>
+                    <TableCell className=" ">€ {invoice.totalAmount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="p-12 flex items-center justify-center border">
+              <p className="text-xl font-bold text-muted-foreground">Empty</p>
+            </div>
+          )}
+        </div>
+      );
 
     default:
       return null;
