@@ -37,7 +37,7 @@ type Props = {email:string}
       return (
         <Dialog open={openModal} onOpenChange={setOpenModal} >
     
-        <DialogContent className="2xl:max-w-[35%] sm:maxw-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%]  max-w-[95%] w-full max-h-[98%] overflow-y-scroll border ">
+        <DialogContent className="2xl:max-w-[30%]   sm:max-w-[90%] md:max-w-[70%] lg:max-w-[60%] xl:max-w-[40%]  max-w-[95%] w-full max-h-[98%] overflow-y-auto border ">
           <DialogHeader>
             <DialogTitle className="pb-8 border-b">Create Your Company</DialogTitle>
             <DialogDescription className="my-8">

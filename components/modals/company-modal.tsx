@@ -22,7 +22,7 @@ const CompanyModal = (props: Props) => {
   return (
     <Dialog open={openModal} onOpenChange={setClose}>
 
-    <DialogContent className="2xl:max-w-[55%] max-w-[95%] w-full max-h-[98%] overflow-y-scroll">
+    <DialogContent className="2xl:max-w-[30%]   sm:max-w-[90%] md:max-w-[70%] lg:max-w-[60%] xl:max-w-[40%]  max-w-[95%] w-full max-h-[98%] overflow-y-auto border">
       <DialogHeader>
       <DialogTitle className="pb-8 border-b">Create New Company</DialogTitle>
         <DialogDescription>
