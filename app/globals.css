@@ -186,3 +186,15 @@
 
 
 
+.phone-input-container .flag-dropdown {
+  display: none !important; /* Hide the country dropdown */
+}
+
+.phone-input-container .flag {
+  display: none !important; /* Hide the flag */
+}
+
+.phone-input {
+  padding-left: 10px !important; /* Adjust padding to start from the beginning */
+  margin-left: 0 !important; /* Ensure margin is reset */
+}

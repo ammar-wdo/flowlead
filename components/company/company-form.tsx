@@ -137,7 +137,11 @@ const CompanyForm = (props: Props) => {
                   <FormLabel>Phone Number*</FormLabel>
                   <FormControl>
                     <PhoneInput
-                      enableSearch={true}
+                      showDropdown={false}
+                      containerClass="phone-input-container"
+                      inputClass="phone-input"
+                      buttonClass="phone-input-button"
+                      dropdownClass="phone-input-dropdown"
                       buttonStyle={{ border: "none", backgroundColor: '#e2e8f0' }}
                       containerStyle={{
                         borderRadius: "7px",
