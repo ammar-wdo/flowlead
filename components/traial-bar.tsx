@@ -34,8 +34,8 @@ const {companySlug} = useParams<{companySlug:string}>()
  
  
   return (
-    <div className={cn("h-20 bg-second flex items-center justify-center relative text-white gap-3",close && "hidden")}>
-       Your traial ends in {differenceInDays} day(s).{"  "} <Link className="underline" href={`/${companySlug}/upgrade`}> {"  "} Upgrade Now</Link>
+    <div className={cn("h-20 bg-second flex items-center justify-center relative text-white text-sm gap-3",close && "hidden")}>
+       Your trial ends in {differenceInDays} day(s).{"  "} <Link className="underline" href={`/${companySlug}/upgrade`}> {"  "} Upgrade Now</Link>
 <XIcon onClick={()=>setClose(true)} className="right-4 cursor-pointer absolute"/>
     </div>
   )
