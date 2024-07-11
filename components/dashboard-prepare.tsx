@@ -40,7 +40,7 @@ type Props = {email:string}
         <DialogContent className="2xl:max-w-[35%] sm:maxw-[90%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%]  max-w-[95%] w-full max-h-[98%] overflow-y-scroll border ">
           <DialogHeader>
             <DialogTitle className="pb-8 border-b">Create Your Company</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="my-8">
             Your login details have been sent by email to &quot;{email}&quot;. To create an administration for your company, we only need your company details. You can fill this in below.
             </DialogDescription>
           </DialogHeader>
