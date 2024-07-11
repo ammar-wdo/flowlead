@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
+import EmptyComponent from "../empty";
 
 type Props = {
   submissions: Submission[];
@@ -208,9 +209,7 @@ const TabsComponents = ({
               </TableBody>
             </Table>
           ) : (
-            <div className="p-12 flex items-center justify-center border">
-              <p className="text-xl font-bold text-muted-foreground">Empty</p>
-            </div>
+            <EmptyComponent title='No Quotations' description='No quotations found for this lead'  />
           )}
         </div>
       );
@@ -247,9 +246,7 @@ const TabsComponents = ({
               </TableBody>
             </Table>
           ) : (
-            <div className="p-12 flex items-center justify-center border">
-              <p className="text-xl font-bold text-muted-foreground">Empty</p>
-            </div>
+            <EmptyComponent title='No Invoices' description='No invoices found for this lead'  />
           )}
         </div>
       );

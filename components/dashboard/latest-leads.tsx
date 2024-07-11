@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import ClientRow from "./client-row";
 import LeadTableActionDropdown from "../leads/lead-action-dropdown";
+import EmptyComponent from "../empty";
 
 type Props = { companySlug: string };
 
@@ -80,9 +81,7 @@ const LatestLeads = async ({ companySlug }: Props) => {
             </TableBody>
           </Table>
         ) : (
-          <p className="text-lg font-semibold text-gray-300 text-center">
-            No Leads
-          </p>
+         <EmptyComponent title='No Leads' description='you will see your leads here when you get them'   />
         )}
       </div>
     </div>

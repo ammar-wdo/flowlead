@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
+import EmptyComponent from "../empty";
 
 type Props = {
   quotations: (Quotation & {
@@ -136,9 +137,7 @@ const TabsComponents = ({
               </TableBody>
             </Table>
           ) : (
-            <div className="p-12 flex items-center justify-center border">
-              <p className="text-xl font-bold text-muted-foreground">Empty</p>
-            </div>
+            <EmptyComponent title='No Quotations' description='No quotations found for this contact'  />
           )}
         </div>
       );
@@ -175,9 +174,7 @@ const TabsComponents = ({
               </TableBody>
             </Table>
           ) : (
-            <div className="p-12 flex items-center justify-center border">
-              <p className="text-xl font-bold text-muted-foreground">Empty</p>
-            </div>
+            <EmptyComponent title='No Invoices' description='No invoices found for this contact'  />
           )}
         </div>
       );

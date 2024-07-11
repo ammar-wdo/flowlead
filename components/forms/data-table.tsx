@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import EmptyComponent from "../empty"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -75,7 +76,7 @@ export function FormDataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center ">
-                No results.
+              <EmptyComponent title='No Forms' description='Add your first form here' url='forms' buttonTitle='Add form'/>
               </TableCell>
             </TableRow>
           )}

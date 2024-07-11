@@ -11,6 +11,7 @@ import {
   } from "@/components/ui/table"
 import { format } from 'date-fns'
 import InvoiceTableActionDropdown from '../invoices/invoices-action-dropdown'
+import EmptyComponent from '../empty'
 
 type Props = {companySlug:string}
 
@@ -70,7 +71,7 @@ const LatestInvoices = async({companySlug}: Props) => {
       <TableCell className=" text-end"><InvoiceTableActionDropdown noDelete={true} id={data.id} /></TableCell>
     </TableRow>)  }
   </TableBody>
-</Table> : <p className='text-lg font-semibold text-gray-300 text-center'>No Invoices</p>}
+</Table> : <EmptyComponent title='No Invoices' description='Add your first invoice here' url='invoices' buttonTitle='Add invoice'/>}
 </div>
     </div>
   )
