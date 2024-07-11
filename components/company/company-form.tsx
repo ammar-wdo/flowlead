@@ -287,7 +287,7 @@ const CompanyForm = (props: Props) => {
 
    }
         <div className='flex items-center justify-between'>
-          <Button type='button' variant={'secondary'} disabled={step===0} onClick={handleBack}>Back</Button>
+         { step > 0 && <Button type='button' variant={'secondary'} disabled={step===0} onClick={handleBack}>Back</Button>}
           <div>
             {step===0 && <Button type='button' onClick={handleNext} className='bg-second hover:bg-second/80 text-white hoer;text-white'>Next</Button>}
             {step===1 &&   <Button disabled={isLoading} className='bg-second hover:bg-second/80 text-white hoer;text-white' type="submit">Submit {isLoading && <Loader className='animate-spin ml-3' />}</Button>}
