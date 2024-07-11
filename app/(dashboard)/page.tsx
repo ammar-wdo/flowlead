@@ -20,14 +20,16 @@ await prepareUser()
 
 
 
- 
+const user = await currentUser()
+
+const email = user?.emailAddresses[0].emailAddress
 
    
   return (
    <div className='min-h-screen flex items-center justify-center'>
 
 
-<DashboardPrepare />
+<DashboardPrepare email={email!} />
  </div> 
   )
 }

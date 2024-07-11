@@ -71,8 +71,8 @@ export const useComapany = ({company}:{company:Company | null}) => {
   const [step, setStep] = useState(0)
 
   const validatingArray: FieldName<z.infer<typeof companySchema>>[][] = [
-    ['name','logo','address','city','zipcode','country','phone','companyEmail','websiteUrl'],
-    ['cocNumber','industry','vatNumber','contactPerson','IBAN','termsUrl']
+    ['name','contactPerson' ,'address','city','zipcode','country','phone','companyEmail','websiteUrl'],
+    ['cocNumber' ,'vatNumber','IBAN','termsUrl']
   ]
 
 

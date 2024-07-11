@@ -44,6 +44,34 @@ const CompanyForm = (props: Props) => {
                 </FormItem>
               )}
             />
+               <FormField
+              control={form.control}
+              name="companyEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Company Email*</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+                <FormField
+              control={form.control}
+              name="contactPerson"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contact Person*</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="address"
@@ -144,21 +172,8 @@ const CompanyForm = (props: Props) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="companyEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company Email*</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
+         
+            {/* <FormField
               control={form.control}
               name="logo"
               render={({ field }) => (
@@ -188,7 +203,7 @@ const CompanyForm = (props: Props) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
           </div>
 
@@ -211,7 +226,7 @@ const CompanyForm = (props: Props) => {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="industry"
               render={({ field }) => (
@@ -224,7 +239,7 @@ const CompanyForm = (props: Props) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <FormField
               control={form.control}
               name="vatNumber"
@@ -239,20 +254,7 @@ const CompanyForm = (props: Props) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="contactPerson"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contact Person*</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        
             <FormField
               control={form.control}
               name="IBAN"
@@ -267,7 +269,7 @@ const CompanyForm = (props: Props) => {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="termsUrl"
               render={({ field }) => (
@@ -280,7 +282,7 @@ const CompanyForm = (props: Props) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
           </div>
 
    }

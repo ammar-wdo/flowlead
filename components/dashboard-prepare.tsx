@@ -17,9 +17,9 @@ import CompanyForm from "./company/company-form"
 import { useEffect, useState } from "react"
 
 
-type Props = {}
+type Props = {email:string}
     
-   export const DashboardPrepare= (props: Props) => {
+   export const DashboardPrepare= ({email}: Props) => {
     const [openModal, setOpenModal] = useState(true)
 
     const [mounted, setMounted] = useState(false)
@@ -41,7 +41,7 @@ type Props = {}
           <DialogHeader>
             <DialogTitle className="pb-8 border-b">Create Your Company</DialogTitle>
             <DialogDescription>
-           
+            Your login details have been sent by email to "{email}". To create an administration for your company, we only need your company details. You can fill this in below.
             </DialogDescription>
           </DialogHeader>
           <CompanyForm/>
