@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import SectionsWrapper from '../sections-wrapper'
 import { SingleImageDropzone } from '../single-image-dropeZone';
 import { Loader } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type Props = {}
 
@@ -287,7 +288,7 @@ const CompanyForm = (props: Props) => {
 
    }
         <div className='flex items-center justify-between'>
-         { step > 0 && <Button type='button' variant={'secondary'} disabled={step===0} onClick={handleBack}>Back</Button>}
+         {  <Button type='button' className={cn((step === 0) && '!opacity-0 pointer-events-none')} variant={'secondary'} disabled={step===0} onClick={handleBack}>Back</Button>}
           <div>
             {step===0 && <Button type='button' onClick={handleNext} className='bg-second hover:bg-second/80 text-white hoer;text-white'>Next</Button>}
             {step===1 &&   <Button disabled={isLoading} className='bg-second hover:bg-second/80 text-white hoer;text-white' type="submit">Submit {isLoading && <Loader className='animate-spin ml-3' />}</Button>}
