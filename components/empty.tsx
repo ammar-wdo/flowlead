@@ -24,7 +24,7 @@ const EmptyComponent = ({description,title,className,url,buttonTitle}: Props) =>
 <p className='mt-2 text-sm font-semibold'>{title}</p>
 <p className='text-gray-400 text-xs  '>{description}</p>
 
-{url && <Button className='!text-xs xl:text-xs lg:text-xs md:text-xs sm:text-xs text-gray-400 border rounded-lg mt-4 bg-gray-50 hover:bg-gray-50' asChild>
+{url && <Button className='!text-xs xl:text-xs lg:text-xs md:text-xs hover:border-gray-500 hover:text-gray-500  sm:text-xs text-gray-400 border rounded-lg mt-4 bg-gray-50 hover:bg-gray-50' asChild>
     <Link href={`/${companySlug}/${url}/new`}>
     <Plus size={13}/> {buttonTitle}
     </Link>
