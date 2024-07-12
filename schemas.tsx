@@ -8,6 +8,7 @@ import {
   InvoiceStatus,
   LogicalOperator,
   QuotationStatus,
+  WidgetPostion,
 } from "@prisma/client";
 import { ReactNode } from "react";
 import * as z from "zod";
@@ -503,6 +504,7 @@ export const widgetSchema = z.object({
   color:requiredString,
   widgetButtonText:requiredString,
   thankyouText:requiredString,
+  widgetPostion:z.nativeEnum(WidgetPostion)
 })
 
 //fields and service elements types

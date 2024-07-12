@@ -22,6 +22,7 @@ export const useWidgetSettings = ({ widgetSettings }: Props) => {
       color: widgetSettings?.color || "",
       thankyouText: widgetSettings?.thankyouText || "",
       widgetButtonText: widgetSettings?.widgetButtonText || "",
+      widgetPostion:widgetSettings?.widgetPostion || 'RIGHT'
     },
   });
   const [color, setColor] = useColor(widgetSettings?.color || "")

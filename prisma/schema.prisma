@@ -272,6 +272,7 @@ model WidgetSettings {
   color            String   @default("blue")
   widgetButtonText String   @default("Open Widget")
   thankyouText     String   @default("we will get back to you as soon as possible")
+  widgetPostion WidgetPostion @default(RIGHT)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   companyId        String   @unique @db.ObjectId
@@ -587,4 +588,9 @@ enum InvoiceStatus {
 enum Plan {
   FREE
   PREMIUM
+}
+
+enum WidgetPostion {
+  LEFT
+  RIGHT
 }
