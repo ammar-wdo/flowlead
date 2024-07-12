@@ -34,7 +34,8 @@ export async function GET(
           select:{
             color:true,
             thankyouText:true,
-            widgetButtonText:true
+            widgetButtonText:true,
+            widgetPostion:true
           }
         }
       },

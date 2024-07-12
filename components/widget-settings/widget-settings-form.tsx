@@ -43,7 +43,7 @@ const WidgetSettingsForm = ({ widgetSettings }: Props) => {
         <Button
         type="button"
           style={{ backgroundColor: form.watch("color"),...(form.watch('widgetPostion')==='LEFT' ?{left:20} :{right:20}) }}
-          className="fixed bottom-3 z-[9999999]"
+          className="fixed bottom-3 z-[9999999999]"
         >
           {form.watch("widgetButtonText")}
         </Button>
