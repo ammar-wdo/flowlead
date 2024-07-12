@@ -29,7 +29,8 @@ type Props = {
 };
 
 const ContactForm = ({ contact }: Props) => {
-  const { form, onSubmit,handleAddContactPerson, handleDeleteContactPerson } = useContact({ contact });
+  const { form, onSubmit, handleAddContactPerson, handleDeleteContactPerson } =
+    useContact({ contact });
   const isLoading = form.formState.isSubmitting;
   return (
     <Form {...form}>
@@ -107,7 +108,12 @@ const ContactForm = ({ contact }: Props) => {
                     <FormControl className="md:col-span-2 max-w-[450px]">
                       <div>
                         <Input placeholder="Company name" {...field} />
-                        <Button type="button" onClick={handleAddContactPerson} className="p-0 mt-6 h-0 ml-auto flex" variant={"link"}>
+                        <Button
+                          type="button"
+                          onClick={handleAddContactPerson}
+                          className="p-0 mt-6 h-0 ml-auto flex"
+                          variant={"link"}
+                        >
                           + Add Contact Person
                         </Button>
                       </div>
@@ -170,12 +176,19 @@ const ContactForm = ({ contact }: Props) => {
                         </FormItem>
                       )}
                     />
-                     <Button type={"button"} onClick={()=>handleDeleteContactPerson(person?.id!)} variant={'link'} className="p-0 mt-6 h-0  flex text-rose-600">- Delete</Button>
+                    <Button
+                      type={"button"}
+                      onClick={() => handleDeleteContactPerson(person?.id!)}
+                      variant={"link"}
+                      className="p-0 mt-6 h-0  flex text-rose-600"
+                    >
+                      - Delete
+                    </Button>
                   </div>
-
-                 
                 </SettingsFormWrapper>
-               {index+1 !== form.watch('contactPersons')?.length &&  <div className="h-px w-full bg-gray-200 my-6" />}
+                {index + 1 !== form.watch("contactPersons")?.length && (
+                  <div className="h-px w-full bg-gray-200 my-6" />
+                )}
               </article>
             ))}
           </div>
@@ -219,9 +232,7 @@ const ContactForm = ({ contact }: Props) => {
           render={({ field }) => (
             <FormItem>
               <SettingsFormWrapper>
-                <FormLabel className="text-sm  ">
-                  Mobile Number
-                </FormLabel>
+                <FormLabel className="text-sm  ">Mobile Number</FormLabel>
                 <FormControl className="md:col-span-2 max-w-[450px]">
                   <Input placeholder="Mobile Number" {...field} />
                 </FormControl>
@@ -301,7 +312,7 @@ const ContactForm = ({ contact }: Props) => {
           </div>
         </SettingsFormWrapper>
 
-        <div className="h-px w-full bg-gray-200 my-1" />
+  {  form.watch('contactType')==="BUSINESS" && <><div className="h-px w-full bg-gray-200 my-1" />
         <FormField
           control={form.control}
           name="cocNumber"
@@ -349,6 +360,8 @@ const ContactForm = ({ contact }: Props) => {
             </FormItem>
           )}
         />
+        </>
+        }
         <LoadingButton
           className="ml-auto  flex bg-second hover:bg-second/90"
           isLoading={isLoading}

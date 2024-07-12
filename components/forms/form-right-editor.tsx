@@ -174,6 +174,15 @@ const TextInputEditor = ({
         <Label htmlFor="required">Is Required</Label>
       </div>
       <div className="grid grid-cols-2 gap-3">
+      <div>
+          <Label>Min Length:</Label>
+          <Input
+            min={1}
+            type="number"
+            value={element?.field?.validations?.minLength || undefined}
+            onChange={(e) => minLength(e)}
+          />
+        </div>
         <div>
           <Label>Max Length:</Label>
           <Input
@@ -183,15 +192,7 @@ const TextInputEditor = ({
             onChange={(e) => maxLength(e)}
           />
         </div>
-        <div>
-          <Label>Min Length:</Label>
-          <Input
-            min={1}
-            type="number"
-            value={element?.field?.validations?.minLength || undefined}
-            onChange={(e) => minLength(e)}
-          />
-        </div>
+        
       </div>
     </div>
   );
@@ -275,6 +276,15 @@ const LongTextInputEditor = ({
         <Label htmlFor="required">Is Required</Label>
       </div>
       <div className="grid grid-cols-2 gap-3">
+      <div>
+          <Label>Min Length:</Label>
+          <Input
+            min={1}
+            type="number"
+            value={element?.field?.validations?.minLength || undefined}
+            onChange={(e) => minLength(e)}
+          />
+        </div>
         <div>
           <Label>Max Length:</Label>
           <Input
@@ -284,15 +294,7 @@ const LongTextInputEditor = ({
             onChange={(e) => maxLength(e)}
           />
         </div>
-        <div>
-          <Label>Min Length:</Label>
-          <Input
-            min={1}
-            type="number"
-            value={element?.field?.validations?.minLength || undefined}
-            onChange={(e) => minLength(e)}
-          />
-        </div>
+     
       </div>
     </div>
   );
@@ -338,6 +340,7 @@ const NumberInputEditor = ({
     );
   };
   const min = (e: React.ChangeEvent<HTMLInputElement>) => {
+    
     form.setValue(
       `elements.${elementIndex}.field.validations.min`,
       +e.target.value
@@ -355,6 +358,7 @@ const NumberInputEditor = ({
       <div>
         <Label>Placeholder:</Label>
         <Input
+        
           value={element?.field?.placeholder || ""}
           onChange={(e) => handlePlaceholderChange(e)}
         />
@@ -378,22 +382,25 @@ const NumberInputEditor = ({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div>
-          <Label>Max Value:</Label>
-          <Input
-            min={1}
-            type="number"
-            value={element?.field?.validations?.max || undefined}
-            onChange={(e) => max(e)}
-          />
-        </div>
+       
         <div>
           <Label>Min Value:</Label>
           <Input
+           
             min={0}
             type="number"
             value={element?.field?.validations?.min || undefined}
             onChange={(e) => min(e)}
+          />
+        </div>
+        <div>
+          <Label>Max Value:</Label>
+          <Input
+    
+            min={1}
+            type="number"
+            value={element?.field?.validations?.max || undefined}
+            onChange={(e) => max(e)}
           />
         </div>
       </div>

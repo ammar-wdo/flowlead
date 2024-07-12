@@ -30,7 +30,7 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+    { params.formSlug !== "new" &&  <div className="flex items-center justify-between">
         <div className="flex items-center">
           <Button
             onClick={() => setActiveComponent("fields")}
@@ -42,7 +42,7 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
           >
             Fields
           </Button>
-          {params.formSlug !== "new" && (
+        
             <Button
               onClick={() => setActiveComponent("rules")}
               className={cn(
@@ -53,9 +53,9 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
             >
               Rules
             </Button>
-          )}
+         
         </div>
-        {params.formSlug !== "new" && (
+     
           <Button
             onClick={() =>
               startTransition(() =>
@@ -71,8 +71,8 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
             View Form{" "}
             {pending && <Loader className="ml-3 animate-spin w-3 h-3" />}
           </Button>
-        )}
-      </div>
+     
+      </div>}
 
       {/* form rules components */}
       <div className="mt-8">

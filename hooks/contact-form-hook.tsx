@@ -48,6 +48,7 @@ res = await updateContact({values,companySlug:params.companySlug,contactId:param
         }
         if(!res.success) return toast.error(res.error)
 toast.success(res.message)
+        router.push(`/${params.companySlug}/contacts`)
         router.refresh()
 
      } catch (error) {
