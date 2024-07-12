@@ -142,12 +142,12 @@ const FieldsComponent = ({
 
   const hasDuplicateLabels = labels.length !== new Set(labels).size;
   return (
-    <section className="flex 2xl:gap-40 gap-20  ">
+    <section className="flex gap-12  ">
       {/* left part _canvas_ */}
-      <div className="flex-1 ">
-        <div className="max-w-[1100px]">
+      <div className="max-w-[1100px] w-full ">
+        <div className="w-full">
           <FormComponent {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
               {/* Form name */}
               <div className="bg-white p-8 space-y-8">
                 <FormField
@@ -332,7 +332,7 @@ const FieldsComponent = ({
             <div className="space-y-6">
               {controllerElements.map((element) => (
                 <div key={uuidv4()}>
-                  <h3 className="text-sm text-muted-foreground">
+                  <h3 className="text-[14px] text-muted-foreground">
                     {element.section}
                   </h3>
                   <div className="grid grid-cols-2 gap-4 mt-2">

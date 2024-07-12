@@ -38,7 +38,7 @@ if(!userId) redirect('/sign-up')
 <span className='text-muted-foreground capitalize'>{format(new Date(), 'EEEE d MMMM', { locale: nl })},</span>
 <h3 className='text-4xl font-semibold mt-6 text-prime'>Hello, {company?.contactPerson}.</h3>
 
-<div className='mt-8'>
+<div id='dashboard-intro' className='mt-8'>
   <DashboardComponent/>
 </div>
 {/* latest leads */}
