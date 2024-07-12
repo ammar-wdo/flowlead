@@ -53,6 +53,7 @@ import FormRightController from "./form-right-editor";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { SingleImageDropzone } from "../single-image-dropeZone";
+import Optional from "../optional";
 
 type Props = {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -154,8 +155,8 @@ const FieldsComponent = ({
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Form Name*</FormLabel>
+                    <FormItem className="space-y-1">
+                      <FormLabel>Form Name</FormLabel>
                       <FormControl>
                         <Input placeholder="Form Name" {...field} />
                       </FormControl>
@@ -169,12 +170,10 @@ const FieldsComponent = ({
                   control={form.control}
                   name="description"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="space-y-1">
                       <FormLabel>
-                        Service Description{" "}
-                        <span className="bg-muted px-2 py-1 rounded-md text-xs">
-                          Optional
-                        </span>
+                        Form Description{" "}
+                        <Optional/>
                       </FormLabel>
                       <FormControl>
                         <QuillEditor
@@ -190,12 +189,10 @@ const FieldsComponent = ({
                   control={form.control}
                   name={`logo`}
                   render={({ field }) => (
-                    <FormItem className="">
+                    <FormItem className="space-y-1">
                       <FormLabel>
                         Image{" "}
-                        <span className="text-xs text-muted-foreground">
-                          (optional)
-                        </span>
+                        <Optional />
                       </FormLabel>
                       <FormControl>
                         <div className="flex items-start gap-3">
@@ -305,7 +302,7 @@ const FieldsComponent = ({
                 </SortableContext>
                 <DragOverlay className="  w-fit ">
                   {
-                    <div className=" ring-[1px] rounded-lg bg-white w-[200px] p-12 flex items-center justify-center text-xl font-bold text-gray-500 ">
+                    <div className=" ring-[1px]   bg-white w-[200px] p-12 flex items-center justify-center text-xl font-bold text-gray-500 ">
                       Drop Field
                     </div>
                   }
@@ -332,7 +329,7 @@ const FieldsComponent = ({
             <div className="space-y-6">
               {controllerElements.map((element) => (
                 <div key={uuidv4()}>
-                  <h3 className="text-[14px] text-muted-foreground">
+                  <h3 className="text-[14px] text-prime font-semibold">
                     {element.section}
                   </h3>
                   <div className="grid grid-cols-2 gap-4 mt-2">

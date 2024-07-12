@@ -45,6 +45,7 @@ import { useSelectedElement } from "@/hooks/selected-element-hook";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Textarea } from "../ui/textarea";
 import { format } from "date-fns";
+import Optional from "../optional";
 
 type Form = UseFormReturn<z.infer<typeof formSchema>>;
 type FieldType = ControllerRenderProps<
@@ -95,7 +96,7 @@ const FormViewItem = ({ form, i, element, handleDelete  }: Props) => {
         onClick={(e) => handleSelectedElementClick()}
         ref={setNodeRef}
         className={cn(
-          " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px]  mb-4",
+          " p-8 relative py-4 group h-fit cursor-pointer  hover:ring-[1px]  mb-4",
           isDragging && "z-10 opacity-30 relative ",
           selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
@@ -108,8 +109,8 @@ const FormViewItem = ({ form, i, element, handleDelete  }: Props) => {
           variant={"ghost"}
           className="right-1  opacity-0 group-hover:opacity-100 
             transition top-1  absolute hover:bg-white
-            bg-white  hover:shadow-gray-300  shadow-md rounded-lg
-             text-gray-300 hover:shadow-lg flex items-center justify-center w-8 h-8  p-0.5"
+            bg-white      rounded-lg
+             text-gray-300  flex items-center justify-center w-8 h-8  p-0.5"
         >
           <XIcon />
         </Button>
@@ -144,7 +145,7 @@ const FormViewItem = ({ form, i, element, handleDelete  }: Props) => {
       style={style}
         ref={setNodeRef}
         className={cn(
-          " p-8 relative  group h-fit cursor-pointer rounded-lg hover:ring-[1px] mb-4 ",
+          " p-8 py-4 relative  group h-fit cursor-pointer   hover:ring-[1px] mb-4 ",
           isDragging && "z-10 opacity-30 relative ",
           selectedElement?.id === element.id && "bg-muted/50 ring-[1px]"
         )}
@@ -157,8 +158,8 @@ const FormViewItem = ({ form, i, element, handleDelete  }: Props) => {
           variant={"ghost"}
           className="right-1  opacity-0 group-hover:opacity-100 
             transition top-1  absolute hover:bg-white
-            bg-white  hover:shadow-gray-300  shadow-md rounded-lg
-             text-gray-300 hover:shadow-lg flex items-center justify-center w-8 h-8  p-0.5"
+            bg-white      rounded-lg
+             text-gray-300  flex items-center justify-center w-8 h-8  p-0.5"
         >
           <XIcon />
         </Button>}
@@ -235,13 +236,13 @@ const TextInputViewItem = ({ index, form }: { index: number; form: Form }) => {
         name={`elements.${index}.field.label`}
         render={({ field }) => (
           <FormItem>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <Label className="flex items-center gap-1">
                 {form.watch("elements")[index].field?.label}
                 {form.watch("elements")[index].field?.validations?.required ? (
                   "*"
                 ) : (
-                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                  <Optional/>
                 )}
               </Label>
               {form.watch("elements")[index].field?.hint && (
@@ -274,13 +275,13 @@ const EmailInputViewItem = ({ index, form }: { index: number; form: Form }) => {
         name={`elements.${index}.field.label`}
         render={({ field }) => (
           <FormItem>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <Label className="flex items-center gap-1">
                 {form.watch("elements")[index].field?.label}
                 {form.watch("elements")[index].field?.validations?.required ? (
                   "*"
                 ) : (
-                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                  <Optional/>
                 )}
               </Label>
               {form.watch("elements")[index].field?.hint && (
@@ -312,13 +313,13 @@ const NameInputViewItem = ({ index, form }: { index: number; form: Form }) => {
         name={`elements.${index}.field.label`}
         render={({ field }) => (
           <FormItem>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <Label className="flex items-center gap-1">
                 {form.watch("elements")[index].field?.label}
                 {form.watch("elements")[index].field?.validations?.required ? (
                   "*"
                 ) : (
-                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                  <Optional/>
                 )}
               </Label>
               {form.watch("elements")[index].field?.hint && (
@@ -357,13 +358,13 @@ const LongTextInputViewItem = ({
         name={`elements.${index}.field.label`}
         render={({ field }) => (
           <FormItem>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <Label className="flex items-center gap-1">
                 {form.watch("elements")[index].field?.label}
                 {form.watch("elements")[index].field?.validations?.required ? (
                   "*"
                 ) : (
-                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                  <Optional/>
                 )}
               </Label>
               {form.watch("elements")[index].field?.hint && (
@@ -411,7 +412,7 @@ const NumberInputViewItem = ({
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                    <Optional/>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
@@ -450,14 +451,14 @@ const SelectInputViewItem = ({
         render={({ field }) => (
           <FormItem>
             <div>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 <Label className="flex items-center gap-1">
                   {form.watch("elements")[index].field?.label}
                   {form.watch("elements")[index].field?.validations
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                    <Optional/>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
@@ -517,20 +518,20 @@ const CheckboxInputViewItem = ({
 
   return (
     <FormControl>
-      <div className="space-y-4">
+      <div className=" ">
         <FormField
           control={form.control}
           name={`elements.${index}.field.label`}
           render={({ field }) => (
             <FormItem>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 <Label className="flex items-center gap-1">
                   {form.watch("elements")[index].field?.label}
                   {form.watch("elements")[index].field?.validations
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                    <Optional/>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
@@ -583,20 +584,20 @@ const CheckboxInputViewItem = ({
 const RadioInputViewItem = ({ form, index }: { form: Form; index: number }) => {
   return (
     <FormControl>
-      <div className="space-y-4">
+      <div className=" ">
         <FormField
           control={form.control}
           name={`elements.${index}.field.label`}
           render={({ field }) => (
             <FormItem>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 <Label className="flex items-center gap-1">
                   {form.watch("elements")[index].field?.label}
                   {form.watch("elements")[index].field?.validations
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                    <Optional/>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
@@ -685,7 +686,7 @@ const Breaker = ({ index, form }: { index: number; form: Form }) => {
           name={`elements.${index}.field.label`}
           render={({ field }) => (
             <FormItem>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1">
                 <h4>{form.watch("elements")[index].field?.label}</h4>
                 <Button className="w-fit px-8 py-2" disabled={true}>
                   {form.watch("elements")[index].field?.placeholder || "Next"}
@@ -739,13 +740,13 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
         name={`elements.${index}.field.label`}
         render={({ field }) => (
           <FormItem>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <Label className="flex items-center gap-1">
                 {form.watch("elements")[index].field?.label}
                 {form.watch("elements")[index].field?.validations?.required ? (
                   "*"
                 ) : (
-                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                  <Optional/>
                 )}
               </Label>
               {form.watch("elements")[index].field?.hint && (
@@ -764,7 +765,7 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
         render={({ field }) => (
           <FormItem className="min-w-[60%] flex-1 ">
             <div className="flex flex-col gap-1">
-              <Label className="flex items-center gap-1">
+              <Label className="flex items-center gap-1 text-xs text-gray-400">
                 {form.watch("elements")[index].field?.address?.addressLabel}
                
               </Label>
@@ -789,7 +790,7 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
         render={({ field }) => (
           <FormItem className="flex-1 min-w-[25%]">
             <div className="flex flex-col gap-1">
-              <Label className="flex items-center gap-1">
+              <Label className="flex items-center gap-1 text-xs text-gray-400">
                 {form.watch("elements")[index].field?.address?.houseNumberLabel}
                
               </Label>
@@ -814,7 +815,7 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
         render={({ field }) => (
           <FormItem className=" flex-1 min-w-[40%]">
             <div className="flex flex-col gap-1">
-              <Label className="flex items-center gap-1">
+              <Label className="flex items-center gap-1 text-xs text-gray-400">
                 {form.watch("elements")[index].field?.address?.postalCodeLabel}
                
               </Label>
@@ -839,7 +840,7 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
         render={({ field }) => (
           <FormItem className=" flex-1 min-w-[40%]">
             <div className="flex flex-col gap-1">
-              <Label className="flex items-center gap-1">
+              <Label className="flex items-center gap-1 text-xs text-gray-400">
                 {form.watch("elements")[index].field?.address?.cityLabel}
                
               </Label>
@@ -864,7 +865,7 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
         render={({ field }) => (
           <FormItem className=" flex-1 min-w-[40%]">
             <div className="flex flex-col gap-1">
-              <Label className="flex items-center gap-1">
+              <Label className="flex items-center gap-1 text-xs text-gray-400">
                 {form.watch("elements")[index].field?.address?.stateRegionLabel}
                
               </Label>
@@ -889,7 +890,7 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
         render={({ field }) => (
           <FormItem className=" flex-1 min-w-[40%]">
             <div className="flex flex-col gap-1">
-              <Label className="flex items-center gap-1">
+              <Label className="flex items-center gap-1 text-xs text-gray-400">
                 {form.watch("elements")[index].field?.address?.countryLabel}
                
               </Label>
@@ -937,13 +938,13 @@ const PhoneInputViewItem = ({
           <FormItem>
        
               <div className="flex flex-col gap-1">
-                <Label className="flex items-center gap-1">
+                <Label className="flex items-center gap-1 ">
                   {form.watch("elements")[index].field?.label}
                   {form.watch("elements")[index].field?.validations
                     ?.required ? (
                     "*"
                   ) : (
-                    <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                    <Optional/>
                   )}
                 </Label>
                 <Label className="text-sm text-muted-foreground font-light">
@@ -982,7 +983,7 @@ const DateInputViewItem = ({ index, form }: { index: number; form: Form }) => {
                 {form.watch("elements")[index].field?.validations?.required ? (
                   "*"
                 ) : (
-                  <span className="py-1 px-2 rounded-md text-muted-foreground bg-slate-200 text-[9px]">Optional</span>
+                  <Optional/>
                 )}
               </Label>
               {form.watch("elements")[index].field?.hint && (
