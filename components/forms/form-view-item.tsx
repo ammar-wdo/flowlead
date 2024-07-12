@@ -240,7 +240,7 @@ const TextInputViewItem = ({ index, form }: { index: number; form: Form }) => {
               <Label className="flex items-center gap-1">
                 {form.watch("elements")[index].field?.label}
                 {form.watch("elements")[index].field?.validations?.required ? (
-                  "*"
+                  ""
                 ) : (
                   <Optional/>
                 )}
@@ -561,12 +561,12 @@ const CheckboxInputViewItem = ({
                   >
                     <div className="h-6">
                       {!!checkedOptions.includes(item) ? (
-                        <SquareCheckBig className="h-6" />
+                        <SquareCheckBig className="h-6 text-white" />
                       ) : (
-                        <Square className="h-6" />
+                        <Square className="h-6 text-muted-foreground" />
                       )}
                     </div>
-                    <FormLabel className="font-normal">
+                    <FormLabel className={cn("font-normal text-sm text-muted-foreground", !!checkedOptions.includes(item) && "text-white")}>
                       {item || `Option ${i + 1}`}
                     </FormLabel>
                     <FormMessage />
@@ -595,7 +595,7 @@ const RadioInputViewItem = ({ form, index }: { form: Form; index: number }) => {
                   {form.watch("elements")[index].field?.label}
                   {form.watch("elements")[index].field?.validations
                     ?.required ? (
-                    "*"
+                    ""
                   ) : (
                     <Optional/>
                   )}
@@ -623,7 +623,7 @@ const RadioInputViewItem = ({ form, index }: { form: Form; index: number }) => {
                 <RadioGroupItem value={item} id={`option-${item}-${i}`} />
                 <FormLabel
                   htmlFor={`option-${item}-${i}`}
-                  className="font-normal"
+                  className="font-normal text-muted-foreground text-sm"
                 >
                   {item}
                 </FormLabel>
@@ -648,7 +648,7 @@ const ServiceViewItem = ({
   if (!form.watch("elements")[i].service?.id)
     return (
       <div className="flex p-3 text-center rounded-md border-dashed border-2  justify-center">
-        <p className="font-semibold leading-relaxed text-muted-foreground ">
+        <p className=" text-sm leading-relaxed text-muted-foreground ">
           Click to choose a service
         </p>
       </div>
@@ -662,14 +662,14 @@ const ServiceViewItem = ({
             {form.watch("elements")[i].service?.name}
           </span>
         </h3>
-        <div className="grid grid-cols-2 gap-3 mt-4">
+        <div className="grid grid-cols-2 gap-3 mt-1">
           {form.watch("elements")[i].service?.options?.map((option, i) => (
             <div
               key={option.name + i}
               className="border rounded-lg p-4 bg-white"
             >
-              <h4 className="capitalize">{option.name}</h4>
-              <p>€ {option.price}</p>
+              <h4 className="capitalize text-sm text-muted-foreground">{option.name}</h4>
+              <p className="text-xs text-muted-foreground">€ {option.price}</p>
             </div>
           ))}
         </div>
@@ -744,7 +744,7 @@ const AddressInputViewItem = ({ index, form }: { index: number; form: Form }) =>
               <Label className="flex items-center gap-1">
                 {form.watch("elements")[index].field?.label}
                 {form.watch("elements")[index].field?.validations?.required ? (
-                  "*"
+                  ""
                 ) : (
                   <Optional/>
                 )}
@@ -942,7 +942,7 @@ const PhoneInputViewItem = ({
                   {form.watch("elements")[index].field?.label}
                   {form.watch("elements")[index].field?.validations
                     ?.required ? (
-                    "*"
+                    ""
                   ) : (
                     <Optional/>
                   )}
@@ -981,7 +981,7 @@ const DateInputViewItem = ({ index, form }: { index: number; form: Form }) => {
               <Label className="flex items-center gap-1">
                 {form.watch("elements")[index].field?.label}
                 {form.watch("elements")[index].field?.validations?.required ? (
-                  "*"
+                  ""
                 ) : (
                   <Optional/>
                 )}
