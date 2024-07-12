@@ -63,7 +63,7 @@ const InvoicePdfGenerator = ({ invoice, companyInfo }: Props) => {
         <View style={styles.contentContainer}>
           <View style={styles.header}>
             {!!companyInfo.logo ? (
-              <Image src={companyInfo.logo} style={styles.logo} />
+              <Image src={companyInfo.logo} style={styles.logo}  />
             ) : (
               <View style={{ padding: 12 }}></View>
             )}
@@ -341,6 +341,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 15,
+    objectFit:'contain'
   },
   companyLetter: {
     display: "flex",
