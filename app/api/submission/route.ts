@@ -91,20 +91,7 @@ console.log('Submission')
       },
     });
 
-    const submissionRecievedRes = axios.post('https://hook.eu1.make.com/0h169jxparey9em9ow9w3ep1275abxdt',{
-      customerName:name,
-      customerEmail:email,
-      company:{...company}
-    })
-
-    const confirmationRes =  axios.post('https://hook.eu1.make.com/jyyhbif7gv2vdhf2a9dvvy06jv8ezatr',{
-      customerName:name,
-      customerEmail:email,
-      company:{...company}
-    })
-
-
-    const [sumDone,confDOne] = await Promise.all([submissionRecievedRes,confirmationRes])
+  
 
 
 
@@ -244,6 +231,22 @@ totalAmount
       });
 
       await prisma.$transaction([quotationRes,quotationSettingsUpdateRes])
+
+      
+      const submissionRecievedRes = axios.post('https://hook.eu1.make.com/0h169jxparey9em9ow9w3ep1275abxdt',{
+        customerName:name,
+        customerEmail:email,
+        company:{...company}
+      })
+  
+      const confirmationRes =  axios.post('https://hook.eu1.make.com/jyyhbif7gv2vdhf2a9dvvy06jv8ezatr',{
+        customerName:name,
+        customerEmail:email,
+        company:{...company}
+      })
+  
+  
+      const [sumDone,confDOne] = await Promise.all([submissionRecievedRes,confirmationRes])
 
     return NextResponse.json({ success: true, message: "Form Submitted Successfully" },{status:200,headers:corsHeaders});
   } catch (error) {
