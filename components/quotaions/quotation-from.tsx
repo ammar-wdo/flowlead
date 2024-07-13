@@ -1770,11 +1770,13 @@ const SendEmailModal = ({
                 Not Now
               </Button>
               <Button
+              disabled={form.formState.isSubmitting}
                 onClick={form.handleSubmit(onSubmit)}
                 variant={"default"}
                 className="bg-second hover:bg-second/80 text-white hover:text-white"
               >
                 Send
+                {form.formState.isSubmitting && <Loader size={13} className="animate-spin ml-2" />}
               </Button>
             </DialogFooter>
           </form>

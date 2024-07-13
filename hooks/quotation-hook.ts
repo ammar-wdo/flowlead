@@ -3,7 +3,11 @@ import { DiscountType, Quotation } from "@prisma/client";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { invoiceEmailSendSchema, quotationEmailSendSchema, quotationSchema } from "@/schemas";
+import {
+  invoiceEmailSendSchema,
+  quotationEmailSendSchema,
+  quotationSchema,
+} from "@/schemas";
 import { useEffect, useState, useTransition } from "react";
 import { v4 as uuid4 } from "uuid";
 import { useEdgeStore } from "@/lib/edgestore";
@@ -12,6 +16,7 @@ import { addQuotation, editQuotation } from "@/actions/quotation-actions";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { replaceDates } from "@/lib/utils";
+import axios from "axios";
 
 export const useQuotation = ({
   quotation,
@@ -265,12 +270,22 @@ export const useQuotation = ({
         receiverEmail:
           returnedQuotation?.contactPerson?.emailAddress ||
           returnedQuotation?.contact.emailAddress!,
+        expiryDate: returnedQuotation!.expiryDate,
+        quotDate: returnedQuotation!.quotationDate,
+        quotationNumber: `${returnedQuotation?.quotationString} ${returnedQuotation?.quotationNumber}`,
+        name: returnedQuotation!.contact.contactName,
+        contactPerson: returnedQuotation!.contactPerson?.contactName,
+        address: returnedQuotation?.contact.address || "",
         senderEmail: returnedQuotation?.company.companyEmail!,
-        senderName:returnedQuotation?.company.name!,
-        attatchments:returnedQuotation?.attatchments
+        senderName: returnedQuotation!.company.name!,
+        attatchments: returnedQuotation?.attatchments,
+        companyName: returnedQuotation?.contact.companyName || "",
+        mobileNumber: returnedQuotation?.contact.mobileNumber || "",
+        phoneNumber:
+          returnedQuotation?.contactPerson?.phoneNumber ||
+          returnedQuotation?.contact.phoneNumber || ''
       });
 
- 
       toast.success(res.message);
     } catch (error) {
       console.error(error);
@@ -278,12 +293,12 @@ export const useQuotation = ({
     }
   }
 
-  const handleResetEmailData = (val:boolean)=>{
-    if(val===true) return 
-    setEmailData(null)
-    router.refresh()
-    router.push(`/${params.companySlug}/quotations`)
-  }
+  const handleResetEmailData = (val: boolean) => {
+    if (val === true) return;
+    setEmailData(null);
+    router.refresh();
+    router.push(`/${params.companySlug}/quotations`);
+  };
 
   const handleSetDiscount = (value: DiscountType) => {
     if (!form.watch("discount")) {
@@ -340,34 +355,45 @@ export const useQuotation = ({
     total,
     pending,
     emailData,
-    handleResetEmailData
+    handleResetEmailData,
   };
 };
 
-
-
-export const useSendEmail = ({emailData}:{emailData:z.infer<typeof quotationEmailSendSchema> | z.infer<typeof invoiceEmailSendSchema> | null})=>{
-
-
-
-  useEffect(()=>{
-   form.reset({...emailData})
-  },[emailData])
-
-
+export const useSendEmail = ({
+  emailData,
+}: {
+  emailData:
+    | z.infer<typeof quotationEmailSendSchema>
+    | z.infer<typeof invoiceEmailSendSchema>
+    | null;
+}) => {
+  useEffect(() => {
+    form.reset({ ...emailData });
+  }, [emailData]);
 
   const form = useForm<z.infer<typeof quotationEmailSendSchema>>({
     resolver: zodResolver(quotationEmailSendSchema),
     defaultValues: {
-...emailData
+      ...emailData,
     },
-  })
- 
+  });
+  const router = useRouter();
+  const params = useParams<{ companySlug: string }>();
 
-  function onSubmit(values: z.infer<typeof quotationEmailSendSchema>) {
-  
-   console.log(JSON.stringify(values,undefined,2))
+  async function onSubmit(values: z.infer<typeof quotationEmailSendSchema>) {
+    try {
+      const res = await axios.post(
+        "https://hook.eu1.make.com/47i1lonj4sf35vkeyum1wew3z1rkehxg",
+        values
+      );
+      toast.success("Sent successfully");
+      router.refresh();
+      router.push(`/${params.companySlug}/quotations`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
   }
 
-return {form, onSubmit}
-}
+  return { form, onSubmit };
+};

@@ -2,7 +2,7 @@
 
 import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
-import { generateRandomSlug } from "@/lib/utils";
+import { generateRandomSlug, replacePlaceholders } from "@/lib/utils";
 import { invoiceSchema } from "@/schemas";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
@@ -63,7 +63,7 @@ export const addInvoice = async (
     );
     const totalAmount = totalTax + subTotalWithDiscount;
 
-    //create quotation
+
 
     const contactPersonId = validData.data.contactPersonId?.trim() === "" ? null : validData.data.contactPersonId;
 
@@ -71,6 +71,7 @@ export const addInvoice = async (
       data: {
         userId,
         accountId: account.id,
+        
         companyId: company.id,
         ...validData.data,
        invoiceSettingsId: company.invoiceSettings?.id,
@@ -83,7 +84,8 @@ export const addInvoice = async (
         totalAmount,
         totalTax,
         discountAmount,
-        contactPersonId
+        contactPersonId,
+        invoiceString:replacePlaceholders(validData.data.invoiceString)
       },
       include:{
         company:{
@@ -95,13 +97,20 @@ export const addInvoice = async (
         contact:{
           select:{
             contactName:true,
-            emailAddress:true
+            emailAddress:true,
+            address:true,
+            phoneNumber:true,
+            mobileNumber:true,
+            companyName:true
           }
         },
         contactPerson:{
           select:{
             contactName:true,
-            emailAddress:true
+            emailAddress:true,
+            phoneNumber:true,
+             
+
           }
         },
         invoiceSettings:{
@@ -204,7 +213,8 @@ export const editInvoice = async (
         totalAmount,
         totalTax,
         discountAmount,
-        contactPersonId
+        contactPersonId,
+        invoiceString:replacePlaceholders(validData.data.invoiceString)
       },
       include:{
         company:{
@@ -216,15 +226,22 @@ export const editInvoice = async (
         contact:{
           select:{
             contactName:true,
-            emailAddress:true
+            emailAddress:true,
+            address:true,
+            phoneNumber:true,
+            mobileNumber:true,
+            companyName:true
           }
         },
         contactPerson:{
           select:{
             contactName:true,
-            emailAddress:true
+            emailAddress:true,
+            phoneNumber:true,
+             
+
           }
-        }  , invoiceSettings:{
+        },  invoiceSettings:{
           select:{
             subject:true,
             body:true

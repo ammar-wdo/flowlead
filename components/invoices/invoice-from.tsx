@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuotation, useSendEmail } from "@/hooks/quotation-hook";
+import { useQuotation } from "@/hooks/quotation-hook";
 import { $Enums, Contact, DiscountType, Invoice } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
@@ -123,7 +123,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import InvoicePdfGenerator from "./invoice-pdf-generator";
-import { useInvoice } from "@/hooks/invoice-hook";
+import { useInvoice, useSendEmail } from "@/hooks/invoice-hook";
 import { MdOutlineEditOff } from "react-icons/md";
 import Tip from "../tip";
 import { taxesValuesMapper, valuesTaxesMapper } from "@/mapping";
@@ -1814,6 +1814,7 @@ const SendEmailModal = ({
                 className="bg-second hover:bg-second/80 text-white hover:text-white"
               >
                 Send
+                {form.formState.isSubmitting && <Loader className="animate-spin ml-3" />}
               </Button>
             </DialogFooter>
           </form>

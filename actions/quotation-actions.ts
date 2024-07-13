@@ -2,7 +2,7 @@
 
 import { CustomError } from "@/custom-error";
 import prisma from "@/lib/prisma";
-import { generateRandomSlug } from "@/lib/utils";
+import { generateRandomSlug, replacePlaceholders } from "@/lib/utils";
 import { quotationSchema } from "@/schemas";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
@@ -83,7 +83,8 @@ export const addQuotation = async (
         totalAmount,
         totalTax,
         discountAmount,
-        contactPersonId
+        contactPersonId,
+        quotationString:replacePlaceholders(validData.data.quotationString)
       },
       include:{
         company:{
@@ -95,13 +96,20 @@ export const addQuotation = async (
         contact:{
           select:{
             contactName:true,
-            emailAddress:true
+            emailAddress:true,
+            address:true,
+            phoneNumber:true,
+            mobileNumber:true,
+            companyName:true
           }
         },
         contactPerson:{
           select:{
             contactName:true,
-            emailAddress:true
+            emailAddress:true,
+            phoneNumber:true,
+             
+
           }
         },
         quotationSettings:{
@@ -204,7 +212,8 @@ export const editQuotation = async (
         totalAmount,
         totalTax,
         discountAmount,
-        contactPersonId
+        contactPersonId,
+        quotationString:replacePlaceholders(validData.data.quotationString)
       },
       include:{
         company:{
@@ -216,13 +225,20 @@ export const editQuotation = async (
         contact:{
           select:{
             contactName:true,
-            emailAddress:true
+            emailAddress:true,
+            address:true,
+            phoneNumber:true,
+            mobileNumber:true,
+            companyName:true
           }
         },
         contactPerson:{
           select:{
             contactName:true,
-            emailAddress:true
+            emailAddress:true,
+            phoneNumber:true,
+             
+
           }
         }  , quotationSettings:{
           select:{

@@ -13,6 +13,7 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { replaceDates } from "@/lib/utils";
 import { addInvoice, editInvoice } from "@/actions/invoice-actions";
+import axios from "axios";
 
 export const useInvoice = ({
   invoice,
@@ -259,6 +260,7 @@ export const useInvoice = ({
       }
 
       const returnedInvoice= res.data;
+
       setEmailData({
         invoiceId: returnedInvoice?.id!,
         content: returnedInvoice?.invoiceSettings!.body!,
@@ -266,7 +268,17 @@ export const useInvoice = ({
         receiverEmail:
           returnedInvoice?.contactPerson?.emailAddress ||
           returnedInvoice?.contact.emailAddress!,
-        senderEmail: returnedInvoice?.company.companyEmail!,
+          invoiceNumber:`${returnedInvoice!.invoiceString}${returnedInvoice!.invoiceNumber}`,
+          name:returnedInvoice!.contact.contactName,
+          contactPerson:returnedInvoice!.contactPerson?.contactName,
+          address:returnedInvoice?.contact.address || '',
+          expiryDate:returnedInvoice!.expiryDate,
+          invoiceDate:returnedInvoice!.invoiceDate,
+          companyName:returnedInvoice?.contact.companyName || '',
+          mobileNumber: returnedInvoice?.contact.mobileNumber || '',
+          phoneNumber:returnedInvoice?.contactPerson?.phoneNumber || returnedInvoice?.contactPerson?.phoneNumber || '',
+         
+        senderEmail: returnedInvoice?.company.companyEmail!  ,
         senderName:returnedInvoice?.company.name!,
         attatchments:returnedInvoice?.attatchments
       });
@@ -364,11 +376,23 @@ export const useSendEmail = ({emailData}:{emailData:z.infer<typeof invoiceEmailS
 ...emailData
     },
   })
- 
+  const router = useRouter()
+ const params = useParams<{companySlug:string}>()
 
-  function onSubmit(values: z.infer<typeof invoiceEmailSendSchema>) {
+ async function onSubmit(values: z.infer<typeof invoiceEmailSendSchema>) {
   
-   console.log(JSON.stringify(values,undefined,2))
+    try {
+    
+      const res = await axios.post('https://hook.eu1.make.com/buxf1tvqjs5diysbtuqsckw248r8xc0d',values)
+      toast.success("Sent successfully")
+      router.refresh()
+      router.push(`/${params.companySlug}/invoices`)
+  
+  
+    } catch (error) {
+      console.error(error)
+      toast.error("Something went wrong")
+    }
   }
 
 return {form, onSubmit}

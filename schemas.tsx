@@ -483,23 +483,42 @@ export const invoiceSchema= z.object({
 export const quotationEmailSendSchema = z.object({
 
     quotationId:requiredString,
+    quotationNumber:requiredString,
+    name:requiredString,
+    companyName:optionalString,
+    address:optionalString,
+    contactPerson:optionalString,
     senderEmail:requiredString.email(),
     senderName:requiredString,
     receiverEmail:requiredString.email(),
     subject:requiredString,
     content:requiredString,
-    attatchments:z.array(attatchmentSchema).optional()
+    phoneNumber:optionalString,
+    mobileNumber:optionalString,
+    attatchments:z.array(attatchmentSchema).optional(),
+    quotDate:z.date(),
+    expiryDate:z.date()
+
   
 })
 export const invoiceEmailSendSchema = z.object({
 
     invoiceId:requiredString,
+    invoiceNumber:requiredString,
+    name:requiredString,
+    companyName:optionalString,
+    address:optionalString,
+    contactPerson:optionalString,
     senderEmail:requiredString.email(),
     senderName:requiredString,
     receiverEmail:requiredString.email(),
     subject:requiredString,
     content:requiredString,
-    attatchments:z.array(attatchmentSchema).optional()
+    phoneNumber:optionalString,
+    mobileNumber:optionalString,
+    attatchments:z.array(attatchmentSchema).optional(),
+    invoiceDate:z.date(),
+    expiryDate:z.date()
   
 })
 
