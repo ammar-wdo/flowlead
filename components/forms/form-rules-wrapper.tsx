@@ -60,7 +60,7 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
             onClick={() =>
               startTransition(() =>
                 router.push(
-                  `/${params.companySlug}/preview/${params.formSlug}`
+                  `https://flowlead-widget.vercel.app/${params.companySlug}/${params.formSlug}`
                 )
               )
             }
