@@ -47,8 +47,8 @@ const LeadTabs = ({ submissions, quotations, invoices }: Props) => {
         <Button
           onClick={() => setTab("submissions")}
           className={cn(
-            "hover:bg-transparent rounded-none border-b-2 text-muted-foreground text-sm   border-transparent",
-            tab === "submissions" && " border-black text-black"
+            "hover:bg-transparent rounded-none border-b-transparent border-r-transparent font-normal rounded-tl-lg text-muted-foreground text-sm   border",
+            tab === "submissions" && "  bg-white text-black hover:bg-white"
           )}
           variant={"ghost"}
         >
@@ -58,8 +58,8 @@ const LeadTabs = ({ submissions, quotations, invoices }: Props) => {
         <Button
           onClick={() => setTab("quotations")}
           className={cn(
-            "hover:bg-transparent rounded-none border-b-2  text-muted-foreground text-sm  border-transparent",
-            tab === "quotations" && " border-black text-black"
+            "hover:bg-transparent rounded-none border-b-transparent border-r-transparent font-normal text-muted-foreground text-sm  border",
+            tab === "quotations" && " bg-white text-black hover:bg-white"
           )}
           variant={"ghost"}
         >
@@ -68,8 +68,8 @@ const LeadTabs = ({ submissions, quotations, invoices }: Props) => {
         <Button
           onClick={() => setTab("invoices")}
           className={cn(
-            "hover:bg-transparent rounded-none border-b-2  text-muted-foreground text-sm  border-transparent",
-            tab === "invoices" && " border-black text-black"
+            "hover:bg-transparent rounded-none border-b-transparent rounded-tr-lg font-normal text-muted-foreground text-sm  border",
+            tab === "invoices" && " bg-white text-black hover:bg-white"
           )}
           variant={"ghost"}
         >
@@ -77,7 +77,7 @@ const LeadTabs = ({ submissions, quotations, invoices }: Props) => {
         </Button>
       </div>
       {/* components */}
-      <div className="mt-8">
+      <div className=" ">
         <TabsComponents
           submissions={submissions}
           quotations={quotations}
@@ -168,17 +168,17 @@ const TabsComponents = ({
   switch (tab) {
     case "submissions":
       return (
-        <div className="bg-white">
+        <div className="bg-white ">
           <DataTable columns={columns} data={data} />
         </div>
       );
 
     case "quotations":
       return (
-        <div className="border rounded-lg bg-white overflow-hidden">
+        <div className="border rounded-lg rounded-tl-none bg-white overflow-hidden">
           {quotations.length ? (
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-muted">
                 <TableRow>
                   <TableHead className=" ">Quotation Number</TableHead>
                   <TableHead>Created At</TableHead>
@@ -216,10 +216,10 @@ const TabsComponents = ({
 
     case "invoices":
       return (
-        <div className="border rounded-lg bg-white overflow-hidden">
+        <div className="border rounded-lg  rounded-tl-none bg-white overflow-hidden">
           {invoices.length ? (
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-muted">
                 <TableRow>
                   <TableHead className=" ">Quotation Number</TableHead>
                   <TableHead>Created At</TableHead>

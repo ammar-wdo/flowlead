@@ -42,8 +42,8 @@ const ContactTabs = ({ invoices, quotations }: Props) => {
         <Button
           onClick={() => setTab("quotations")}
           className={cn(
-            "hover:bg-transparent rounded-none border-b-2  text-muted-foreground text-sm  border-transparent",
-            tab === "quotations" && " border-black text-black"
+            "hover:bg-transparent rounded-none border border-b-transparent font-normal  rounded-tl-lg border-r-0 text-muted-foreground text-sm  ",
+            tab === "quotations" && "    text-black bg-white hover:bg-white"
           )}
           variant={"ghost"}
         >
@@ -52,8 +52,8 @@ const ContactTabs = ({ invoices, quotations }: Props) => {
         <Button
           onClick={() => setTab("invoices")}
           className={cn(
-            "hover:bg-transparent rounded-none border-b-2  text-muted-foreground text-sm  border-transparent",
-            tab === "invoices" && " border-black text-black"
+            "hover:bg-transparent rounded-none border rounded-tr-lg font-normal border-b-transparent text-muted-foreground text-sm  ",
+            tab === "invoices" && "  text-black bg-white hover:bg-white"
           )}
           variant={"ghost"}
         >
@@ -61,7 +61,7 @@ const ContactTabs = ({ invoices, quotations }: Props) => {
         </Button>
       </div>
       {/* components */}
-      <div className="mt-8">
+      <div className="">
         <TabsComponents quotations={quotations} invoices={invoices} tab={tab} />
       </div>
     </div>
@@ -103,10 +103,10 @@ const TabsComponents = ({
   switch (tab) {
     case "quotations":
       return (
-        <div className="border rounded-lg bg-white overflow-hidden">
+        <div className="border rounded-lg rounded-tl-none bg-white overflow-hidden">
           {quotations.length ? (
             <Table>
-              <TableHeader>
+              <TableHeader  className="bg-muted">
                 <TableRow>
                   <TableHead className=" ">Quotation Number</TableHead>
                   <TableHead>Created At</TableHead>
@@ -144,10 +144,10 @@ const TabsComponents = ({
 
     case "invoices":
       return (
-        <div className="border rounded-lg bg-white overflow-hidden">
+        <div className="border rounded-lg rounded-tl-none bg-white overflow-hidden">
           {invoices.length ? (
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-muted">
                 <TableRow>
                   <TableHead className=" ">Quotation Number</TableHead>
                   <TableHead>Created At</TableHead>
