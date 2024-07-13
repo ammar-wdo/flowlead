@@ -3,7 +3,7 @@ import { DiscountType, Invoice, Quotation } from "@prisma/client";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { invoiceEmailSendSchema, invoiceSchema } from "@/schemas";
+import { companySchema, invoiceEmailSendSchema, invoiceSchema } from "@/schemas";
 import { useEffect, useState, useTransition } from "react";
 import { v4 as uuid4 } from "uuid";
 import { useEdgeStore } from "@/lib/edgestore";
@@ -261,10 +261,32 @@ export const useInvoice = ({
 
       const returnedInvoice= res.data;
 
+      const returnedCompany = returnedInvoice?.company
+      const theCompany:z.infer<typeof companySchema>={
+        address:returnedCompany!.address,
+        city:returnedCompany!.city,
+        companyEmail:returnedCompany!.companyEmail,
+        contactPerson:returnedCompany!.contactPerson,
+        country:returnedCompany!.country,
+        name:returnedCompany!.name,
+        phone:returnedCompany!.phone,
+        zipcode:returnedCompany!.zipcode,
+        cocNumber:returnedCompany!.cocNumber || '',
+        IBAN:returnedCompany!.IBAN || '',
+        industry:returnedCompany!.industry || '',
+        logo:returnedCompany!.logo || '',
+        termsUrl:returnedCompany?.termsUrl || '',
+        vatNumber:returnedCompany?.vatNumber || '',
+        websiteUrl:returnedCompany?.websiteUrl || ''
+      
+      
+      }
+
       setEmailData({
         invoiceId: returnedInvoice?.id!,
         content: returnedInvoice?.invoiceSettings!.body!,
         subject: returnedInvoice?.invoiceSettings.subject!,
+        company:theCompany,
         receiverEmail:
           returnedInvoice?.contactPerson?.emailAddress ||
           returnedInvoice?.contact.emailAddress!,

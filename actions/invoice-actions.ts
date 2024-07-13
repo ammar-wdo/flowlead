@@ -88,12 +88,7 @@ export const addInvoice = async (
         invoiceString:replacePlaceholders(validData.data.invoiceString)
       },
       include:{
-        company:{
-          select:{
-            name:true,
-            companyEmail:true
-          }
-        },
+        company:true,
         contact:{
           select:{
             contactName:true,
@@ -217,12 +212,7 @@ export const editInvoice = async (
         invoiceString:replacePlaceholders(validData.data.invoiceString)
       },
       include:{
-        company:{
-          select:{
-            name:true,
-            companyEmail:true
-          }
-        },
+        company:true,
         contact:{
           select:{
             contactName:true,

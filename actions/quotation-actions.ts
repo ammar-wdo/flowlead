@@ -87,12 +87,7 @@ export const addQuotation = async (
         quotationString:replacePlaceholders(validData.data.quotationString)
       },
       include:{
-        company:{
-          select:{
-            name:true,
-            companyEmail:true
-          }
-        },
+        company:true,
         contact:{
           select:{
             contactName:true,
@@ -216,12 +211,7 @@ export const editQuotation = async (
         quotationString:replacePlaceholders(validData.data.quotationString)
       },
       include:{
-        company:{
-          select:{
-            name:true,
-            companyEmail:true
-          }
-        },
+        company:true,
         contact:{
           select:{
             contactName:true,

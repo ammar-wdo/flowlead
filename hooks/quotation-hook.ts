@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
+  companySchema,
   invoiceEmailSendSchema,
   quotationEmailSendSchema,
   quotationSchema,
@@ -261,12 +262,33 @@ export const useQuotation = ({
 
         return;
       }
-
       const returnedQuotation = res.data;
+      const returnedCompany = returnedQuotation?.company
+const theCompany:z.infer<typeof companySchema>={
+  address:returnedCompany!.address,
+  city:returnedCompany!.city,
+  companyEmail:returnedCompany!.companyEmail,
+  contactPerson:returnedCompany!.contactPerson,
+  country:returnedCompany!.country,
+  name:returnedCompany!.name,
+  phone:returnedCompany!.phone,
+  zipcode:returnedCompany!.zipcode,
+  cocNumber:returnedCompany!.cocNumber || '',
+  IBAN:returnedCompany!.IBAN || '',
+  industry:returnedCompany!.industry || '',
+  logo:returnedCompany!.logo || '',
+  termsUrl:returnedCompany?.termsUrl || '',
+  vatNumber:returnedCompany?.vatNumber || '',
+  websiteUrl:returnedCompany?.websiteUrl || ''
+
+
+}
+    
       setEmailData({
         quotationId: returnedQuotation?.id!,
         content: returnedQuotation?.quotationSettings!.body!,
         subject: returnedQuotation?.quotationSettings.subject!,
+        company:theCompany,
         receiverEmail:
           returnedQuotation?.contactPerson?.emailAddress ||
           returnedQuotation?.contact.emailAddress!,

@@ -484,6 +484,7 @@ export const quotationEmailSendSchema = z.object({
 
     quotationId:requiredString,
     quotationNumber:requiredString,
+ company:companySchema,
     name:requiredString,
     companyName:optionalString,
     address:optionalString,
@@ -505,6 +506,7 @@ export const invoiceEmailSendSchema = z.object({
 
     invoiceId:requiredString,
     invoiceNumber:requiredString,
+    company:companySchema,
     name:requiredString,
     companyName:optionalString,
     address:optionalString,
