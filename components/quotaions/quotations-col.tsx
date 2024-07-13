@@ -35,7 +35,7 @@ export const columns: ColumnDef<FullQuotation>[] = [
     ),
   },
   {
-    accessorKey: "contact.contactName",
+    accessorKey: "name",
     header: "Name",
     cell: ({ row }) => (
       <p className="font-semibold capitalize">
@@ -44,7 +44,10 @@ export const columns: ColumnDef<FullQuotation>[] = [
     ),
   },
   {
-    accessorKey: "contact.emailAddress",
+    filterFn: (row, columnId, filterValue) => {
+      return row.original.contact.emailAddress.includes(filterValue) || row.original.contact.contactName.includes(filterValue)
+    },
+    accessorKey: 'email',
     header: "Email address",
     cell: ({ row }) => <p className="">{row.original.contact.emailAddress}</p>,
   },

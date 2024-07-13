@@ -45,7 +45,10 @@ export const columns: ColumnDef<FullInvoice>[] = [
     ),
   },
   {
-    accessorKey: "contact.emailAddress",
+    accessorKey: "email",
+    filterFn: (row, columnId, filterValue) => {
+      return row.original.contact.emailAddress.includes(filterValue) || row.original.contact.contactName.includes(filterValue)
+    },
     header: "Email address",
     cell: ({ row }) => <p className="">{row.original.contact.emailAddress}</p>,
   },

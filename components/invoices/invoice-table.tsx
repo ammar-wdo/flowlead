@@ -4,8 +4,13 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
+  ColumnFiltersState,
+  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+
+import { Input } from "@/components/ui/input"
 
 import {
   Table,
@@ -16,6 +21,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import EmptyComponent from "../empty"
+import { Button } from "../ui/button"
+import React from "react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -26,13 +33,35 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  )
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+ 
+      columnFilters,
+    },
   })
 
   return (
+    <div> 
+       <div className="flex items-center p-4">
+        <Input
+              placeholder="Search..."
+          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("email")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+      </div>
     <div className=" ">
       <Table>
         <TableHeader className="bg-muted">
@@ -77,5 +106,24 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
     </div>
+       <div className="flex items-center justify-between space-x-2 p-4">
+       <Button
+         variant="outline"
+         size="sm"
+         onClick={() => table.previousPage()}
+         disabled={!table.getCanPreviousPage()}
+       >
+         Previous
+       </Button>
+       <Button
+         variant="outline"
+         size="sm"
+         onClick={() => table.nextPage()}
+         disabled={!table.getCanNextPage()}
+       >
+         Next
+       </Button>
+     </div>
+   </div>
   )
 }

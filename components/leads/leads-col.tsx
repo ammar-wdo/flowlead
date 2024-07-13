@@ -21,7 +21,10 @@ export const columns: ColumnDef<Contact>[] = [
     cell:({row})=><p className="font-semibold capitalize">{row.original.contactName}</p>
   },
   {
-    accessorKey: "email",
+    filterFn: (row, columnId, filterValue) => {
+      return row.original.emailAddress.includes(filterValue) || row.original.contactName.includes(filterValue)
+    },
+    accessorKey: "emailAddress",
     header: "Email",
     cell:({row})=><p className="">{row.original.emailAddress}</p>
   },
