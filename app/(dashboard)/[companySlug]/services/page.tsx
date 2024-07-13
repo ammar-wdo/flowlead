@@ -23,7 +23,7 @@ const page = async({params:{companySlug}}: Props) => {
 
 
   return (
-    <div>
+    <div className=''>
       <div className='flex items-center justify-between'>
       <Heading title='services'/>
       <Link

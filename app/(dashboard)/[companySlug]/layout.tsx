@@ -29,14 +29,14 @@ const layout = async({ children,params:{companySlug} }: Props) => {
 
 
   return (
-    <div className=' h-full    '>
+    <div className='   '>
 
 
       <Aside companySlug={companySlug}/>
-      <div className=' flex flex-col pl-[240px]'>
+      <div className=' flex flex-col pl-[240px] '>
       <Header />
       {company?.plan==='FREE' && <TraialBar  date={company?.createdAt!}  />}
-        <main className=' flex-1 p-12 min-h-[calc(100vh-64px)]  bg-[#384EB7]/5 min-w-[1100px]'>
+        <main className='  p-12 min-h-[calc(100vh-64px)]   bg-[#384EB7]/5 min-w-[1100px]'>
 
           {children}
 

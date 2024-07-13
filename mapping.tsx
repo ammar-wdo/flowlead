@@ -1,7 +1,7 @@
 import { ReactElement, ReactNode } from "react";
 import { SinglePricingType } from "./components/pricing-type";
 import { ArrowDown, Check, CheckCircle, LucideIcon, ShieldCheck } from "lucide-react";
-import { ComparisonOperatorType, FieldTypeMapper, dateComparisonOperator, numberComparisonOperator, phoneComparisonOperator, serviceAndMultipleComparisonOperator, textComparisonOperatorArray } from "./schemas";
+import { ComparisonOperatorType, FieldTypeMapper, TaxesType, dateComparisonOperator, numberComparisonOperator, phoneComparisonOperator, serviceAndMultipleComparisonOperator, textComparisonOperatorArray } from "./schemas";
 
 
 export const pricingTypeMap: { [key in SinglePricingType]: { title: string, Icon: ReactNode } } = {
@@ -29,6 +29,21 @@ export const inputsLabelsMap : {[key in FieldTypeMapper]:string} ={
     email:"Email Adres",
     date:"Date Picker"
 }
+
+export const taxesValuesMapper:{[key in TaxesType]:number} = {
+    "0% btw":0,
+    "21% btw":21,
+    "9% btw":9,
+    
+}
+
+export const valuesTaxesMapper:{[key:number]:TaxesType} ={
+0:'0% btw',
+9:'9% btw',
+21:'21% btw'
+}
+
+ 
 
 
 

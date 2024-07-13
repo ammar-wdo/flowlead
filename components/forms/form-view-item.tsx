@@ -687,7 +687,7 @@ const Breaker = ({ index, form }: { index: number; form: Form }) => {
           render={({ field }) => (
             <FormItem>
               <div className="flex flex-col gap-1">
-                <h4>{form.watch("elements")[index].field?.label}</h4>
+                <h4 className="text-sm font-[500]">{form.watch("elements")[index].field?.label}</h4>
                 <Button className="w-fit px-8 py-2" disabled={true}>
                   {form.watch("elements")[index].field?.placeholder || "Next"}
                 </Button>

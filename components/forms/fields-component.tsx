@@ -313,6 +313,7 @@ const FieldsComponent = ({
                 previousVar={previousVar}
               />
               <LoadingButton
+              className="bg-second text-white hover:bg-second/90 hover:text-white"
                 isLoading={isLoading}
                 title={fetchedForm ? "Update" : "Submit"}
               />

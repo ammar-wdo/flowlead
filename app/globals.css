@@ -6,6 +6,7 @@
 
   html, body {
    height: 100%;
+   min-height: 100vh;
    overflow-y: auto;
 
   }
@@ -198,3 +199,5 @@
   padding-left: 10px !important; /* Adjust padding to start from the beginning */
   margin-left: 0 !important; /* Ensure margin is reset */
 }
+
+ 

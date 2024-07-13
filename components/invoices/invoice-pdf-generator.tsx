@@ -51,6 +51,29 @@ type Props = {
 };
 
 const InvoicePdfGenerator = ({ invoice, companyInfo }: Props) => {
+
+
+  const lineItems = invoice?.lineItems || []
+  const totalTaxes =  () => {
+    let totalTax9 = 0;
+    let totalTax21 = 0;
+    let totalTax0 = 0;
+
+    lineItems.forEach(el => {
+      const taxValue = (el.taxPercentage * el.price * el.quantity) / 100;
+      if (el.taxPercentage === 9) {
+        totalTax9 += taxValue;
+      } else if (el.taxPercentage === 21) {
+        totalTax21 += taxValue;
+      } else if (el.taxPercentage === 0) {
+        totalTax0 += taxValue;
+      }
+    });
+
+    return ({ totalTax9, totalTax21, totalTax0 });
+  }
+
+
   const subTotalAmount =
     invoice?.lineItems.reduce(
       (acc, val) => acc + val.price * val.quantity,
@@ -255,34 +278,75 @@ const InvoicePdfGenerator = ({ invoice, companyInfo }: Props) => {
               </Text>
             </View>
           </View>
-          {invoice?.lineItems.map((item, index) => (
-            <View key={`VAT-${item.id}`} style={styles.tableRowNoBorder}>
+          <View  style={styles.tableRowNoBorder}>
               <View style={styles.tableColQuantity}></View>
               <View style={styles.tableColDescription}></View>
               <View
                 style={
-                  index === invoice.lineItems.length - 1
-                    ? styles.tableColAmountBorder
-                    : styles.tableColAmount
+                  styles.tableColAmount
                 }
               >
                 <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
-                  % {item.taxPercentage} VAT
+                  % 21 VAT
                 </Text>
               </View>
               <View
                 style={
-                  index === invoice.lineItems.length - 1
-                    ? styles.tableColTotalBorder
-                    : styles.tableColTotal
+                styles.tableColTotal
                 }
               >
                 <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
-                  € {item.taxAmount}
+                  € {totalTaxes().totalTax21}
                 </Text>
               </View>
             </View>
-          ))}
+            <View   style={styles.tableRowNoBorder}>
+              <View style={styles.tableColQuantity}></View>
+              <View style={styles.tableColDescription}></View>
+              <View
+                style={
+                  styles.tableColAmount
+                }
+              >
+                <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
+                  % 9 VAT
+                </Text>
+              </View>
+              <View
+                style={
+                  styles.tableColTotal
+                }
+              >
+                <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
+                  € {totalTaxes().totalTax9}
+                </Text>
+              </View>
+            </View>
+            <View   style={styles.tableRowNoBorder}>
+              <View style={styles.tableColQuantity}></View>
+              <View style={styles.tableColDescription}></View>
+              <View
+                style={
+                 
+                    styles.tableColAmountBorder
+                   
+                }
+              >
+                <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
+                  % 0 VAT
+                </Text>
+              </View>
+              <View
+                style={
+                styles.tableColTotalBorder
+                  
+                }
+              >
+                <Text style={[styles.tableDiscount, { textAlign: "right" }]}>
+                  € {totalTaxes().totalTax0}
+                </Text>
+              </View>
+            </View>
           <View style={styles.tableRowNoBorder}>
             <View style={styles.tableColQuantity}></View>
             <View style={styles.tableColDescription}></View>

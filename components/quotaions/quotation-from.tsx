@@ -64,6 +64,7 @@ import {
   Building,
   CalendarIcon,
   Check,
+  ChevronDown,
   ChevronsUpDown,
   Euro,
   FileIcon,
@@ -81,7 +82,7 @@ import {
 import { Calendar } from "../ui/calendar";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Textarea } from "../ui/textarea";
-import { VARIABLES, quotationEmailSendSchema } from "@/schemas";
+import { VARIABLES, quotationEmailSendSchema, taxesEnum } from "@/schemas";
 import { MultiFileDropzone } from "../MultiFileDropzone";
 
 import { v4 as uuidv4 } from "uuid";
@@ -119,25 +120,34 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import { taxesValuesMapper, valuesTaxesMapper } from "@/mapping";
 
 type Props = {
-  quotation: Quotation & { 
-    contact: {
-      address: string | null;
-      zipcode: string | null;
-      city: string | null;
-      country: string | null;
-    contactType: $Enums.ContactType;
-    contactName: string;
-    emailAddress: string;
-    companyName: string | null;
-} | null | undefined,
-contactPerson:{
-  emailAddress: string;
-  contactName: string
-} | null | undefined
-
-} | undefined | null;
+  quotation:
+    | (Quotation & {
+        contact:
+          | {
+              address: string | null;
+              zipcode: string | null;
+              city: string | null;
+              country: string | null;
+              contactType: $Enums.ContactType;
+              contactName: string;
+              emailAddress: string;
+              companyName: string | null;
+            }
+          | null
+          | undefined;
+        contactPerson:
+          | {
+              emailAddress: string;
+              contactName: string;
+            }
+          | null
+          | undefined;
+      })
+    | undefined
+    | null;
   options: {
     id: string;
     name: string;
@@ -176,8 +186,8 @@ contactPerson:{
     name: string;
     zipcode: string;
     city: string;
-    companyEmail:string
-}
+    companyEmail: string;
+  };
 };
 
 const QuotationsForm = ({
@@ -186,7 +196,7 @@ const QuotationsForm = ({
   options,
   quotationSettings,
   refactoredContacts,
-  companyInfo
+  companyInfo,
 }: Props) => {
   const {
     form,
@@ -223,26 +233,47 @@ const QuotationsForm = ({
     handleResetEmailData,
   } = useQuotation({ quotation, quotationSettings });
 
+  const lineItems = form.watch("lineItems");
+
+  const totalTaxes = () => {
+    let totalTax9 = 0;
+    let totalTax21 = 0;
+    let totalTax0 = 0;
+
+    lineItems.forEach((el) => {
+      const taxValue = (el.taxPercentage * el.price * el.quantity) / 100;
+      if (el.taxPercentage === 9) {
+        totalTax9 += taxValue;
+      } else if (el.taxPercentage === 21) {
+        totalTax21 += taxValue;
+      } else if (el.taxPercentage === 0) {
+        totalTax0 += taxValue;
+      }
+    });
+
+    return { totalTax9, totalTax21, totalTax0 };
+  };
+
   const [mount, setMount] = useState(false);
   useEffect(() => {
     setMount(true);
   }, []);
-
- 
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(String(event.active.id));
-    const index = form.watch('lineItems').findIndex(el=>el.id===event.active.id)
-    setActiveIndex(index)
+    const index = form
+      .watch("lineItems")
+      .findIndex((el) => el.id === event.active.id);
+    setActiveIndex(index);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
-    setActiveIndex(null)
+    setActiveIndex(null);
     if (over && active.id !== over.id) {
       const items = form.watch("lineItems");
       const oldIndex = items.findIndex((item) => item.id === active.id);
@@ -255,10 +286,9 @@ const QuotationsForm = ({
 
   const handleDragCancel = () => {
     setActiveId(null);
-    setActiveIndex(null)
+    setActiveIndex(null);
   };
   if (!mount) return null;
-
 
   return (
     <Form {...form}>
@@ -321,7 +351,8 @@ const QuotationsForm = ({
                           : field.value
                           ? refactoredContacts.find(
                               (contact) => contact.companyId === field.value
-                            )?.companyName || refactoredContacts.find(
+                            )?.companyName ||
+                            refactoredContacts.find(
                               (contact) => contact.companyId === field.value
                             )?.contactName
                           : "Select Contact"}
@@ -386,7 +417,9 @@ const QuotationsForm = ({
                                       <div>
                                         <p className="capitalize">
                                           {contact.contactName} -{" "}
-                                          <span className="text-xs bg-muted p-1 rounded-md group-hover:bg-white border">{contact.companyName}</span>
+                                          <span className="text-xs bg-muted p-1 rounded-md group-hover:bg-white border">
+                                            {contact.companyName}
+                                          </span>
                                         </p>
                                         <p className="text-muted-foreground text-xs mt-2">
                                           {contact.emailAddress}
@@ -396,20 +429,28 @@ const QuotationsForm = ({
                                   ) : (
                                     <div className="flex items-center gap-5 ">
                                       <span>
-                                     
                                         {contact.contactType ===
-                                        "INDIVIDUAL"  ? (
-                                         contact.contactCategory==='LEAD' ?  <MagnetIcon /> :   <User />
+                                        "INDIVIDUAL" ? (
+                                          contact.contactCategory === "LEAD" ? (
+                                            <MagnetIcon />
+                                          ) : (
+                                            <User />
+                                          )
                                         ) : (
                                           <Building />
                                         )}
                                       </span>
                                       <div>
-                                      {contact.contactType=== 'INDIVIDUAL' ? <p className="capitalize">
-                                          {contact.contactName}
-                                        </p> : <p className="capitalize">
-                                          {contact.companyName}
-                                        </p>}
+                                        {contact.contactType ===
+                                        "INDIVIDUAL" ? (
+                                          <p className="capitalize">
+                                            {contact.contactName}
+                                          </p>
+                                        ) : (
+                                          <p className="capitalize">
+                                            {contact.companyName}
+                                          </p>
+                                        )}
                                         <p className="text-muted-foreground text-xs ">
                                           {contact.emailAddress}
                                         </p>
@@ -445,11 +486,10 @@ const QuotationsForm = ({
                       {replacePlaceholders(form.watch("quotationString"))}
                     </span>
                     <Input
-                   min={1}
+                      min={1}
                       className="flex-[1]"
                       placeholder="Quotation Number"
                       {...field}
-                     
                       type="number"
                       value={
                         field.value
@@ -458,12 +498,7 @@ const QuotationsForm = ({
                       }
                       onChange={(e) =>
                         field.onChange(
-                          +formatWithLeadingZeros(
-                            Number(
-                               +e.target.value
-                            ),
-                            4
-                          )
+                          +formatWithLeadingZeros(Number(+e.target.value), 4)
                         )
                       }
                     />
@@ -623,7 +658,7 @@ const QuotationsForm = ({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                    <TableHead></TableHead>
+                      <TableHead></TableHead>
                       <TableHead className="w-[300px]">Item</TableHead>
                       <TableHead>Quantity</TableHead>
                       <TableHead>Price</TableHead>
@@ -662,19 +697,21 @@ const QuotationsForm = ({
                           />
                         ))}
                       </SortableContext>
-                      <DragOverlay style={{opacity:1}} className="">
+                      <DragOverlay style={{ opacity: 1 }} className="">
                         <div>
-                        <OptionTableRow
-                      
+                          <OptionTableRow
                             key={"any"}
                             calculate={calculate}
                             deleteLineItem={deleteLineItem}
                             form={form}
                             index={activeIndex as number}
-                            lineItem={form.watch('lineItems').find(item=>item.id === activeId)!}
+                            lineItem={
+                              form
+                                .watch("lineItems")
+                                .find((item) => item.id === activeId)!
+                            }
                           />
                         </div>
-                    
                       </DragOverlay>
                     </DndContext>
                   </TableBody>
@@ -815,13 +852,11 @@ const QuotationsForm = ({
           <ShowValueElement title="Subtotal" value={subTotalWithDiscount} />
 
           {/* lineitemes vat */}
-          {form.watch("lineItems").map((el, index) => (
-            <ShowValueElement
-              key={`vat - ${index}`}
-              title={`${el.taxPercentage}% VAT`}
-              value={(el.taxPercentage * el.price * el.quantity) / 100}
-            />
-          ))}
+          <ShowValueElement title={`21% VAT`} value={totalTaxes().totalTax21} />
+          <ShowValueElement title={`9% VAT`} value={totalTaxes().totalTax9} />
+
+          <ShowValueElement title={`0% VAT`} value={totalTaxes().totalTax0} />
+
           {/* total amount */}
           <ShowValueElement title={"Total"} value={total} />
         </div>
@@ -1024,9 +1059,14 @@ const QuotationsForm = ({
       </form>
 
       {/* PDF Veiwer */}
-     { quotation && <PDFViewer width="100%" height="1200">
-        <QuotationPdfGenerator quotation={quotation} companyInfo={companyInfo} />
-      </PDFViewer>}
+      {quotation && (
+        <PDFViewer width="100%" height="1200">
+          <QuotationPdfGenerator
+            quotation={quotation}
+            companyInfo={companyInfo}
+          />
+        </PDFViewer>
+      )}
     </Form>
   );
 };
@@ -1069,16 +1109,13 @@ const OptionTableRow = ({
   } = useSortable({ id: lineItem.id });
 
   const style = {
-   
     transition,
-  
   };
-
+  const [openTax, setOpenTax] = useState(false);
   return (
     <TableRow
       style={style}
       ref={setNodeRef}
-   
       key={lineItem.id}
       className={cn(
         "w-full border-none border-t-0 relative group !h-6 p-0  bg-white hover:!opacity-100 hover:bg-muted/80",
@@ -1086,7 +1123,7 @@ const OptionTableRow = ({
       )}
     >
       <TableCell className="self-start">
-      <Button
+        <Button
           {...attributes}
           {...listeners}
           type="button"
@@ -1218,7 +1255,36 @@ const OptionTableRow = ({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input
+                <Popover open={openTax} onOpenChange={setOpenTax}>
+                  <PopoverTrigger className="">
+                    <Button
+                      type="button"
+                      className="w-full border bg-white"
+                      variant={"ghost"}
+                    >
+                      {valuesTaxesMapper[field.value]}
+                      <ChevronDown size={14} className="ml-3" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className=" p-1">
+                    {taxesEnum.map((tax) => (
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          field.onChange(taxesValuesMapper[tax]);
+                          setOpenTax(false);
+                          calculate(index);
+                        }}
+                        className="w-full"
+                        key={tax}
+                        variant={"ghost"}
+                      >
+                        {tax}
+                      </Button>
+                    ))}
+                  </PopoverContent>
+                </Popover>
+                {/* <Input
                   type="number"
                   className=""
                   placeholder="taxPercentage"
@@ -1228,7 +1294,7 @@ const OptionTableRow = ({
                     field.onChange(e.target.value);
                     calculate(index);
                   }}
-                />
+                /> */}
               </FormControl>
 
               <FormMessage />

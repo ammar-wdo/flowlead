@@ -104,7 +104,7 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
       <FormComponent {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full space-y-8"
+          className="w-full space-y-2"
         >
           {form.watch("rules")?.map((rule, i) => (
             <FormField
@@ -119,8 +119,8 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
                     variant={"ghost"}
                     className="right-1  opacity-0 group-hover:opacity-100 
             transition top-1  absolute hover:bg-white
-            bg-white  hover:shadow-gray-300  shadow-md rounded-lg
-             text-gray-300 hover:shadow-lg flex items-center justify-center w-8 h-8  p-0.5"
+            bg-white     rounded-lg
+             text-gray-300  flex items-center justify-center w-8 h-8  p-0.5"
                   >
                     <XIcon />
                   </Button>
@@ -141,8 +141,8 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
                     variant={"ghost"}
                     className="right-1  opacity-0 group-hover/two:opacity-100 
             transition top-1  absolute hover:bg-white
-            bg-white  hover:shadow-gray-300  shadow-md rounded-lg
-             text-gray-300 hover:shadow-lg flex items-center justify-center w-5 h-5  p-0.5"
+            bg-white     rounded-lg
+             text-gray-300  flex items-center justify-center w-5 h-5  p-0.5"
                   >
                     <XIcon />
                   </Button>}
@@ -469,20 +469,24 @@ const RulesComponent = ({ fetchedForm, form, onSubmit }: Props) => {
               )}
             />
           ))}
+          <div className="flex items-center justify-between">
           <Button
             type="button"
             onClick={addRule}
             variant={"link"}
             className="text-second"
           >
-            <Plus className="mr-3" />
+            <Plus size={15} className="mr-1 " />
             Add Rule
           </Button>
 
           <LoadingButton
+            className="bg-second text-white hover:bg-second/90 hover:text-white ml-auto" 
             title="Submit"
             isLoading={form.formState.isSubmitting}
           />
+          </div>
+        
         </form>
       </FormComponent>
     </section>

@@ -142,7 +142,7 @@ export const serviceSchema = z.object({
   isLineItem: z.boolean().default(false),
   taxPercentage: z.coerce
     .number({ message: "Enter valid number please" })
-    .min(1),
+    ,
   options: z.array(optionSchema).min(1, "Atleast one option"),
   addToQoutation: z.boolean().default(false),
 });
@@ -270,6 +270,12 @@ const validationOptionsSchema = z.object({
 export type ElementTypeMapper = (typeof elementTypeEnum)[number];
 const elementTypeArray = ["FIELD", "SERVICE_ELEMENT"];
 const elementTypeEnum = ["FIELD", "SERVICE_ELEMENT"] as const;
+
+
+export const taxesEnum = ["21% btw","9% btw", "0% btw" ] as const
+
+
+export type TaxesType = typeof taxesEnum[number]
 
 const addressSchema = z
   .object({

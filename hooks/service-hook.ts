@@ -20,7 +20,7 @@ export const useService  =(service:Service | null | undefined)=>{
           isRequired:service?.isRequired || false,
           pricingType:service?.pricingType || 'SINGLE_PRICE',
           addToQoutation:service?.addToQoutation   || false ,
-          taxPercentage:service?.taxPercentage || undefined ,
+          taxPercentage:service?.taxPercentage || 0 ,
           isLineItem:service?.isLineItem || false
         },
       })

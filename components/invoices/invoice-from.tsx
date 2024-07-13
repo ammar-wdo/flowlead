@@ -64,6 +64,7 @@ import {
   Building,
   CalendarIcon,
   Check,
+  ChevronDown,
   ChevronsUpDown,
   Edit,
   Euro,
@@ -83,7 +84,7 @@ import {
 import { Calendar } from "../ui/calendar";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Textarea } from "../ui/textarea";
-import { VARIABLES, invoiceEmailSendSchema } from "@/schemas";
+import { VARIABLES, invoiceEmailSendSchema, taxesEnum } from "@/schemas";
 import { MultiFileDropzone } from "../MultiFileDropzone";
 
 import { v4 as uuidv4 } from "uuid";
@@ -125,6 +126,7 @@ import InvoicePdfGenerator from "./invoice-pdf-generator";
 import { useInvoice } from "@/hooks/invoice-hook";
 import { MdOutlineEditOff } from "react-icons/md";
 import Tip from "../tip";
+import { taxesValuesMapper, valuesTaxesMapper } from "@/mapping";
 
 type Props = {
   invoice:
@@ -237,7 +239,28 @@ const InvoicesForm = ({
     edit,
     setEdit,
     handleResetEmailData,
-  } = useInvoice({ invoice, invoiceSettings });
+  } = useInvoice({ invoice, invoiceSettings })
+
+  const lineItems = form.watch('lineItems')
+
+  const totalTaxes =  () => {
+    let totalTax9 = 0;
+    let totalTax21 = 0;
+    let totalTax0 = 0;
+
+    lineItems.forEach(el => {
+      const taxValue = (el.taxPercentage * el.price * el.quantity) / 100;
+      if (el.taxPercentage === 9) {
+        totalTax9 += taxValue;
+      } else if (el.taxPercentage === 21) {
+        totalTax21 += taxValue;
+      } else if (el.taxPercentage === 0) {
+        totalTax0 += taxValue;
+      }
+    });
+
+    return ({ totalTax9, totalTax21, totalTax0 });
+  } 
 
   const [mount, setMount] = useState(false);
   useEffect(() => {
@@ -862,13 +885,24 @@ const InvoicesForm = ({
           <ShowValueElement title="Subtotal" value={subTotalWithDiscount} />
 
           {/* lineitemes vat */}
-          {form.watch("lineItems").map((el, index) => (
-            <ShowValueElement
-              key={`vat - ${index}`}
-              title={`${el.taxPercentage}% VAT`}
-              value={(el.taxPercentage * el.price * el.quantity) / 100}
-            />
-          ))}
+         {/* lineitemes vat */}
+       
+         <ShowValueElement
+            
+            title={`21% VAT`}
+            value={totalTaxes().totalTax21}
+          />
+         <ShowValueElement
+             
+             title={`9% VAT`}
+             value={totalTaxes().totalTax9}
+           />
+        
+           <ShowValueElement
+            
+             title={`0% VAT`}
+             value={totalTaxes().totalTax0}
+           />
           {/* total amount */}
           <ShowValueElement title={"Total"} value={total} />
         </div>
@@ -1120,7 +1154,7 @@ const OptionTableRow = ({
   const style = {
     transition,
   };
-
+  const [openTax, setOpenTax]=useState(false)
   return (
     <TableRow
       style={style}
@@ -1264,7 +1298,32 @@ const OptionTableRow = ({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input
+              <Popover open={openTax} onOpenChange={setOpenTax}>
+                  <PopoverTrigger className="">
+                    <Button type="button" className="w-full border bg-white" variant={"ghost"}>
+                      {valuesTaxesMapper[field.value]}
+                      <ChevronDown size={14} className="ml-3" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className=" p-1">
+                    {taxesEnum.map((tax) => (
+                      <Button
+                      type="button"
+                        onClick={() => {
+                          field.onChange(taxesValuesMapper[tax]);
+                          setOpenTax(false);
+                          calculate(index)
+                        }}
+                        className="w-full"
+                        key={tax}
+                        variant={"ghost"}
+                      >
+                        {tax}
+                      </Button>
+                    ))}
+                  </PopoverContent>
+                </Popover>
+                {/* <Input
                   type="number"
                   className=""
                   placeholder="taxPercentage"
@@ -1274,7 +1333,7 @@ const OptionTableRow = ({
                     field.onChange(e.target.value);
                     calculate(index);
                   }}
-                />
+                /> */}
               </FormControl>
 
               <FormMessage />

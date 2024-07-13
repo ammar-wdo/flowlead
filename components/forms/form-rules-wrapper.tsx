@@ -30,7 +30,7 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
 
   return (
     <div>
-    { params.formSlug !== "new" &&  <div className="flex items-center justify-between">
+    { params.formSlug !== "new" &&  <div className="flex items-center justify-between ">
         <div className="flex items-center">
           <Button
             onClick={() => setActiveComponent("fields")}

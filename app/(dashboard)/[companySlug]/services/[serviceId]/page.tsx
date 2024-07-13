@@ -41,7 +41,7 @@ if(serviceId !=='new' && !service) return notFound()
             <Heading title='Add Service' />
 
             {/* service form  */}
-            <div className='mt-12 max-w-[1000px] w-full '>
+            <div className='  max-w-[1000px] w-full  '>
 <ServiceForm service={service}/>
             </div>
          
