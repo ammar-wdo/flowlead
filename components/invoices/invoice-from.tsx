@@ -1097,7 +1097,7 @@ const InvoicesForm = ({
             </p>
           </div>
         )}
-        {JSON.stringify(form.formState.errors)}
+        {/* {JSON.stringify(form.formState.errors)} */}
         <SendEmailModal
           emailData={emailData}
           handleResetEmailData={handleResetEmailData}
@@ -1105,11 +1105,11 @@ const InvoicesForm = ({
       </form>
 
       {/* PDF Veiwer */}
-      {invoice && (
+      {/* {invoice && (
         <PDFViewer width="100%" height="1200">
           <InvoicePdfGenerator invoice={invoice} companyInfo={companyInfo} />
         </PDFViewer>
-      )}
+      )} */}
     </Form>
   );
 };

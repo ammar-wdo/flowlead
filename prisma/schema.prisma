@@ -269,7 +269,7 @@ model InvoiceSettings {
 
 model WidgetSettings {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  color            String   @default("blue")
+  color            String   @default("#4657C2")
   widgetButtonText String   @default("Open Widget")
   thankyouText     String   @default("we will get back to you as soon as possible")
   widgetPostion WidgetPostion @default(RIGHT)

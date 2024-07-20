@@ -102,15 +102,15 @@ export const useQuotation = ({
     },
   });
 
-  useEffect(() => {
-    const refactoredFootNoteContent = replaceDates(
-      form.watch("footNote") || "",
-      form.watch("quotationDate"),
-      form.watch("expiryDate")
-    );
+  // useEffect(() => {
+  //   const refactoredFootNoteContent = replaceDates(
+  //     form.watch("footNote") || "",
+  //     form.watch("quotationDate"),
+  //     form.watch("expiryDate")
+  //   );
 
-    form.setValue("footNote", refactoredFootNoteContent);
-  }, [form.watch("footNote")]);
+  //   form.setValue("footNote", refactoredFootNoteContent);
+  // }, [form.watch("footNote")]);
 
   //calculate total when inputs change
   const calculate = (index: number) => {

@@ -1051,7 +1051,7 @@ const QuotationsForm = ({
             </p>
           </div>
         )}
-        {JSON.stringify(form.formState.errors)}
+        {/* {JSON.stringify(form.formState.errors)} */}
         <SendEmailModal
           emailData={emailData}
           handleResetEmailData={handleResetEmailData}
@@ -1059,14 +1059,14 @@ const QuotationsForm = ({
       </form>
 
       {/* PDF Veiwer */}
-      {quotation && (
+      {/* {quotation && (
         <PDFViewer width="100%" height="1200">
           <QuotationPdfGenerator
             quotation={quotation}
             companyInfo={companyInfo}
           />
         </PDFViewer>
-      )}
+      )} */}
     </Form>
   );
 };
