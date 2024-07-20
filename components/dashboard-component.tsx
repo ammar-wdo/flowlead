@@ -84,11 +84,11 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
           >
             <EditCompany
               companySlug={companySlug}
-              nextStep={() => setStep("add a service")}
+              nextStep={() => setStep("create a service")}
             />
           </motion.div>
         )}
-        {step === "add a service" && (
+        {step === "create a service" && (
           <motion.div
           key={'2-step'}
           variants={sectionVariants}
@@ -98,11 +98,11 @@ key={'steps-article'} className="grid grid-cols-3 gap-4 p-12 bg-white border ove
           >
             <AddService
               companySlug={companySlug}
-              nextStep={() => setStep("add a form")}
+              nextStep={() => setStep("create a form")}
             />
           </motion.div>
         )}
-        {step === "add a form" && (
+        {step === "create a form" && (
           <motion.div
           key={'3-step'}
           variants={sectionVariants}
@@ -214,7 +214,7 @@ const AddService = ({
 }) => {
   return (
     <article>
-      <h3 className="font-semibold text-lg text-prime">Add a service</h3>
+      <h3 className="font-semibold text-lg text-prime">Create a service</h3>
       <p className="text-sm text-muted-foreground mt-2  w-[450px]">
         Add new services and products to illustrate in your forms.
       </p>
@@ -224,7 +224,7 @@ const AddService = ({
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/services/new`}>Add Services</Link>
+          <Link href={`/${companySlug}/services/new`}>Create a service</Link>
         </Button>
         <Button
           onClick={nextStep}
@@ -256,7 +256,7 @@ const AddForm = ({
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/forms/new`}>Add Form</Link>
+          <Link href={`/${companySlug}/forms/new`}>Create a form</Link>
         </Button>
         <Button
           onClick={nextStep}
@@ -287,7 +287,7 @@ const AddContact = ({
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/contacts/new`}>Add Contact</Link>
+          <Link href={`/${companySlug}/contacts/new`}>Create a contact</Link>
         </Button>
         <Button
           onClick={nextStep}
@@ -309,14 +309,14 @@ const AddQuotation = ({
   return (
     <article>
       <h3 className="font-semibold text-lg text-prime ">Create a quotation</h3>
-      <p className="text-sm text-muted-foreground mt-2  w-[450px]">Create new quotation.</p>
+      <p className="text-sm text-muted-foreground mt-2  w-[450px]">Create a quotation.</p>
       <div className="flex items-center gap-8 mt-4">
         {" "}
         <Button
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/quotations/new`}>Add Quotation</Link>
+          <Link href={`/${companySlug}/quotations/new`}>Create Quotation</Link>
         </Button>
         <Button
           onClick={nextStep}
@@ -338,15 +338,15 @@ const AddInvoice = ({
 }) => {
   return (
     <article>
-      <h3 className="font-semibold text-lg text-prime">Create Invoice</h3>
-      <p className="text-sm text-muted-foreground mt-2  w-[450px]">Create new Invoice.</p>
+      <h3 className="font-semibold text-lg text-prime">Create an Invoice</h3>
+      <p className="text-sm text-muted-foreground mt-2  w-[450px]">Create  Invoice.</p>
       <div className="flex items-center gap-8 mt-4">
         {" "}
         <Button
           asChild
           className="bg-second hover:bg-second/90   text-white rounded-lg w-40"
         >
-          <Link href={`/${companySlug}/invoices/new`}>Add Invoice</Link>
+          <Link href={`/${companySlug}/invoices/new`}>Create an Invoice</Link>
         </Button>
         <Button
           onClick={nextStep}

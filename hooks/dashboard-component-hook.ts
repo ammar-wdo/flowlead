@@ -4,7 +4,7 @@ import { useState } from "react"
 export const useDashboard = ()=>{
 const [hide, setHide] = useState(false)
 
-    const STEPS = ["Edit company details","add a service","add a form","create a contact","create a quotation","create an invoice"] as const
+    const STEPS = ["Edit company details","create a service","create a form","create a contact","create a quotation","create an invoice"] as const
 
     const [step, setStep] = useState<typeof STEPS[number]>('Edit company details')
 

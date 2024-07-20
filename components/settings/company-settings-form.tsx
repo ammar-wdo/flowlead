@@ -214,7 +214,8 @@ const CompanySettingsForm = ({ company }: Props) => {
                   <FormLabel>Phone Number</FormLabel>
                   <div className="col-span-1 sm:col-span-2">
                     <FormControl>
-                      <PhoneInput
+                      <Input {...field} type="number"   className="max-w-[450px]"  />
+                      {/* <PhoneInput
                         enableSearch={true}
                         buttonStyle={{
                           border: "none",
@@ -234,7 +235,7 @@ const CompanySettingsForm = ({ company }: Props) => {
                         }}
                         value={form.getValues("phone")}
                         onChange={(phone) => form.setValue("phone", phone)}
-                      />
+                      /> */}
                     </FormControl>
                   </div>
                 </SettingsFormWrapper>

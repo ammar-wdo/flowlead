@@ -165,7 +165,7 @@ const page = async ({ params: { companySlug, invoiceId } }: Props) => {
   if (invoiceId !== "new" && !invoice) return notFound();
   return (
     <div>
-      <Heading title={invoice ? "Edit quotation" : "Create quotation"} />
+      <Heading title={invoice ? "Edit Invoice" : "Create Invoice"} />
 
       <div className="mt-12">
         <InvoicesForm

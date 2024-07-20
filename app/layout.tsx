@@ -47,7 +47,7 @@ export default function RootLayout({
         <Script id="weglot-init"  strategy="beforeInteractive">
           {`
               Weglot.initialize({
-                api_key: 'wg_7feb4815fb5c361da19061e921d6ab622'
+                api_key: 'wg_a6811f9e36ef92df3e837cfcb6f915059'
               });
             `}
         </Script>
