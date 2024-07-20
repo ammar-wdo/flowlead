@@ -50,8 +50,8 @@ export const subscribe = async ({
       customer: customerId,
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL!}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL!}/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL!}/${company.slug}/success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL!}/${company.slug}/cancel`,
     });
 
     return { success: true, url: session.url };

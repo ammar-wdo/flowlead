@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 import OptionItem from "./option-item";
 import { z } from "zod";
 import { Checkbox } from "../ui/checkbox";
-import { ChevronDown, FileDiff, Loader } from "lucide-react";
+import { ChevronDown, FileDiff, Loader, PlusIcon } from "lucide-react";
 import LoadingButton from "../loading-button";
 import Scroller from "../scroller";
 import {
@@ -46,6 +46,7 @@ import {
   DragEndEvent,
 } from "@dnd-kit/core";
 import { taxesValuesMapper, valuesTaxesMapper } from "@/mapping";
+import Optional from "../optional";
 
 type Props = {
   service: Service | undefined | null;
@@ -90,7 +91,7 @@ const ServiceForm = ({ service }: Props) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Service Name*</FormLabel>
+                <FormLabel>Service Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Service name" {...field} />
                 </FormControl>
@@ -107,7 +108,7 @@ const ServiceForm = ({ service }: Props) => {
               <FormItem>
                 <FormLabel>
                   Service Description{" "}
-                  <span className="text-muted-foreground">(optional)</span>
+                  <span className="text-muted-foreground"><Optional /></span>
                 </FormLabel>
                 <FormControl>
                   <QuillEditor
@@ -147,7 +148,7 @@ const ServiceForm = ({ service }: Props) => {
                 <FormLabel>Tax Percentage</FormLabel>
                 <Popover open={openTax} onOpenChange={setOpenTax}>
                   <PopoverTrigger className="w-[240px]">
-                    <Button type="button" className="w-full" variant={"secondary"}>
+                    <Button type="button" className="w-full bg-white hover:bg-white border" variant={"secondary"}>
                       {valuesTaxesMapper[field.value]}
                       <ChevronDown size={14} className="ml-auto" />
                     </Button>
@@ -182,7 +183,7 @@ const ServiceForm = ({ service }: Props) => {
             name="pricingType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Pricing Type*</FormLabel>
+                <FormLabel>Pricing Type</FormLabel>
                 <FormControl>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {pricingTypeArray.map((type, i) => (
@@ -218,9 +219,9 @@ const ServiceForm = ({ service }: Props) => {
                 name="options"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Options*</FormLabel>
+                    <FormLabel>Options</FormLabel>
                     <FormControl>
-                      <div className="space-y-16">
+                      <div className="space-y-3">
                         <FormField
                           control={form.control}
                           name="isRequired"
@@ -270,7 +271,7 @@ const ServiceForm = ({ service }: Props) => {
                             ])
                           }
                         >
-                          Add New Option
+                       <PlusIcon className="mr-3" size={14}/>   Add New Option
                         </Button>
                       </div>
                     </FormControl>

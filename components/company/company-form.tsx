@@ -13,11 +13,21 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 import { Input } from "@/components/ui/input"
 import SectionsWrapper from '../sections-wrapper'
 import { SingleImageDropzone } from '../single-image-dropeZone';
 import { Loader } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Optional from '../optional';
 
 type Props = {}
 
@@ -36,7 +46,7 @@ const CompanyForm = (props: Props) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company Name*</FormLabel>
+                  <FormLabel>Company Name</FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -50,7 +60,7 @@ const CompanyForm = (props: Props) => {
               name="companyEmail"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company Email*</FormLabel>
+                  <FormLabel>Company Email</FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -64,7 +74,7 @@ const CompanyForm = (props: Props) => {
               name="contactPerson"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Contact Person*</FormLabel>
+                  <FormLabel>Contact Person</FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -78,7 +88,7 @@ const CompanyForm = (props: Props) => {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address*</FormLabel>
+                  <FormLabel>Address</FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -92,7 +102,7 @@ const CompanyForm = (props: Props) => {
               name="zipcode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Zipcode*</FormLabel>
+                  <FormLabel>Zipcode</FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -106,7 +116,7 @@ const CompanyForm = (props: Props) => {
               name="city"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>City*</FormLabel>
+                  <FormLabel>City</FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -115,20 +125,30 @@ const CompanyForm = (props: Props) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country*</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+          control={form.control}
+          name="country"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Country  </FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Country" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem className='cursor-pointer' value="Netherlands">Netherlands</SelectItem>
+                  <SelectItem className='cursor-pointer' value="Belguim">Belguim</SelectItem>
+                  
+                </SelectContent>
+              </Select>
+         
+            
+              <FormMessage />
+            </FormItem>
+          )}
+        />
          
           
             <FormField
@@ -136,9 +156,9 @@ const CompanyForm = (props: Props) => {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number*</FormLabel>
+                  <FormLabel>Phone Number</FormLabel>
                   <FormControl>
-                    <PhoneInput
+                    {/* <PhoneInput
                     placeholder=''
                       showDropdown={false}
                       containerClass="phone-input-container"
@@ -159,7 +179,8 @@ const CompanyForm = (props: Props) => {
                       }}
                       value={form.getValues("phone")}
                       onChange={(phone) => form.setValue("phone", phone)}
-                    />
+                    /> */}
+                    <Input {...field} type='number'/>
                   </FormControl>
 
                   <FormMessage />
@@ -171,7 +192,7 @@ const CompanyForm = (props: Props) => {
               name="websiteUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Website URL</FormLabel>
+                  <FormLabel>Website URL <Optional/></FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -225,7 +246,7 @@ const CompanyForm = (props: Props) => {
               name="cocNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Chumber of Commerce</FormLabel>
+                  <FormLabel>Chamber of Commerce <Optional/></FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -253,7 +274,7 @@ const CompanyForm = (props: Props) => {
               name="vatNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>VAT Number</FormLabel>
+                  <FormLabel>VAT Number <Optional/></FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -268,7 +289,7 @@ const CompanyForm = (props: Props) => {
               name="IBAN"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>IBAN</FormLabel>
+                  <FormLabel>IBAN <Optional/></FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>

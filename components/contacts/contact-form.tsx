@@ -218,7 +218,7 @@ const ContactForm = ({ contact }: Props) => {
               <SettingsFormWrapper>
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl className="md:col-span-2 max-w-[450px]">
-                  <Input placeholder="Phone Number" {...field} />
+                  <Input type="number" placeholder="Phone Number" {...field} />
                 </FormControl>
               </SettingsFormWrapper>
               <FormMessage />
@@ -234,7 +234,7 @@ const ContactForm = ({ contact }: Props) => {
               <SettingsFormWrapper>
                 <FormLabel className="text-sm  ">Mobile Number</FormLabel>
                 <FormControl className="md:col-span-2 max-w-[450px]">
-                  <Input placeholder="Mobile Number" {...field} />
+                  <Input type="number" placeholder="Mobile Number" {...field} />
                 </FormControl>
               </SettingsFormWrapper>
               <FormMessage />

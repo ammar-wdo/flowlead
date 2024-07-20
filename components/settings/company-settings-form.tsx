@@ -58,15 +58,7 @@ const CompanySettingsForm = ({ company }: Props) => {
                           )}
                         </FormControl>
                       </div>
-                      <Button
-                        className={`${
-                          (!file || !!form.watch("logo")) && "hidden"
-                        }`}
-                        type="button"
-                        onClick={uploadImage}
-                      >
-                        Upload
-                      </Button>
+                  
 
                       <ImagePlaceholder />
                     </div>

@@ -2,7 +2,7 @@
 import { useEdgeStore } from "@/lib/edgestore";
 import { Loader, XIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   form: any;
@@ -15,6 +15,15 @@ export const useLogo = ({ form }: Props) => {
 
   const [imageLoader, setImageLoader] = useState(false);
   const { edgestore } = useEdgeStore();
+
+  useEffect(()=>{
+
+    const uploadtheImate = async()=>await  uploadImage()
+    if(!file) return 
+
+     uploadtheImate()
+
+  },[file])
 
   const uploadImage = async () => {
     if (file) {
@@ -49,6 +58,7 @@ export const useLogo = ({ form }: Props) => {
     } finally {
       setDeleteLoader(false);
       setImage("");
+      setFile(undefined)
     }
   };
 

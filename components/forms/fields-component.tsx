@@ -196,7 +196,7 @@ const FieldsComponent = ({
                       </FormLabel>
                       <FormControl>
                         <div className="flex items-start gap-3">
-                          <div>
+                       { !form.watch('logo') &&   <div>
                             <SingleImageDropzone
                               width={200}
                               height={200}
@@ -206,16 +206,8 @@ const FieldsComponent = ({
                               }}
                             />
 
-                            <Button
-                              className={`${
-                                (!file || !!form.watch(`logo`)) && "hidden"
-                              }`}
-                              type="button"
-                              onClick={uploadImage}
-                            >
-                              Upload
-                            </Button>
-                          </div>
+                          
+                          </div>}
 
                           <ImagePlaceholder />
                         </div>
@@ -317,7 +309,7 @@ const FieldsComponent = ({
                 isLoading={isLoading}
                 title={fetchedForm ? "Update" : "Submit"}
               />
-              {JSON.stringify(form.formState.errors, null, 2)}
+              {/* {JSON.stringify(form.formState.errors, null, 2)} */}
             </form>
           </FormComponent>
         </div>

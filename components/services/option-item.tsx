@@ -17,6 +17,7 @@ import { GripVertical, XIcon } from "lucide-react";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from "@/lib/utils";
+import Optional from "../optional";
 
 
 
@@ -49,10 +50,10 @@ const OptionItem = ({ index, form, id, handleDelete }: Props) => {
     const { ImagePlaceholder, file, setFile, uploadImage } = useOptionLogo({ form, index })
 
     return (
-        <article ref={setNodeRef} style={style}  className={cn("grid grid-cols-1 md:grid-cols-2 gap-8 relative group  bg-white p-3 rounded-lg",isDragging && 'z-10 opacity-60 relative  ')}>
+        <article ref={setNodeRef} style={style}  className={cn("flex  gap-8 relative group  bg-white p-3 rounded-lg",isDragging && 'z-10 opacity-60 relative  ')}>
             <Button {...attributes} {...listeners} type='button' variant={'ghost'} className="-left-4 opacity-0 group-hover:opacity-100 transition top-1/2 -translate-y-1/2 absolute hover:bg-transparent !p-0"><GripVertical/></Button>
             {/* first column */}
-            <div className="space-y-3">
+            <div className="space-y-3 flex-1">
                 <div className="flex items-start gap-4">
                     <FormField
                         control={form.control}
@@ -124,10 +125,10 @@ const OptionItem = ({ index, form, id, handleDelete }: Props) => {
                     name={`options.${index}.image`}
                     render={({ field }) => (
                         <FormItem className="">
-                            <FormLabel>Image <span className="text-xs text-muted-foreground">(optional)</span></FormLabel>
+                            <FormLabel>Image <span className="text-xs text-muted-foreground"><Optional/></span></FormLabel>
                             <FormControl>
                                 <div className="flex items-start gap-3">
-                                    <div>
+                                  { !form.watch(`options.${index}.image`) &&  <div>
                                         <SingleImageDropzone
                                             width={200}
                                             height={200}
@@ -136,16 +137,8 @@ const OptionItem = ({ index, form, id, handleDelete }: Props) => {
                                                 setFile(file);
                                             }}
                                         />
-
-                                        <Button
-                                            className={`${(!file || !!form.watch(`options.${index}.image`)) && 'hidden'}`}
-
-                                            type="button"
-                                            onClick={uploadImage}
-                                        >
-                                            Upload
-                                        </Button>
-                                    </div>
+ 
+                                    </div>}
 
                                     <ImagePlaceholder />
                                 </div>
