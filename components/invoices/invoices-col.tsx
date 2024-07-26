@@ -46,8 +46,8 @@ export const columns: ColumnDef<FullInvoice>[] = [
   },
   {
     accessorKey: "email",
-    filterFn: (row, columnId, filterValue) => {
-      return row.original.contact.emailAddress.includes(filterValue) || row.original.contact.contactName.includes(filterValue)
+    filterFn: (row, columnId, filterValue:string) => {
+      return row.original.contact.emailAddress.toLowerCase().includes(filterValue.toLowerCase()) || row.original.contact.contactName.toLowerCase().includes(filterValue.toLowerCase())
     },
     header: "Email address",
     cell: ({ row }) => <p className="">{row.original.contact.emailAddress}</p>,

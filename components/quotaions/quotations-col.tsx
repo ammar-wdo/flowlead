@@ -44,10 +44,17 @@ export const columns: ColumnDef<FullQuotation>[] = [
     ),
   },
   {
-    filterFn: (row, columnId, filterValue) => {
-      return row.original.contact.emailAddress.includes(filterValue) || row.original.contact.contactName.includes(filterValue)
+    filterFn: (row, columnId, filterValue: string) => {
+      return (
+        row.original.contact.emailAddress
+          .toLowerCase()
+          .includes(filterValue.toLowerCase()) ||
+        row.original.contact.contactName
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())
+      );
     },
-    accessorKey: 'email',
+    accessorKey: "email",
     header: "Email address",
     cell: ({ row }) => <p className="">{row.original.contact.emailAddress}</p>,
   },
@@ -59,6 +66,10 @@ export const columns: ColumnDef<FullQuotation>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell: ({ row }) => <div className="flex justify-end"><QuotationTableActionDropdown id={row.original.id} /></div>,
+    cell: ({ row }) => (
+      <div className="flex justify-end">
+        <QuotationTableActionDropdown id={row.original.id} />
+      </div>
+    ),
   },
 ];

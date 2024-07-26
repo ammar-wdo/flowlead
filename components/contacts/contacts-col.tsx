@@ -22,8 +22,8 @@ export const columns: ColumnDef<Contact>[] = [
     cell:({row})=><p className="font-semibold capitalize">{row.original.contactName}</p>
   },
   {
-    filterFn: (row, columnId, filterValue) => {
-      return row.original.emailAddress.includes(filterValue) || row.original.contactName.includes(filterValue)
+    filterFn: (row, columnId, filterValue:string) => {
+      return row.original.emailAddress.toLowerCase().includes(filterValue.toLowerCase()) || row.original.contactName.toLowerCase().includes(filterValue.toLowerCase())
     },
     accessorKey: "emailAddress",
     header: "Email",
