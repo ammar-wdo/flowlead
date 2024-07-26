@@ -7,6 +7,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import { BsExclamationSquareFill } from "react-icons/bs";
+import { FaReceipt } from "react-icons/fa";
 
 type Props = {params:{companySlug:string}};
 
@@ -38,7 +39,7 @@ if(!userId) redirect('/sign-up')
     },
     {
       label: "Invoices",
-      icon: <ReceiptText />,
+      icon: <FaReceipt />,
       description:"Manage your Invoices Settings",
       pathname: `/${companySlug}/settings/invoices`,
     },
