@@ -12,6 +12,7 @@ import { z } from "zod";
 import { formSchema } from "@/schemas";
 import { useParams, useRouter } from "next/navigation";
 import { Loader } from "lucide-react";
+import Link from "next/link";
 
 type Props = {
   fetchedForm: Form | null | undefined;
@@ -57,19 +58,13 @@ const FormRuleWrapper = ({ fetchedForm, services }: Props) => {
         </div>
      
           <Button
-            onClick={() =>
-              startTransition(() =>
-                router.push(
-                  `https://flowlead-widget.vercel.app/${params.companySlug}/${params.formSlug}`
-                )
-              )
-            }
-            disabled={pending}
+           asChild
             variant={"ghost"}
             className="bg-white text-second  border-second border rounded-md hover:bg-white h-[34px] hover:text-second "
           >
+            <Link target="_blank" href={`https://flowlead-widget.vercel.app/${params.companySlug}/${params.formSlug}`}>
             View Form{" "}
-            {pending && <Loader className="ml-3 animate-spin w-3 h-3" />}
+            </Link>
           </Button>
      
       </div>}
