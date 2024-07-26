@@ -31,7 +31,10 @@ if(!userId) throw new CustomError("Unauthorized")
 
     const services = await prisma.service.findMany({
       where:{
-        userId
+        userId,
+        company:{
+          slug:companySlug
+        }
       }
     })
 
